@@ -611,7 +611,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
   // SPECIALIZED INTERACTIVE CALCULATOR: 5 Varför (t_5why)
   // ----------------------------------------------------
   if (toolId === 't_5why' && !children) {
-    const problem = fields.problem || 'Packmaskin Pepsi stannar ofta';
+    const problem = fields.problem || 'Packmaskin Pepsi stannar ofta under skift';
     const w1 = fields.w1 || '';
     const w2 = fields.w2 || '';
     const w3 = fields.w3 || '';
@@ -623,76 +623,173 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
       setFields(up);
     };
 
+    const loadClassicExample = () => {
+      const example = {
+        problem: 'Säkringen på huvudmotorn gick och linjen stannade helt',
+        w1: 'Motorns lager skar ihop på grund av överbelastning',
+        w2: 'Smörjpumpen till lagret cirkulerade inte oljan som den skulle',
+        w3: 'Smörjpumpens drivmekanism slutade snurra',
+        w4: 'Pumpens drivaxel hade blivit kraftigt utsliten över tid',
+        w5: 'Det saknades ett partikelfilter på oljeintaget vilket släppte in metallspån'
+      };
+      setFields(example);
+      handleSave(items, example, notes);
+    };
+
+    const levels = [
+      { num: 1, key: 'w1', placeholder: 'Varför gick säkringen? (Direkt orsak till symptom)', label: 'Symptomnivå 1', colorClass: 'bg-rose-50 border-rose-150 text-rose-850', labelColor: 'bg-rose-100 text-rose-800' },
+      { num: 2, key: 'w2', placeholder: 'Varför inträffade rotorsak 1? (Sekundär orsak)', label: 'Symptomnivå 2', colorClass: 'bg-orange-50 border-orange-150 text-orange-850', labelColor: 'bg-orange-100 text-orange-800' },
+      { num: 3, key: 'w3', placeholder: 'Varför inträffade rotorsak 2? (Mellankoppling)', label: 'Indirekt orsak', colorClass: 'bg-amber-50 border-amber-150 text-amber-850', labelColor: 'bg-amber-100 text-amber-805 text-amber-800' },
+      { num: 4, key: 'w4', placeholder: 'Varför inträffade rotorsak 3? (Processbrist)', label: 'Processrelaterad', colorClass: 'bg-teal-50 border-teal-150 text-teal-850', labelColor: 'bg-teal-100 text-teal-800' },
+      { num: 5, key: 'w5', placeholder: 'Varför inträffade rotorsak 4? (Systemfel/Rotorsak)', label: 'Systemomfattande (Rotorsak)', colorClass: 'bg-emerald-50 border-emerald-150 text-emerald-850 font-semibold', labelColor: 'bg-emerald-500 text-white font-bold' }
+    ];
+
+    const filledCount = [w1, w2, w3, w4, w5].filter(Boolean).length;
+    const progressPercent = (filledCount / 5) * 100;
+
     return (
       <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+        <div className="flex flex-wrap items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
           <div>
             <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Wrench className="w-5 h-5 text-teal-600" /> 5 Varför (5 Whys)
+              <Wrench className="w-5 h-5 text-teal-600" /> 5 Varför (5 Whys Causal Diagram)
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-teal-50 text-teal-600 border border-teal-100">
-              Rotorsaksanalys
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-teal-50 text-teal-600 border border-teal-100 mt-1 inline-block">
+              Rotorsakshierarki (Root Cause Chain)
             </span>
-            <p className="text-sm text-slate-500 mt-1">{description}</p>
+            <p className="text-xs text-slate-500 mt-1">{description}</p>
           </div>
+          
+          <button
+            onClick={loadClassicExample}
+            className="text-xs px-3 py-2 bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 hover:from-teal-100 hover:to-emerald-100 rounded-lg border border-teal-200 transition-all font-bold flex items-center gap-1.5 shadow-sm hover:scale-102"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Ladda klassiskt Lean-exempel
+          </button>
         </div>
 
-        <div className="p-5 bg-teal-50/40 rounded-xl border border-teal-100/50 space-y-4 mb-6">
-          <h4 className="text-sm font-bold text-teal-800 flex items-center gap-2">
-            <span>🔍</span> Interaktivt Verktyg
-          </h4>
+        {/* Visual progress bar bar */}
+        <div className="mb-6 bg-slate-100 p-3 rounded-xl border border-slate-200/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="w-full sm:w-2/3 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div 
+              className="bg-gradient-to-r from-teal-500 to-emerald-500 h-full transition-all duration-500" 
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <span className="font-bold text-slate-600 shrink-0 uppercase tracking-wider text-[10px]">
+            Nedbrytning: {filledCount} av 5 Varför ({progressPercent.toFixed(0)}%)
+          </span>
+        </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Mål/Problemformulering att bryta ner</label>
-              <input
-                type="text"
-                className="w-full p-2.5 bg-white border border-slate-200 font-bold text-slate-800 rounded-lg text-sm"
-                value={problem}
-                onChange={(e) => updateF('problem', e.target.value)}
-              />
+        {/* Causal Chain Area */}
+        <div className="space-y-4 mb-6">
+          {/* PROBLEM CARD at top */}
+          <div className="p-4 bg-slate-900 text-slate-100 rounded-xl shadow-md border border-slate-950 relative overflow-hidden">
+            <div className="absolute top-2 right-2 flex gap-1">
+              <span className="h-2 w-2 rounded-full bg-red-500 animate-ping" />
+              <span className="h-2 w-2 rounded-full bg-red-500" />
             </div>
+            
+            <div className="flex items-center gap-3">
+              <span className="text-xl">⚠️</span>
+              <div className="flex-1">
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Observerat Symptom / Problemformulering</label>
+                <input
+                  type="text"
+                  className="w-full mt-1 bg-transparent border-0 border-b-2 border-slate-700 focus:border-red-500 text-sm font-extrabold text-white leading-relaxed focus:outline-none focus:ring-0 px-0 pb-1"
+                  value={problem}
+                  onChange={(e) => updateF('problem', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
 
-            <div className="space-y-3 pl-2 border-l-2 border-dashed border-teal-300">
-              {[1, 2, 3, 4, 5].map((num) => {
-                const key = `w${num}`;
-                const val = fields[key] || '';
-                return (
-                  <div key={key} className="flex items-start gap-3">
-                    <span className="flex h-7 w-12 items-center justify-center rounded bg-teal-100 text-teal-800 font-bold text-[11px] shrink-0 mt-1">
-                      Varför {num}
-                    </span>
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-teal-500"
-                        placeholder={num === 1 ? 'Varför uppstod problemet med packmaskinen?' : 'Varför uppstod föregående steg?'}
-                        value={val}
-                        onChange={(e) => updateF(key, e.target.value)}
-                      />
+          {/* Interactive Cascade Fields */}
+          <div className="space-y-2">
+            {levels.map((lvl, index) => {
+              const currentVal = fields[lvl.key] || '';
+              const prevKey = index > 0 ? levels[index - 1].key : 'problem';
+              const isPrevFilled = index === 0 ? problem.trim().length > 0 : (fields[prevKey] || '').trim().length > 0;
+              const isSelfFilled = currentVal.trim().length > 0;
+
+              return (
+                <div key={lvl.key} className="transition-all duration-300">
+                  {/* Dynamic Connector Arrow */}
+                  <div className="flex justify-center -my-1 relative z-10 select-none">
+                    <svg className={`w-8 h-8 transition-colors duration-300 ${isSelfFilled ? 'text-teal-500' : 'text-slate-200'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </div>
+
+                  {/* Node Panel */}
+                  <div className={`p-3 border rounded-xl transition-all duration-350 ${
+                    !isPrevFilled 
+                      ? 'opacity-40 select-none border-slate-100 bg-slate-50/50' 
+                      : isSelfFilled 
+                        ? `${lvl.colorClass} border-teal-200 shadow-sm shadow-teal-500/5` 
+                        : 'bg-white border-slate-200 hover:border-slate-300'
+                  }`}>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      {/* Badge indicator */}
+                      <div className="flex items-center justify-between shrink-0">
+                        <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] uppercase font-mono font-bold tracking-widest ${lvl.labelColor}`}>
+                          Varför {lvl.num}
+                        </span>
+                        <span className="sm:hidden text-[9px] text-slate-400 italic">
+                          {lvl.label}
+                        </span>
+                      </div>
+
+                      {/* Heading side label for desktop */}
+                      <span className="hidden sm:inline text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                        ({lvl.label})
+                      </span>
+
+                      {/* Main input */}
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          disabled={!isPrevFilled}
+                          className="w-full p-2 bg-white/70 border border-slate-200/80 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-teal-550 focus:ring-teal-500 focus:bg-white disabled:cursor-not-allowed"
+                          placeholder={lvl.placeholder}
+                          value={currentVal}
+                          onChange={(e) => updateF(lvl.key, e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Finalized root cause box */}
-        <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200 mb-6 flex gap-3">
-          <span className="text-2xl">💡</span>
+        {/* Dynamic educational assessment box */}
+        <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-250 border-emerald-200 mb-6 flex gap-3 text-xs leading-relaxed">
+          <span className="text-xl">💡</span>
           <div>
-            <h4 className="text-xs font-extrabold text-emerald-800 uppercase tracking-widest">Rotorsak identifierad:</h4>
-            <p className="text-sm text-emerald-950 font-bold mt-1">
-              {w5 || w4 || w3 || w2 || w1 || 'Fortsätt fylla i Varför-frågorna för att nå roten.'}
+            <h4 className="text-xs font-black text-emerald-850 text-emerald-850 uppercase tracking-widest">Utvärderad Rotorsak (Root Cause):</h4>
+            <p className="text-sm text-emerald-950 font-extrabold mt-1">
+              {w5 
+                ? `✔️ ${w5}` 
+                : w4 
+                  ? `🔍 ${w4} (Mellannivå)` 
+                  : w1 
+                    ? `Symptom började benas ut. Fyll i mer detaljer nedåt i kedjan.` 
+                    : 'Fortsätt att ställa frågan "Varför" och bryt ner mekaniska/processproblem för att nå den grundläggande systematiska rotorsaken.'}
             </p>
+            {w5 && (
+              <p className="text-[11px] text-emerald-800 mt-2">
+                <b>Rekommendation:</b> Etablera en felsäkring (Poka-Yoke) eller korrigerande åtgärd speciellt utformad för att helt eliminera denna rotorsak.
+              </p>
+            )}
           </div>
         </div>
 
         <div className="mb-6 space-y-1.5">
           <textarea
             className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm bg-slate-50"
-            placeholder="Lägg till extra anteckningar här..."
+            placeholder="Analysera kopplingarna här, fyll i deltagande operatörer och ifall det krävs en ändrad underhållsplan (PM-kontroll) eller standardiserat arbetssätt (SOP)..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
@@ -702,15 +799,15 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <span className="text-xs text-slate-400">
             {saveSuccess ? (
               <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
-                <Check className="w-4 h-4" /> Sparat till rotorsaker!
+                <Check className="w-4 h-4" /> Sparat rotorsakerna!
               </span>
             ) : (
-              'Kom ihåg att spara till projektet'
+              'Analysen sparas automatiskt i ditt projekt'
             )}
           </span>
           <button
             onClick={() => handleSave(items, fields, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-850 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
           >
             <Save className="w-4 h-4" /> Spara till projekt
           </button>
@@ -849,109 +946,404 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
   // SPECIALIZED INTERACTIVE CALCULATOR: Cp / Cpk Processduglighet (t_cp)
   // ----------------------------------------------------
   if (toolId === 't_cp' && !children) {
+    const rawMode = fields.capMode || 'direct';
+
+    // Parse raw data text if in data mode
+    const rawDataText = fields.rawDataText || '10.15, 9.95, 10.20, 10.05, 9.85, 10.10, 10.30, 9.90, 9.75, 10.05, 9.98, 10.12, 10.02, 9.88, 10.22, 10.08, 9.92, 10.18, 9.82, 10.15';
+    let rawAvg = 10.0;
+    let rawStdDev = 0.15;
+    let rawCount = 0;
+    let rawMin = 0;
+    let rawMax = 0;
+    let rawRange = 0;
+
+    const parsedValues = rawDataText
+      .split(/[\s,;]+/)
+      .map((v: string) => parseFloat(v))
+      .filter((v: number) => !isNaN(v));
+
+    if (parsedValues.length > 1) {
+      rawCount = parsedValues.length;
+      rawMin = Math.min(...parsedValues);
+      rawMax = Math.max(...parsedValues);
+      rawRange = rawMax - rawMin;
+      rawAvg = parsedValues.reduce((a: number, b: number) => a + b, 0) / rawCount;
+      const squaredDiffs = parsedValues.map((v: number) => Math.pow(v - rawAvg, 2));
+      const variance = squaredDiffs.reduce((a: number, b: number) => a + b, 0) / (rawCount - 1);
+      rawStdDev = Math.sqrt(variance);
+    } else if (parsedValues.length === 1) {
+      rawCount = 1;
+      rawAvg = parsedValues[0];
+      rawStdDev = 0.15;
+      rawMin = rawAvg;
+      rawMax = rawAvg;
+    }
+
+    // Set parameters based on active input mode
     const usl = parseFloat(fields.usl || '10.5');
     const lsl = parseFloat(fields.lsl || '9.5');
-    const mean = parseFloat(fields.mean || '10.0');
-    const stdDev = parseFloat(fields.stdDev || '0.15');
+    const mean = rawMode === 'data' ? rawAvg : parseFloat(fields.mean || '10.0');
+    // Sanitize stdDev so it is never 0 to avoid division by zero
+    const stdDev = Math.max(0.001, rawMode === 'data' ? rawStdDev : parseFloat(fields.stdDev || '0.15'));
 
     const cp = (usl - lsl) / (6 * stdDev);
     const cpk = Math.min((usl - mean) / (3 * stdDev), (mean - lsl) / (3 * stdDev));
 
-    const updateCapabilityField = (key: string, val: string) => {
+    // Standard Normal Cumulative Distribution Function (Abramowitz & Stegun)
+    const stdNormalCDF = (z: number): number => {
+      const p = 0.2316419;
+      const b1 = 0.319381530;
+      const b2 = -0.356563782;
+      const b3 = 1.781477937;
+      const b4 = -1.821255978;
+      const b5 = 1.330274429;
+      const t = 1 / (1 + p * Math.abs(z));
+      const exp = Math.exp(-0.5 * z * z);
+      const fact = 0.3989422804 * exp * t * (b1 + t * (b2 + t * (b3 + t * (b4 + t * b5))));
+      const val = 1 - fact;
+      return z >= 0 ? val : 1 - val;
+    };
+
+    // Calculate quality indices
+    const zL = (lsl - mean) / stdDev;
+    const zU = (usl - mean) / stdDev;
+    const pBelowLSL = stdNormalCDF(zL);
+    const pAboveUSL = 1 - stdNormalCDF(zU);
+    const pOutside = pBelowLSL + pAboveUSL;
+    const defectPPM = pOutside * 1000000;
+    const yieldPct = (1 - pOutside) * 100;
+    const zBench = Math.min(Math.abs(zL), Math.abs(zU));
+    const processSigma = zBench + 1.5; // Short-term + 1.5 sigma shift
+
+    const updateCapabilityField = (key: string, val: any) => {
       const updated = { ...fields, [key]: val };
       setFields(updated);
     };
 
+    // Generate bell curve points for SVG routing
+    // Plot range: Mean +/- 4.5 * StdDev
+    const minPlotX = mean - 4.5 * stdDev;
+    const maxPlotX = mean + 4.5 * stdDev;
+    const boundaryMin = Math.min(minPlotX, lsl - 0.2 * stdDev);
+    const boundaryMax = Math.max(maxPlotX, usl + 0.2 * stdDev);
+    const plotRange = boundaryMax - boundaryMin;
+
+    const svgW = 500;
+    const svgH = 180;
+    const paddingX = 40;
+    const paddingY = 25;
+
+    const getSvgX = (x: number) => paddingX + ((x - boundaryMin) / plotRange) * (svgW - 2 * paddingX);
+    const maxY = 1 / (stdDev * Math.sqrt(2 * Math.PI));
+    const getSvgY = (y: number) => (svgH - paddingY) - (y / maxY) * (svgH - paddingY - 10);
+
+    const normalPDF = (x: number) => {
+      return (1 / (stdDev * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mean) / stdDev, 2));
+    };
+
+    // Construct curve coordinates
+    const pointsCount = 100;
+    const curvePoints = [];
+    for (let i = 0; i <= pointsCount; i++) {
+      const xVal = boundaryMin + (i / pointsCount) * plotRange;
+      const yVal = normalPDF(xVal);
+      curvePoints.push({ x: xVal, y: yVal, sx: getSvgX(xVal), sy: getSvgY(yVal) });
+    }
+
+    // SVG Main Area path format
+    const pathD = curvePoints.reduce((acc, p, idx) => {
+      return acc + `${idx === 0 ? 'M' : 'L'} ${p.sx.toFixed(1)} ${p.sy.toFixed(1)} `;
+    }, '') + `L ${getSvgX(boundaryMax).toFixed(1)} ${(svgH - paddingY).toFixed(1)} L ${getSvgX(boundaryMin).toFixed(1)} ${(svgH - paddingY).toFixed(1)} Z`;
+
+    const lslSx = getSvgX(lsl);
+    const uslSx = getSvgX(usl);
+    const meanSx = getSvgX(mean);
+
+    // Filter points inside specifications to color-code conforming distribution
+    const curveInside = curvePoints.filter(p => p.x >= lsl && p.x <= usl);
+    let insidePathD = '';
+    if (curveInside.length > 0) {
+      insidePathD = `M ${getSvgX(lsl).toFixed(1)} ${(svgH - paddingY).toFixed(1)} `;
+      curveInside.forEach(p => {
+        insidePathD += `L ${p.sx.toFixed(1)} ${p.sy.toFixed(1)} `;
+      });
+      insidePathD += `L ${getSvgX(usl).toFixed(1)} ${(svgH - paddingY).toFixed(1)} Z`;
+    }
+
     return (
       <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
+        <div className="flex flex-wrap items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
           <div>
             <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-emerald-600" /> {title}
+              <Calculator className="w-5 h-5 text-emerald-600" /> Processkapacitet / Duglighet ({title})
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
-              Kapabilitet
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 mt-1 inline-block">
+              Statistisk Analys (Cp & Cpk)
             </span>
-            <p className="text-sm text-slate-500 mt-1">{description}</p>
+            <p className="text-xs text-slate-500 mt-1">{description}</p>
+          </div>
+
+          {/* Tab Selection */}
+          <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+            <button
+              onClick={() => updateCapabilityField('capMode', 'direct')}
+              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
+                rawMode === 'direct' ? 'bg-white text-slate-800 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              Ange parametrar
+            </button>
+            <button
+              onClick={() => updateCapabilityField('capMode', 'data')}
+              className={`px-3 py-1.5 rounded-md font-medium transition-all ${
+                rawMode === 'data' ? 'bg-white text-slate-800 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              Beräkna från mätdata
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="p-5 bg-emerald-50/30 rounded-xl border border-emerald-100/50 space-y-3">
-            <h4 className="text-sm font-bold text-emerald-800">🎛️ Inmatningsdata</h4>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">USL (Övre gräns)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm"
-                  value={fields.usl || '10.5'}
-                  onChange={(e) => updateCapabilityField('usl', e.target.value)}
-                />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          {/* Controls column */}
+          <div className="lg:col-span-5 space-y-4">
+            <div className="p-4 bg-slate-50/70 border border-slate-200/60 rounded-xl space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-200/50 pb-1.5">
+                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                  <span>⚙️</span> {rawMode === 'data' ? 'Process Specifikationer' : 'Inmatningsparametrar'}
+                </h4>
+                {rawMode === 'data' && (
+                  <span className="text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold px-1.5 py-0.5 rounded-md">
+                    Rådata Läge: {rawCount} st
+                  </span>
+                )}
               </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">LSL (Nedre gräns)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm"
-                  value={fields.lsl || '9.5'}
-                  onChange={(e) => updateCapabilityField('lsl', e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Medelvärde (μ)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm"
-                  value={fields.mean || '10.0'}
-                  onChange={(e) => updateCapabilityField('mean', e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Standardavvikelse (σ)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm"
-                  value={fields.stdDev || '0.15'}
-                  onChange={(e) => updateCapabilityField('stdDev', e.target.value)}
-                />
+
+              {rawMode === 'data' ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1 flex justify-between">
+                      <span>Mätdata (kommaseparerad)</span>
+                      <span className="font-mono text-slate-400 text-[10px]">Ex: 10.1, 9.8, 10.3</span>
+                    </label>
+                    <textarea
+                      className="w-full h-24 p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono resize-none focus:ring-2 focus:ring-emerald-550 focus:ring-emerald-500 focus:outline-none"
+                      value={rawDataText}
+                      onChange={(e) => updateCapabilityField('rawDataText', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-900 text-slate-200 p-2.5 rounded-lg font-mono">
+                    <div>Medel (μ): <b className="text-emerald-400">{rawAvg.toFixed(4)}</b></div>
+                    <div>StdAvv (σ): <b className="text-amber-400">{rawStdDev.toFixed(4)}</b></div>
+                    <div>N-analys: <b>{rawCount} rader</b></div>
+                    <div>Vidd (Range): <b>{rawRange.toFixed(3)}</b></div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase">LSL (Nedre gräns)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        value={fields.lsl || '9.5'}
+                        onChange={(e) => updateCapabilityField('lsl', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase">USL (Övre gräns)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        value={fields.usl || '10.5'}
+                        onChange={(e) => updateCapabilityField('usl', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase">LSL (Nedre gräns)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        value={fields.lsl || '9.5'}
+                        onChange={(e) => updateCapabilityField('lsl', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase">USL (Övre gräns)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        value={fields.usl || '10.5'}
+                        onChange={(e) => updateCapabilityField('usl', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="border-t border-slate-200/50 my-2 pt-2"></div>
+
+                  <div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase mb-1">
+                      <span>Medelvärde (μ)</span>
+                      <span className="text-slate-800 font-mono text-xs">{mean.toFixed(2)}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={(lsl - 0.5 * (usl - lsl)).toString()}
+                      max={(usl + 0.5 * (usl - lsl)).toString()}
+                      step="0.01"
+                      className="w-full h-1 bg-slate-200 accent-emerald-600 rounded-md cursor-pointer"
+                      value={mean.toString()}
+                      onChange={(e) => updateCapabilityField('mean', e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase mb-1">
+                      <span>Standardavvikelse (σ)</span>
+                      <span className="text-slate-800 font-mono text-xs">{stdDev.toFixed(3)}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.01"
+                      max={(0.5 * (usl - lsl)).toString()}
+                      step="0.005"
+                      className="w-full h-1 bg-slate-200 accent-emerald-600 rounded-md cursor-pointer"
+                      value={stdDev.toString()}
+                      onChange={(e) => updateCapabilityField('stdDev', e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Quality thresholds widget card */}
+            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex gap-2.5 items-start">
+              <span className="text-lg">📈</span>
+              <div className="text-[11px] text-emerald-850 text-emerald-800 space-y-0.5">
+                <p className="font-bold">Duglighetsstandarder (Cp & Cpk):</p>
+                <div className="grid grid-cols-2 gap-x-2 font-medium">
+                  <div>• &lt; 1.00: Brister (Underkänd)</div>
+                  <div>• 1.00 - 1.33: Gränsfall</div>
+                  <div>• 1.33 - 1.67: Bra standard</div>
+                  <div>• &gt; 1.67: Världsklass (6σ)</div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="p-5 bg-slate-900 text-slate-100 rounded-xl flex flex-col justify-between">
-            <div>
-              <span className="text-[10px] uppercase font-mono text-slate-400 font-bold block">Kapabilitetsanalys</span>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <div className="text-xs text-slate-400">Cp (Potential)</div>
-                  <div className="text-2xl font-bold font-mono text-orange-400">{cp.toFixed(3)}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-slate-400">Cpk (Faktisk)</div>
-                  <div className="text-2xl font-bold font-mono text-emerald-450 text-emerald-400">{cpk.toFixed(3)}</div>
-                </div>
+          {/* Chart and results columns */}
+          <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+            
+            {/* Visual Bell curve graph */}
+            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center">
+              <h4 className="w-full text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left mb-2">
+                Processfördelning vs Specifikationsgränser
+              </h4>
+              <div className="w-full overflow-hidden select-none">
+                <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-auto" style={{ maxHeight: '180px' }}>
+                  {/* Grid Lines */}
+                  <line x1={paddingX} y1={svgH - paddingY} x2={svgW - paddingX} y2={svgH - paddingY} stroke="#cbd5e1" strokeWidth="1" />
+                  
+                  {/* Area under curve - defect area (entire curve colored pale red) */}
+                  <path d={pathD} fill="#fee2e2" stroke="#fca5a5" strokeWidth="1" opacity={0.65} />
+                  
+                  {/* Inside specs curve area - conforming area colored clean emerald green */}
+                  {insidePathD && (
+                    <path d={insidePathD} fill="#d1fae5" stroke="#34d399" strokeWidth="1.5" />
+                  )}
+
+                  {/* LSL Marker */}
+                  {lslSx >= paddingX && lslSx <= svgW - paddingX && (
+                    <g>
+                      <line x1={lslSx} y1={10} x2={lslSx} y2={svgH - paddingY} stroke="#ef4444" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <text x={lslSx - 5} y={20} fill="#dc2626" fontSize="9" fontWeight="bold" textAnchor="end">LSL ({lsl.toFixed(2)})</text>
+                    </g>
+                  )}
+
+                  {/* USL Marker */}
+                  {uslSx >= paddingX && uslSx <= svgW - paddingX && (
+                    <g>
+                      <line x1={uslSx} y1={10} x2={uslSx} y2={svgH - paddingY} stroke="#ef4444" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <text x={uslSx + 5} y={20} fill="#dc2626" fontSize="9" fontWeight="bold" textAnchor="start">USL ({usl.toFixed(2)})</text>
+                    </g>
+                  )}
+
+                  {/* Mean Marker */}
+                  {meanSx >= paddingX && meanSx <= svgW - paddingX && (
+                    <g>
+                      <line x1={meanSx} y1={15} x2={meanSx} y2={svgH - paddingY} stroke="#059669" strokeWidth="1.5" />
+                      <text x={meanSx} y={svgH - paddingY + 12} fill="#047857" fontSize="9" fontWeight="bold" textAnchor="middle">Medel (μ={mean.toFixed(2)})</text>
+                    </g>
+                  )}
+
+                  {/* X-axis indicators */}
+                  <text x={paddingX} y={svgH - 5} fill="#64748b" fontSize="8" fontWeight="medium" textAnchor="middle">{boundaryMin.toFixed(2)}</text>
+                  <text x={svgW - paddingX} y={svgH - 5} fill="#64748b" fontSize="8" fontWeight="medium" textAnchor="middle">{boundaryMax.toFixed(2)}</text>
+                </svg>
               </div>
             </div>
-            
-            <div className={`mt-4 p-3 rounded text-xs leading-relaxed font-semibold ${
-              cpk >= 1.33 ? 'bg-green-500/20 text-green-200' : 'bg-red-500/20 text-red-200'
+
+            {/* Metrics Dashboard */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3 bg-slate-900 text-white rounded-xl shadow-sm border border-slate-850">
+                <span className="text-[9px] text-slate-400 uppercase font-mono font-bold block">Cp (Kapacitet)</span>
+                <span className="text-xl font-bold font-mono text-orange-400 block mt-1">{cp.toFixed(3)}</span>
+                <span className="text-[9px] text-slate-400">Variationspotential</span>
+              </div>
+
+              <div className="p-3 bg-slate-900 text-white rounded-xl shadow-sm border border-slate-850">
+                <span className="text-[9px] text-slate-400 uppercase font-mono font-bold block">Cpk (Duglighet)</span>
+                <span className={`text-xl font-bold font-mono block mt-1 ${cpk >= 1.33 ? 'text-emerald-400' : 'text-rose-450 text-red-400'}`}>
+                  {cpk.toFixed(3)}
+                </span>
+                <span className="text-[9px] text-slate-400">Verklig centrerad</span>
+              </div>
+
+              <div className="p-3 bg-slate-900 text-white rounded-xl shadow-sm border border-slate-850">
+                <span className="text-[9px] text-slate-400 uppercase font-mono font-bold block">Defektandel (PPM)</span>
+                <span className="text-xl font-bold font-mono text-red-300 block mt-1">
+                  {defectPPM >= 100000 ? `${(defectPPM/1000).toFixed(0)}k` : defectPPM.toLocaleString('sv-SE', { maximumFractionDigits: 0 })}
+                </span>
+                <span className="text-[9px] text-slate-400">Feltäthet per miljon</span>
+              </div>
+
+              <div className="p-3 bg-slate-900 text-white rounded-xl shadow-sm border border-slate-850">
+                <span className="text-[9px] text-slate-400 uppercase font-mono font-bold block">Process Sigma</span>
+                <span className="text-xl font-bold font-mono text-teal-300 block mt-1">
+                  {processSigma.toFixed(2)}σ
+                </span>
+                <span className="text-[9px] text-slate-400">Med +1.5σ skift</span>
+              </div>
+            </div>
+
+            <div className={`p-3 rounded-xl border text-xs font-semibold leading-relaxed flex items-center gap-2 ${
+              cpk >= 1.33 
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
+                : 'bg-rose-50 border-rose-200 text-rose-800'
             }`}>
-              {cpk >= 1.33 
-                ? '✅ Processen är fullt kapabel! Den klarar specifikationerna utmärkt.' 
-                : '⚠️ Processen är ej tillräckligt Duglig (Cpk < 1.33). Centreringsproblem eller för stor variation.'}
+              <span>{cpk >= 1.33 ? '✅' : '⚠️'}</span>
+              <span>
+                {cpk >= 1.33 
+                  ? `Processen är stabil och fullt kapabel! Den presterar en fin yield på ${yieldPct.toFixed(3)}%.` 
+                  : `Processen har brister (Cpk = ${cpk.toFixed(2)} < 1.33). Centrera processen eller sänk spridningen för att nå Six Sigma.`}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50"
-            placeholder="Fyll i kommentarer om dugligheten..."
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-550 focus:ring-emerald-500 text-sm bg-slate-50"
+            placeholder="Fyll i kommentarer om duglighetsanalysen och planerade korrigerande åtgärder..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
@@ -961,7 +1353,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <span className="text-xs text-slate-400">
             {saveSuccess ? (
               <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
-                <Check className="w-4 h-4" /> Sparat framgångsrikt!
+                <Check className="w-4 h-4" /> Sparat framgångsrikt till mätetal!
               </span>
             ) : (
               'Klicka för att spara duglighet till projekt'
@@ -969,7 +1361,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </span>
           <button
             onClick={() => handleSave(items, fields, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all animate-fade"
           >
             <Save className="w-4 h-4" /> Spara till projekt
           </button>
