@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { User } from '../types';
-import { BarChart3, Lock, User as UserIcon, LogIn, UserPlus } from 'lucide-react';
+import { BarChart3, Lock, User as UserIcon, LogIn, UserPlus, Chrome } from 'lucide-react';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { setDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../services/firebase';
 
 interface Props {
   onLogin: (user: User) => void;
@@ -15,49 +18,96 @@ const Login: React.FC<Props> = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const handleGoogleLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      
+      const displayName = userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'Användare';
+      
+      // Save or update profile in users Firestore collection
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        id: userCredential.user.uid,
+        name: displayName,
+        email: userCredential.user.email || ''
+      }, { merge: true });
+
+      onLogin({
+        id: userCredential.user.uid,
+        name: displayName
+      });
+    } catch (err: any) {
+      console.error("Firebase Google Auth error:", err);
+      let errMsg = 'Ett fel uppstod vid Google-inloggning. Kontrollera att din webbläsare tillåter popup-fönster eller öppna appen i en ny flik för att tillåta cookies.';
+      if (err.code === 'auth/unauthorized-domain' || (err.message && err.message.includes('unauthorized-domain'))) {
+        errMsg = `Denna domän är inte auktoriserad i Firebase-konsolen för Google-inloggning!
+
+För att lösa detta:
+1. Gå till Firebase Console -> Authentication -> Settings -> Authorized domains (Auktoriserade domäner) och klicka på "Add domain" (Lägg till domän)
+2. Lägg till dessa domäner:
+   • ais-dev-dy4p6ozb3dpdshzlyesy3a-91211108491.europe-west2.run.app
+   • ais-pre-dy4p6ozb3dpdshzlyesy3a-91211108491.europe-west2.run.app`;
+      } else if (err.code === 'auth/popup-blocked') {
+        errMsg = 'Popup-fönstret blockerades av webbläsaren. Tillåt popups eller tryck på knappen för att öppna appen i en ny flik.';
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        errMsg = 'Inloggningsfönstret stängdes innan inloggningen var färdig.';
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        errMsg = 'Inloggningsförfrågan avbröts.';
+      }
+      setError(errMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const normalizedUsername = username.trim().toLowerCase();
-
-    let endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
-    let body: any = isLogin ? { username: normalizedUsername, password } : { username: normalizedUsername, password, name };
-
-    if (isForgotPassword) {
-      endpoint = '/api/auth/reset';
-      body = { username: normalizedUsername, newPassword: password };
-    }
+    const email = username.includes('@') ? username.trim() : `${username.trim().toLowerCase()}@sixsigma-ai.com`;
 
     try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        if (isForgotPassword) {
-          setIsForgotPassword(false);
-          setIsLogin(true);
-          setPassword('');
-          setError('Lösenordet har uppdaterats! Logga in med dina nya uppgifter.');
-        } else if (isLogin) {
-          if (data.token) localStorage.setItem('sm_token', data.token);
-          onLogin(data.user);
-        } else {
-          setIsLogin(true);
-          setError('Konto skapat! Logga in nu.');
-        }
+      if (isForgotPassword) {
+        await sendPasswordResetEmail(auth, email);
+        setIsForgotPassword(false);
+        setIsLogin(true);
+        setPassword('');
+        setError('En länk för lösenordsåterställning har skickats till din e-post (eller din konto-id e-post)!');
+      } else if (isLogin) {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        onLogin({
+          id: userCredential.user.uid,
+          name: userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'Användare'
+        });
       } else {
-        setError(data.error || 'Något gick fel');
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: name });
+        
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          id: userCredential.user.uid,
+          name: name,
+          email: email
+        });
+
+        setIsLogin(true);
+        setError('Konto skapat! Logga in nu.');
       }
-    } catch (err) {
-      setError('Nätverksfel');
+    } catch (err: any) {
+      console.error("Firebase auth error:", err);
+      let errMsg = 'Ett fel uppstod: ' + (err.message || err);
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        errMsg = 'Felaktigt användarnamn eller lösenord';
+      } else if (err.code === 'auth/email-already-in-use') {
+        errMsg = 'Användarnamnet eller e-posten används redan';
+      } else if (err.code === 'auth/weak-password') {
+        errMsg = 'Lösenordet måste vara minst 6 tecken långt';
+      } else if (err.code === 'auth/invalid-email') {
+        errMsg = 'Ange ett giltigt användarnamn eller e-post';
+      }
+      setError(errMsg);
     } finally {
       setLoading(false);
     }
@@ -165,7 +215,7 @@ const Login: React.FC<Props> = ({ onLogin }) => {
             )}
 
             {error && (
-              <div className={`p-3 rounded-lg text-xs font-medium ${error.includes('skapat') || error.includes('uppdaterats') ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+              <div className={`p-3 rounded-lg text-xs font-medium whitespace-pre-line ${error.includes('skapat') || error.includes('uppdaterats') ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
                 {error}
               </div>
             )}
@@ -174,7 +224,7 @@ const Login: React.FC<Props> = ({ onLogin }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-md"
               >
                 {loading ? (
                   <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -185,6 +235,27 @@ const Login: React.FC<Props> = ({ onLogin }) => {
                 )}
               </button>
 
+              {!isForgotPassword && (
+                <>
+                  <div className="relative my-4 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-slate-200"></div>
+                    </div>
+                    <span className="relative px-3 bg-white text-xs text-slate-400 uppercase font-medium">Eller</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={loading}
+                    onClick={handleGoogleLogin}
+                    className="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-98 disabled:opacity-50 cursor-pointer text-sm"
+                  >
+                    <Chrome className="h-4 w-4 text-rose-500" />
+                    <span>Logga in med Google</span>
+                  </button>
+                </>
+              )}
+
               {isForgotPassword && (
                 <button
                   type="button"
@@ -192,7 +263,7 @@ const Login: React.FC<Props> = ({ onLogin }) => {
                     setIsForgotPassword(false);
                     setError('');
                   }}
-                  className="w-full py-2 text-xs text-slate-500 hover:text-slate-800 hover:underline text-center font-semibold"
+                  className="w-full py-2 text-xs text-slate-500 hover:text-slate-800 hover:underline text-center font-semibold cursor-pointer"
                 >
                   Tillbaka till logga in
                 </button>

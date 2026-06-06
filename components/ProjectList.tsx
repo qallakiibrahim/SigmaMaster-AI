@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ProjectData } from '../types';
 import { Plus, Folder, Trash2, ChevronRight, BarChart3, Clock } from 'lucide-react';
-import { fetchWithAuth } from '../services/auth';
+import { collection, query, where, getDocs, setDoc, doc, deleteDoc } from 'firebase/firestore';
+import { db, auth, handleFirestoreError, OperationType } from '../services/firebase';
 
 interface Props {
   onSelectProject: (projectId: string) => void;
@@ -21,21 +22,22 @@ const ProjectList: React.FC<Props> = ({ onSelectProject, onAuthError }) => {
   }, []);
 
   const fetchProjects = async () => {
+    if (!auth.currentUser) {
+      if (onAuthError) onAuthError();
+      return;
+    }
     try {
-      const res = await fetchWithAuth('/api/projects');
-      if (res.status === 401) {
-          // Session might have expired
-          if (onAuthError) onAuthError();
-          return;
-      }
-      if (!res.ok) throw new Error('Kunde inte hämta projekt');
-      const data = await res.json();
-      if (data.projects) {
-        setProjects(data.projects);
-      }
+      const q = query(collection(db, 'projects'), where('ownerId', '==', auth.currentUser.uid));
+      const querySnapshot = await getDocs(q);
+      const fetched: ProjectData[] = [];
+      querySnapshot.forEach((doc) => {
+        fetched.push({ id: doc.id, ...doc.data() } as ProjectData);
+      });
+      setProjects(fetched);
     } catch (err) {
-      console.error("Failed to fetch projects", err);
+      console.error("Failed to fetch Firestore projects:", err);
       setError("Kunde inte ladda projektlistan");
+      handleFirestoreError(err, OperationType.LIST, 'projects');
     } finally {
       setLoading(false);
     }
@@ -43,30 +45,44 @@ const ProjectList: React.FC<Props> = ({ onSelectProject, onAuthError }) => {
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newProjectName.trim()) return;
+    if (!newProjectName.trim() || !auth.currentUser) return;
     setLoading(true);
 
     try {
-      const res = await fetchWithAuth('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newProjectName })
-      });
-      
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Misslyckades att skapa projekt');
-      }
+      const projectId = Math.random().toString(36).substring(2, 11);
+      const newProj = {
+        id: projectId,
+        name: newProjectName.trim(),
+        problemStatement: '',
+        businessCase: '',
+        stakeholders: '',
+        goal: '',
+        scope: '',
+        measurements: [100.2, 101.5, 99.8, 100.5, 102.1, 98.9, 100.0, 101.2, 100.8, 99.5, 103.2, 98.4, 100.1, 101.0],
+        rootCauses: [],
+        improvements: [],
+        selectedTools: ['t_charter', 't_sipoc', 't_stakeholder', 't_data_plan', 't_msa', 't_capability', 't_ishikawa', 't_5why', 't_pareto', 't_fmea', 't_brainstorm', 't_pilot', 't_spc', 't_control_plan', 't_sop'],
+        toolData: {},
+        tollgateStatus: {
+          'Define': 'In Progress',
+          'Measure': 'Not Started',
+          'Analyze': 'Not Started',
+          'Improve': 'Not Started',
+          'Control': 'Not Started',
+        },
+        ownerId: auth.currentUser.uid,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
 
-      const data = await res.json();
-      if (data.success) {
-        setNewProjectName('');
-        setIsCreating(false);
-        await fetchProjects();
-      }
+      await setDoc(doc(db, 'projects', projectId), newProj);
+      setNewProjectName('');
+      setIsCreating(false);
+      await fetchProjects();
     } catch (err) {
-      console.error("Failed to create project", err);
+      console.error("Failed to create Firestore project:", err);
       setError(err instanceof Error ? err.message : "Ett oväntat fel uppstod");
+      handleFirestoreError(err, OperationType.CREATE, 'projects');
     } finally {
       setLoading(false);
     }
@@ -81,12 +97,13 @@ const ProjectList: React.FC<Props> = ({ onSelectProject, onAuthError }) => {
     if (!deleteConfirmId) return;
     setLoading(true);
     try {
-      await fetchWithAuth(`/api/projects/${deleteConfirmId}`, { method: 'DELETE' });
+      await deleteDoc(doc(db, 'projects', deleteConfirmId));
       setDeleteConfirmId(null);
-      fetchProjects();
+      await fetchProjects();
     } catch (err) {
-      console.error("Failed to delete project", err);
+      console.error("Failed to delete Firestore project:", err);
       setError("Kunde inte ta bort projektet");
+      handleFirestoreError(err, OperationType.DELETE, `projects/${deleteConfirmId}`);
     } finally {
       setLoading(false);
     }

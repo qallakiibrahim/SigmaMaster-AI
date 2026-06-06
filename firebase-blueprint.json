@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account information and profile details.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique Firebase Auth uid" },
+        "name": { "type": "string", "description": "Display name of the user" },
+        "email": { "type": "string", "description": "Primary email address" }
+      },
+      "required": ["id", "name", "email"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Six Sigma DMAIC project including all tool and phase metrics.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier of the project" },
+        "name": { "type": "string", "description": "The custom name of the DMAIC project" },
+        "ownerId": { "type": "string", "description": "The owner's Auth ID" },
+        "problemStatement": { "type": "string", "description": "Detailed description of the process problem" },
+        "businessCase": { "type": "string", "description": "Financial and quantitative justification" },
+        "stakeholders": { "type": "string", "description": "Key members of the project team and users" },
+        "goal": { "type": "string", "description": "The clear, measurable objective of the project" },
+        "scope": { "type": "string", "description": "Boundaries of the process being analyzed" },
+        "measurements": { "type": "array", "description": "List of metrics collected during the measure phase" },
+        "rootCauses": { "type": "array", "description": "Calculated or verified failure causes" },
+        "improvements": { "type": "array", "description": "Proposed actions and statuses" },
+        "selectedTools": { "type": "array", "description": "List of tool IDs currently active" },
+        "toolData": { "type": "object", "description": "Loose object containing tool-specific fields" },
+        "tollgateStatus": { "type": "object", "description": "DMAIC phase checklist results and approvals" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "ownerId", "selectedTools", "toolData", "tollgateStatus"]
+    },
+    "History": {
+      "title": "History",
+      "description": "Collaborative modification history event records.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier of the history record" },
+        "project_id": { "type": "string", "description": "ID of parent project" },
+        "user_id": { "type": "string", "description": "ID of user that made the change" },
+        "user_name": { "type": "string", "description": "Logged name of modifier" },
+        "change_summary": { "type": "string", "description": "Friendly description of the modification" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "project_id", "user_id", "user_name", "change_summary"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection storing public user profiles under their auth UUID."
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Collection storing the active portfolio of Lean Six Sigma DMAIC projects."
+    },
+    "/projects/{projectId}/history/{historyId}": {
+      "schema": "History",
+      "description": "Sub-collection under each project storing its collaborative audit logs."
+    }
+  }
+}

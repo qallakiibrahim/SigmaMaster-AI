@@ -15,7 +15,9 @@ import Login from './components/Login';
 import ProjectList from './components/ProjectList';
 import ProjectHeader from './components/ProjectHeader';
 import HistorySidebar from './components/HistorySidebar';
-import { fetchWithAuth } from './services/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, onSnapshot, updateDoc, setDoc, collection, query, orderBy, limit } from 'firebase/firestore';
+import { auth, db, handleFirestoreError, OperationType } from './services/firebase';
 import { TOOLS_LIBRARY } from './data/toolsData';
 import { Activity, Target, Search, Settings, ShieldCheck, BarChart3, ChevronRight, Menu, RotateCcw, Map, LayoutDashboard, FileText, Users, Wifi, WifiOff, LogOut, Clock } from 'lucide-react';
 
@@ -63,177 +65,163 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View | Phase>(View.PROJECT_LIST);
   const [project, setProject] = useState<ProjectData | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
-  // Check Auth on Mount
+  // Check Auth on Mount & Subscribe to auth state
   useEffect(() => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-    fetchWithAuth('/api/auth/me', { 
-        signal: controller.signal 
-    })
-      .then(async res => {
-          clearTimeout(timeoutId);
-          if (res.status === 401) throw new Error('Not authenticated');
-          if (!res.ok) throw new Error('Server error');
-          return res.json();
-      })
-      .then(data => {
-        if (data.user) {
-            console.log("User authenticated:", data.user.name);
-            setUser(data.user);
-        }
-      })
-      .catch((err) => {
-          if (err.message !== 'Not authenticated') {
-            console.error("Auth check failed:", err.message);
-          }
-          setUser(null);
-      })
-      .finally(() => {
-          setAuthLoading(false);
-      });
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        console.log("User authenticated in Firebase:", firebaseUser.displayName || firebaseUser.email);
+        setUser({
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Användare'
+        });
+      } else {
+        setUser(null);
+      }
+      setAuthLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
-  // WebSocket Connection
+  // Real-time synchronization of selected project & history logs using Firebase Firestore onSnapshot
   useEffect(() => {
-    if (!user) {
-      if (socket) {
-        socket.close();
-        setSocket(null);
+    if (!project?.id || !user) return;
+
+    // 1. Listen to details document updates
+    const docRef = doc(db, 'projects', project.id);
+    const unsubscribeProj = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        // Update local React state with Firestore contents
+        setProject({ id: docSnap.id, ...data } as ProjectData);
+      } else {
+        console.warn("Currently selected project document was deleted remotely.");
+        setProject(null);
+        setCurrentView(View.PROJECT_LIST);
       }
-      setIsConnected(false);
-      return;
-    }
+    }, (err) => {
+      console.error("Firestore onSnapshot error for project:", err);
+      handleFirestoreError(err, OperationType.GET, `projects/${project.id}`);
+    });
 
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        // If socket already exists and we have a project, join it
-        if (project?.id) {
-            socket.send(JSON.stringify({ type: 'JOIN_PROJECT', projectId: project.id, user }));
-            socket.send(JSON.stringify({ type: 'GET_HISTORY' }));
-        }
-        return;
-    }
-
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}`;
-    const ws = new WebSocket(wsUrl);
-
-    ws.onopen = () => {
-      console.log('Connected to collaboration server');
-      setIsConnected(true);
-      if (project?.id) {
-        ws.send(JSON.stringify({ type: 'JOIN_PROJECT', projectId: project.id, user }));
-        ws.send(JSON.stringify({ type: 'GET_HISTORY' }));
-      }
-    };
-
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === 'SYNC_STATE') {
-        console.log("Received state for project:", message.payload.id);
-        setProject(message.payload);
-      } else if (message.type === 'HISTORY_UPDATE') {
-        setHistory(message.payload);
-      } else if (message.type === 'ERROR') {
-          console.error("Server error:", message.payload);
-          if (message.payload.includes('not found')) {
-              setCurrentView(View.PROJECT_LIST);
-              setProject(null);
-          }
-      }
-    };
-
-    ws.onclose = () => {
-      console.log('Disconnected from collaboration server');
-      setIsConnected(false);
-      setSocket(null);
-    };
-
-    ws.onerror = (err) => {
-        console.error('WebSocket error:', err);
-        setIsConnected(false);
-    };
-
-    setSocket(ws);
+    // 2. Listen to child historical logs updates
+    const histRef = collection(db, 'projects', project.id, 'history');
+    const qHist = query(histRef, orderBy('timestamp', 'desc'), limit(50));
+    const unsubscribeHist = onSnapshot(qHist, (snapshot) => {
+      const fetchedHist: HistoryEntry[] = [];
+      snapshot.forEach((hDoc) => {
+        const hData = hDoc.data();
+        fetchedHist.push({
+          id: hDoc.id as any,
+          project_id: project.id,
+          user_id: hData.user_id,
+          user_name: hData.user_name,
+          change_summary: hData.change_summary,
+          timestamp: hData.timestamp
+        });
+      });
+      setHistory(fetchedHist);
+    }, (err) => {
+      console.error("Firestore onSnapshot error for history:", err);
+    });
 
     return () => {
-      // Don't close here if we want to keep it alive across project changes
-      // but we need to handle cleanup on logout
+      unsubscribeProj();
+      unsubscribeHist();
     };
   }, [user, project?.id]);
 
   const handleSelectProject = (projectId: string) => {
-    // Clear old project data first and show dashboard view
+    // Show loading spinner first, onSnapshot will load document contents instantly
     setProject({ id: projectId, name: '', selectedTools: [], measurements: [], improvements: [], tollgateStatus: {} } as any);
     setCurrentView(View.DASHBOARD);
-    
-    // Fetch full project data immediately via REST HTTP to load instantly
-    fetchWithAuth(`/api/projects/${projectId}`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error('Kunde inte läsa projektdata');
-        const data = await res.json();
-        if (data.project) {
-          console.log("Loaded project immediately via REST:", data.project.name);
-          setProject(data.project);
-        }
-      })
-      .catch((err) => {
-         console.error("REST project fetch error:", err);
-      });
   };
 
   const handleLogout = async () => {
-    await fetchWithAuth('/api/auth/logout', { method: 'POST' });
-    localStorage.removeItem('sm_token');
-    setUser(null);
-    setSocket(null);
+    try {
+      await signOut(auth);
+      setUser(null);
+      setProject(null);
+      setCurrentView(View.PROJECT_LIST);
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
   };
 
-  const updateProject = (data: Partial<ProjectData>) => {
-    if (!project) return;
+  const updateProject = async (data: Partial<ProjectData>) => {
+    if (!project || !user) return;
+    
+    // Instantly set local React state so typing/interacting feels zero-latency
     const updatedProject = { ...project, ...data };
     setProject(updatedProject as ProjectData);
-    
-    // 1. Send update via WebSocket if open (highly reactive)
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({
-        type: 'UPDATE_PROJECT',
-        payload: data
-      }));
-    }
-    
-    // 2. Durability saving via REST PUT
-    if (project?.id) {
-      fetchWithAuth(`/api/projects/${project.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      }).catch(err => console.error("Could not save project data to REST:", err));
+
+    try {
+      const docRef = doc(db, 'projects', project.id);
+      await updateDoc(docRef, data);
+    } catch (err) {
+      console.error("Failed to update project fields in Firestore:", err);
+      // Fail gracefully: don't crash the interface but log securely
+      try {
+        handleFirestoreError(err, OperationType.UPDATE, `projects/${project.id}`);
+      } catch (innerErr) {
+        console.error("Security rules restriction:", innerErr);
+      }
     }
   };
 
-  const saveVersion = (comment: string) => {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({
-        type: 'SAVE_VERSION',
-        comment,
-        user
-      }));
+  const saveVersion = async (comment: string) => {
+    if (!project || !user) return;
+    try {
+      const histRef = collection(db, 'projects', project.id, 'history');
+      const historyId = Math.random().toString(36).substring(2, 11);
+      await setDoc(doc(histRef, historyId), {
+        id: historyId,
+        project_id: project.id,
+        user_id: user.id,
+        user_name: user.name,
+        change_summary: comment,
+        timestamp: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error("Failed to append history item to Firestore:", err);
     }
   };
 
-  const handleResetProject = () => {
+  const isConnected = !!user; // Connected to Firebase Client SDK state engine
+
+  const handleResetProject = async () => {
     if (window.confirm("Är du säker på att du vill återställa projektet till ursprungsläget? All din data kommer att raderas.")) {
-      setProject(initialProject);
-      localStorage.removeItem(STORAGE_KEY);
-      setCurrentView(View.DASHBOARD);
+      try {
+        const docRef = doc(db, 'projects', project!.id);
+        const resetData = {
+          name: project?.name || 'Optimering av Svetsprocess',
+          problemStatement: 'Svetsprocessen på linje 3 har en kasseringsgrad på 12%, vilket överstiger målet på 2%.',
+          businessCase: 'Hög kasseringsgrad leder till ökade materialkostnader på 500k SEK/år samt flaskhalsar i produktionen.',
+          stakeholders: 'Produktionschef, Kvalitetsansvarig, Linjeoperatörer',
+          goal: '',
+          scope: '',
+          measurements: [100.2, 101.5, 99.8, 100.5, 102.1, 98.9],
+          rootCauses: [],
+          improvements: [],
+          selectedTools: TOOLS_LIBRARY.filter(t => t.recommended).map(t => t.id),
+          toolData: {},
+          tollgateStatus: {
+            [Phase.DEFINE]: 'In Progress',
+            [Phase.MEASURE]: 'Not Started',
+            [Phase.ANALYZE]: 'Not Started',
+            [Phase.IMPROVE]: 'Not Started',
+            [Phase.CONTROL]: 'Not Started',
+          }
+        };
+        await updateDoc(docRef, resetData as any);
+        setCurrentView(View.DASHBOARD);
+      } catch (err) {
+        console.error("Reset failed:", err);
+      }
     }
   };
 

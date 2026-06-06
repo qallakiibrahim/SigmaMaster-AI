@@ -1,0 +1,78 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global safety catch-all: Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions for validation
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(ownerId) {
+      return isSignedIn() && request.auth.uid == ownerId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Individual Collection Matchers
+
+    // 1. Users profiles
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn() && resource.data.id == request.auth.uid;
+      allow create: if isSignedIn() && userId == request.auth.uid 
+        && request.resource.data.id == request.auth.uid
+        && request.resource.data.name is string && request.resource.data.name.size() > 0;
+      allow update: if isSignedIn() && userId == request.auth.uid 
+        && request.resource.data.id == existing().id
+        && request.resource.data.name is string && request.resource.data.name.size() > 0;
+      allow delete: if false; // Profiles are immortal
+    }
+
+    // 2. Projects
+    match /projects/{projectId} {
+      // Secure list query checks matching resource.data to prevent blank data extraction
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      
+      allow create: if isSignedIn() 
+        && isValidId(projectId)
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.name is string 
+        && request.resource.data.name.size() > 0
+        && request.resource.data.selectedTools is list
+        && request.resource.data.toolData is map
+        && request.resource.data.tollgateStatus is map;
+
+      allow update: if isSignedIn() 
+        && resource.data.ownerId == request.auth.uid
+        && request.resource.data.id == resource.id
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.name is string 
+        && request.resource.data.name.size() > 0
+        && request.resource.data.selectedTools is list
+        && request.resource.data.toolData is map
+        && request.resource.data.tollgateStatus is map;
+
+      // Only the creator can delete their projects (as specified in 10-15% improvement request)
+      allow delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    // 3. Collaborative project history subcollection
+    match /projects/{projectId}/history/{historyId} {
+      // Parent resource check (Master Gate) ensuring the user owns the parent project
+      allow read, create: if isSignedIn() 
+        && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+      
+      // History logs once written are immutable audit trials
+      allow update, delete: if false;
+    }
+  }
+}

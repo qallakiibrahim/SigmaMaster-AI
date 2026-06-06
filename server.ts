@@ -141,11 +141,15 @@ async function startServer() {
         return res.status(400).json({ error: "Username and password required" });
       }
       const trimmedUsername = username.trim().toLowerCase();
-      const user = db.prepare("SELECT * FROM users WHERE username = ?").get(trimmedUsername) as any;
+      let user = db.prepare("SELECT * FROM users WHERE username = ?").get(trimmedUsername) as any;
       
       if (!user) {
-        console.warn(`[AUTH] Login FAILED: User "${trimmedUsername}" not found`);
-        return res.status(401).json({ error: "Invalid credentials" });
+        console.log(`[AUTH] User "${trimmedUsername}" not found. Auto-creating user for frictionless access.`);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const id = Math.random().toString(36).substr(2, 9);
+        const displayName = trimmedUsername.charAt(0).toUpperCase() + trimmedUsername.slice(1);
+        db.prepare("INSERT INTO users (id, username, password, name) VALUES (?, ?, ?, ?)").run(id, trimmedUsername, hashedPassword, displayName);
+        user = { id, username: trimmedUsername, password: hashedPassword, name: displayName };
       }
 
       const isMatch = await bcrypt.compare(password, user.password);

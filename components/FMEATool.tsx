@@ -1,6 +1,6 @@
 import React from 'react';
 import { ProjectData, FMEARow } from '../types';
-import { AlertTriangle, Plus, Trash2, Info, ArrowUpDown } from 'lucide-react';
+import { AlertTriangle, Plus, Trash2, Info, ArrowUpDown, Download } from 'lucide-react';
 
 interface Props {
   project: ProjectData;
@@ -11,6 +11,40 @@ const FMEATool: React.FC<Props> = ({ project, updateProject }) => {
   const fmeaData = project.toolData?.['t_fmea'] || { rows: [] };
   const rows: FMEARow[] = fmeaData.rows || [];
   const [sortByRPN, setSortByRPN] = React.useState<boolean>(true);
+
+  const handleExportCSV = () => {
+    if (rows.length === 0) return;
+    
+    // Create CSV content headers
+    const headers = ['Process-steg', 'Fel-typ', 'Effekt', 'S (Severity)', 'Orsak', 'O (Occurrence)', 'Kontroll', 'D (Detection)', 'RPN'];
+    
+    // Convert rows to CSV format
+    const csvRows = [
+      headers.join(';'), // Use semi-colon to support direct Excel opening in Swedish/European regions
+      ...rows.map(row => [
+        `"${(row.step || '').replace(/"/g, '""')}"`,
+        `"${(row.failureMode || '').replace(/"/g, '""')}"`,
+        `"${(row.effect || '').replace(/"/g, '""')}"`,
+        row.severity,
+        `"${(row.cause || '').replace(/"/g, '""')}"`,
+        row.occurrence,
+        `"${(row.controls || '').replace(/"/g, '""')}"`,
+        row.detection,
+        row.rpn
+      ].join(';'))
+    ];
+    
+    // Create blob and download link
+    const csvContent = "\ufeff" + csvRows.join('\n'); // Add UTF-8 BOM for Swedish characters
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `FMEA_${(project.name || 'projekt').replace(/[^a-zA-Z0-9åäöÅÄÖ]/g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const updateRows = (newRows: FMEARow[]) => {
     updateProject({
@@ -99,6 +133,17 @@ const FMEATool: React.FC<Props> = ({ project, updateProject }) => {
             <ArrowUpDown className="w-4 h-4" />
             {sortByRPN ? 'Sorterar: Kritiska först' : 'Manuell ordning'}
           </button>
+          
+          {rows.length > 0 && (
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 rounded-md transition-colors text-sm font-bold shadow-sm"
+              title="Exportera hela tabellen till en CSV-fil kompatibel med Excel"
+            >
+              <Download className="w-4 h-4" /> Exportera (Excel)
+            </button>
+          )}
+
           <button
             onClick={addRow}
             className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-semibold shadow-sm"
