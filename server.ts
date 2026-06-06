@@ -4,6 +4,27 @@ import { WebSocketServer, WebSocket } from "ws";
 import { createServer } from "http";
 import Database from "better-sqlite3";
 import bcrypt from "bcryptjs";
+import { GoogleGenAI } from "@google/genai";
+
+let aiClient: GoogleGenAI | null = null;
+
+function getGeminiAI(): GoogleGenAI {
+  if (!aiClient) {
+    const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
+    if (!key) {
+      throw new Error('GEMINI_API_KEY environment variable is not set. Please configure it in your Settings/Secrets.');
+    }
+    aiClient = new GoogleGenAI({
+      apiKey: key,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
+  }
+  return aiClient;
+}
 
 const db = new Database("projects.db");
 
@@ -198,6 +219,44 @@ async function startServer() {
   const getHistory = db.prepare("SELECT * FROM history WHERE project_id = ? ORDER BY timestamp DESC LIMIT 50");
   const listProjects = db.prepare("SELECT id, data FROM projects WHERE owner_id = ?");
   const deleteProject = db.prepare("DELETE FROM projects WHERE id = ? AND owner_id = ?");
+
+  // Secure Gemini Proxy Route for full-stack architecture
+  app.post("/api/ai/generate", async (req, res) => {
+    // Authenticate users to protect the endpoint
+    const userId = (req as any).user?.userId;
+    if (!userId) {
+      return res.status(401).json({ error: "Du måste vara inloggad för att använda AI-funktionen." });
+    }
+
+    const { prompt, context } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt saknas" });
+    }
+
+    try {
+      const ai = getGeminiAI();
+      const model = 'gemini-3.5-flash';
+      const fullPrompt = `
+        Du är en expert Six Sigma Master Black Belt och Senior Processingenjör. 
+        Ditt mål är att hjälpa användaren med DMAIC-metodiken.
+        Svara professionellt, kortfattat och analytiskt på svenska.
+        
+        Kontext: ${context || 'Ingen kontext given.'}
+        
+        Fråga/Uppgift: ${prompt}
+      `;
+
+      const response = await ai.models.generateContent({
+        model,
+        contents: fullPrompt,
+      });
+
+      res.json({ insight: response.text || "Kunde inte generera svar." });
+    } catch (error: any) {
+      console.error("Gemini Proxy API Error:", error);
+      res.status(500).json({ error: "Ett internt fel uppstod vid kommunikation med AI-tjänsten: " + error.message });
+    }
+  });
 
   // API Routes for Projects
   app.get("/api/projects", (req, res) => {
