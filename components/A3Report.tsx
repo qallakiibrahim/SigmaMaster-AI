@@ -96,19 +96,65 @@ const A3Report: React.FC<Props> = ({ project, onBack }) => {
       {/* Dynamic injection of landscape A3 CSS print settings */}
       <style>{`
         @media print {
-          body {
+          /* Hide all elements on the page by default */
+          body * {
+            visibility: hidden !important;
+          }
+          /* Hide non-print structures entirely from layout flow */
+          aside, header, nav, .print-hidden, [class*="ProjectHeader"], [class*="HistorySidebar"], button, .mb-8 {
+            display: none !important;
+          }
+          /* Override page layout sizes and margins */
+          @page {
+            size: A3 landscape;
+            margin: 0.8cm 1cm;
+          }
+          /* Ensure document body is clean and resets any background offsets */
+          html, body {
+            height: auto !important;
+            overflow: visible !important;
             background-color: #ffffff !important;
             color: #0d1b2a !important;
-            font-size: 11px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
-          @page {
-            size: A3 landscape;
-            margin: 1.2cm 1.5cm 1.2cm 1.5cm;
+          /* Collapse high-level flex/grid app wrappers that lock height & scrollbars */
+          #root, main, .flex, .overflow-hidden, .overflow-auto, [class*="max-w-7xl"], [class*="mx-auto"] {
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            position: static !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
           }
-          .print-hidden {
-            display: none !important;
+          /* Re-reveal only the A3 page layout container and snap it to top-left of target sheet */
+          .a3-page-wrapper {
+            visibility: visible !important;
+            display: block !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background-color: #ffffff !important;
+          }
+          /* Enable visibility for all child components within the A3 card */
+          .a3-page-wrapper * {
+            visibility: visible !important;
           }
           .print-card-border {
             border: 2px solid #0f172a !important;
@@ -123,13 +169,6 @@ const A3Report: React.FC<Props> = ({ project, onBack }) => {
           .print-grid-layout {
             grid-template-cols: repeat(2, minmax(0, 1fr)) !important;
             gap: 1.5rem !important;
-          }
-          .a3-page-wrapper {
-            box-shadow: none !important;
-            border: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 100% !important;
           }
           section {
             page-break-inside: avoid;
