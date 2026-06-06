@@ -42,13 +42,13 @@ const Login: React.FC<Props> = ({ onLogin }) => {
       console.error("Firebase Google Auth error:", err);
       let errMsg = 'Ett fel uppstod vid Google-inloggning. Kontrollera att din webbläsare tillåter popup-fönster eller öppna appen i en ny flik för att tillåta cookies.';
       if (err.code === 'auth/unauthorized-domain' || (err.message && err.message.includes('unauthorized-domain'))) {
-        errMsg = `Denna domän är inte auktoriserad i Firebase-konsolen för Google-inloggning!
+        const currentHost = window.location.hostname;
+        errMsg = `Denna domän (${currentHost}) är inte auktoriserad i Firebase-konsolen för Google-inloggning!
 
-För att lösa detta:
+För att lösa detta för din Vercel-sida eller denna miljö:
 1. Gå till Firebase Console -> Authentication -> Settings -> Authorized domains (Auktoriserade domäner) och klicka på "Add domain" (Lägg till domän)
-2. Lägg till dessa domäner:
-   • ais-dev-dy4p6ozb3dpdshzlyesy3a-91211108491.europe-west2.run.app
-   • ais-pre-dy4p6ozb3dpdshzlyesy3a-91211108491.europe-west2.run.app`;
+2. Lägg till följande domän exakt:
+   • ${currentHost}`;
       } else if (err.code === 'auth/popup-blocked') {
         errMsg = 'Popup-fönstret blockerades av webbläsaren. Tillåt popups eller tryck på knappen för att öppna appen i en ny flik.';
       } else if (err.code === 'auth/popup-closed-by-user') {
