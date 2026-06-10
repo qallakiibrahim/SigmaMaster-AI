@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ProjectData } from '../types';
 import { TOOLS_LIBRARY } from '../data/toolsData';
+import { generateInsight } from '../services/geminiService';
 import { 
   Wrench, Plus, Trash2, Save, Check, Calculator, AlertTriangle, 
   HelpCircle, CheckCircle, FileText, Sparkles, Sliders, ChevronRight,
-  Shuffle, ArrowRight, Percent, ClipboardList, TrendingUp
+  Shuffle, ArrowRight, Percent, ClipboardList, TrendingUp, Loader2
 } from 'lucide-react';
 import {
   ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Scatter, Line, Legend
@@ -48,6 +49,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
   
   const [draftInputs, setDraftInputs] = useState<Record<string, string>>({});
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+  const [aiLoading, setAiLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const savedData = project.toolData?.[toolId] || {};
@@ -438,147 +440,412 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
   }
 
   // ----------------------------------------------------
-  // SPECIALIZED INTERACTIVE CALCULATOR: Problemformulering (t_problem)
+  // SPECIALIZED INTERACTIVE CALCULATOR: 5W2H & Is / Is Not Problem & Scope Generator (t_problem)
   // ----------------------------------------------------
   if (toolId === 't_problem' && !children) {
-    const what = fields.what || '';
-    const where = fields.where || '';
-    const when = fields.when || '';
-    const size = fields.size || '';
-    const impact = fields.impact || '';
+    const whatIs = fields.whatIs || '';
+    const whatIsNot = fields.whatIsNot || '';
+    const whereIs = fields.whereIs || '';
+    const whereIsNot = fields.whereIsNot || '';
+    const whenIs = fields.whenIs || '';
+    const whenIsNot = fields.whenIsNot || '';
+    const whoIs = fields.whoIs || '';
+    const whoIsNot = fields.whoIsNot || '';
+    const whyIs = fields.whyIs || '';
+    const whyIsNot = fields.whyIsNot || '';
+    const howIs = fields.howIs || '';
+    const howIsNot = fields.howIsNot || '';
+    const howMuchIs = fields.howMuchIs || '';
+    const howMuchIsNot = fields.howMuchIsNot || '';
 
-    const autoFormulated = what || where || when || size || impact
-      ? `${what ? what + '. ' : ''}${where ? 'Det uppstår i ' + where + '. ' : ''}${when ? 'Problemet har observerats ' + when + '. ' : ''}${size ? 'Omfattningen är ' + size + '. ' : ''}${impact ? 'Påverkan: ' + impact + '.' : ''}`
-      : 'Inget problem formulerat än.';
+    const compileProblem = (f: Record<string, string>) => {
+      const parts = [];
+      if (f.whatIs) parts.push(`VAD ÄR PROBLEMET: ${f.whatIs}`);
+      if (f.whereIs) parts.push(`VAR UPPSTÅR DET: ${f.whereIs}`);
+      if (f.whenIs) parts.push(`NÄR UPPSTÅR DET: ${f.whenIs}`);
+      if (f.whoIs) parts.push(`VEM OBSERVERAR/BERÖRS: ${f.whoIs}`);
+      if (f.whyIs) parts.push(`VARFÖR ÄR DET ETT PROBLEM: ${f.whyIs}`);
+      if (f.howIs) parts.push(`HUR UPPTÄCKTS DET: ${f.howIs}`);
+      if (f.howMuchIs) parts.push(`OMFATTNING (HUR MYCKET): ${f.howMuchIs}`);
+      
+      return parts.length > 0 
+        ? parts.join('\n') 
+        : 'Fyll i fälten ovan för att generera en problembeskrivning.';
+    };
+
+    const compileScope = (f: Record<string, string>) => {
+      const ins = [];
+      if (f.whatIs) ins.push(`Produkt/Process: ${f.whatIs}`);
+      if (f.whereIs) ins.push(`Område/Linjer: ${f.whereIs}`);
+      if (f.whenIs) ins.push(`Tid/Skift: Sker under ${f.whenIs}`);
+      if (f.whoIs) ins.push(`Målgrupp/Deltagare: ${f.whoIs}`);
+      if (f.howIs) ins.push(`Felsymptom: ${f.howIs}`);
+      if (f.howMuchIs) ins.push(`Volym/Kostnad: Upp till ${f.howMuchIs}`);
+
+      const outs = [];
+      if (f.whatIsNot) outs.push(`Uteslutet process/produkt: ${f.whatIsNot}`);
+      if (f.whereIsNot) outs.push(`Uteslutna platser/linjer: ${f.whereIsNot}`);
+      if (f.whenIsNot) outs.push(`Uteslutna tider/skift: Sker INTE ${f.whenIsNot}`);
+      if (f.whoIsNot) outs.push(`Uteslutna personer/kunder: ${f.whoIsNot}`);
+      if (f.howIsNot) outs.push(`Uteslutna symptom/orsaker: Sker INTE genom ${f.howIsNot}`);
+      if (f.howMuchIsNot) outs.push(`Utesluten ekonomisk/volympåverkan: ${f.howMuchIsNot}`);
+
+      let scopeStr = '';
+      if (ins.length > 0) {
+        scopeStr += '✔️ INGÅR I PROJEKTET (IN SCOPE):\n' + ins.map(i => `• ${i}`).join('\n');
+      }
+      if (outs.length > 0) {
+        if (scopeStr) scopeStr += '\n\n';
+        scopeStr += '❌ INGÅR INTE I PROJEKTET (OUT OF SCOPE):\n' + outs.map(o => `• ${o}`).join('\n');
+      }
+      return scopeStr || 'Fyll i fälten ovan för att generera projektets omfattning.';
+    };
 
     const loadPepsiExample = () => {
       const pepsiFields = {
-        what: 'Packmaskin har 6,25% stillestånd på OEE för Pepsi-produkten',
-        where: 'Packningslinje 3, Pepsi 0,5L',
-        when: 'Sedan januari 2026, dagligen',
-        size: '6,25% stillestånd = ca 150 förlorade produktionstimmar/42 veckor',
-        impact: 'Förlorad produktion, ökade kostnader, missat leveransmål'
+        whatIs: 'Packmaskin har 6,25% stillestånd på Pepsi-produkten (flaskor blockeras vid utmatning)',
+        whatIsNot: 'Fyllningsmaskinen eller glasflasklinjen har inga onormala stopp',
+        whereIs: 'Packningslinje 3, slutet av fabriken',
+        whereIsNot: 'Packningslinje 1 och linje 2 fungerar helt felfritt',
+        whenIs: 'Sedan januari 2026, främst under nattskiftet vid hög hastighet',
+        whenIsNot: 'Före januari 2026, samt vid dagskiftets normala tempo',
+        whoIs: 'Operatörer på nattskiftet och underhållstekniker på plats',
+        whoIsNot: 'Dagskiftets operatörer, kundleverantörer eller externa montörer',
+        whyIs: 'Stilleståndet orsakar förlorad produktion, missade leveransmål och dyra övertidstimmar',
+        whyIsNot: 'Inga säkerhetsrisker eller felleveranser ut till butik',
+        howIs: 'Skakningar och slitage i utmatningsbandet gör rörelsen ojämn',
+        howIsNot: 'Inte elektriska fel eller buggar i styrsystemet (PLC)',
+        howMuchIs: '150 förlorade produktionstimmar, motsvarande förlust på ca 450 000 kr',
+        howMuchIsNot: 'Ingen påverkan på burklinjen eller budget för förebyggande underhåll'
       };
-      setFields(pepsiFields);
-      handleSave(items, pepsiFields, notes);
+
+      const pbText = compileProblem(pepsiFields);
+      const scText = compileScope(pepsiFields);
+
+      const completeFields = {
+        ...pepsiFields,
+        generatedProblem: pbText,
+        generatedScope: scText
+      };
+
+      setFields(completeFields);
+      handleSave(items, completeFields, notes);
     };
 
     const updateField = (key: string, val: string) => {
       const updatedFields = { ...fields, [key]: val };
+      
+      // Auto-compile preview dynamically if the user is typing fields and hasn't manually overridden final boxes
+      if (!fields.generatedProblemManuallyEdited) {
+        updatedFields.generatedProblem = compileProblem(updatedFields);
+      }
+      if (!fields.generatedScopeManuallyEdited) {
+        updatedFields.generatedScope = compileScope(updatedFields);
+      }
+
       setFields(updatedFields);
     };
 
+    const handleAIEngine = async () => {
+      setAiLoading(true);
+      const prompt = `
+        Du är en erfaren sex sigma Black Belt expert. Skriv en professionell, mätbar och koncis problemformulering (Problem Statement) samt en tydlig projektomfattning (Scope) baserat på följande 5W2H med ÄR och INTE ÄR listor:
+
+        VAD (What):
+        - Det är (Is / In-Scope): ${fields.whatIs || '(ej ifyllt)'}
+        - Det är INTE (IsNot / Out-of-Scope): ${fields.whatIsNot || '(ej ifyllt)'}
+
+        VAR (Where):
+        - Det är (Is / In-Scope): ${fields.whereIs || '(ej ifyllt)'}
+        - Det är INTE (IsNot / Out-of-Scope): ${fields.whereIsNot || '(ej ifyllt)'}
+
+        NÄR (When):
+        - Det är (Is / In-Scope): ${fields.whenIs || '(ej ifyllt)'}
+        - Det är INTE (IsNot / Out-of-Scope): ${fields.whenIsNot || '(ej ifyllt)'}
+
+        VEM (Who):
+        - Det är (Is / In-Scope): ${fields.whoIs || '(ej ifyllt)'}
+        - Det är INTE (IsNot / Out-of-Scope): ${fields.whoIsNot || '(ej ifyllt)'}
+
+        VARFÖR (Why):
+        - Det är (Is / In-Scope): ${fields.whyIs || '(ej ifyllt)'}
+        - Det är INTE (IsNot / Out-of-Scope): ${fields.whyIsNot || '(ej ifyllt)'}
+
+        HUR (How):
+        - Det är (Is / In-Scope): ${fields.howIs || '(ej ifyllt)'}
+        - Det är INTE (IsNot / Out-of-Scope): ${fields.howIsNot || '(ej ifyllt)'}
+
+        HUR MYCKET (How Much):
+        - Det är (Is / In-Scope): ${fields.howMuchIs || '(ej ifyllt)'}
+        - Det är INTE (IsNot / Out-of-Scope): ${fields.howMuchIsNot || '(ej ifyllt)'}
+
+        Generera svaret på svenska. Skriv mycket strukturerat, affärsmässigt och exakt.
+        Returnera texten uppdelad i exakt de här två rubrikerna:
+        === PROBLEMBESKRIVNING ===
+        *(här skriver du en professionell, sammanhållen problemformulering i löpande text baserad på ÄR-kolumnen)*
+
+        === SCOPE / OMFATTNING ===
+        *(här skapar du två rubriker: 'INGÅR I PROJEKTET (IN-SCOPE)' samt 'INGÅR INTE (OUT-OF-SCOPE)' fyllda med tydliga punktlistor baserade på skillnaderna i ÄR och INTE ÄR)*
+      `;
+
+      try {
+        const resultText = await generateInsight(prompt, `Projektnamn: ${project.name}`);
+        
+        let pb = '';
+        let sc = '';
+        if (resultText.includes('=== PROBLEMBESKRIVNING ===') && resultText.includes('=== SCOPE / OMFATTNING ===')) {
+          const parts = resultText.split('=== SCOPE / OMFATTNING ===');
+          pb = parts[0].replace('=== PROBLEMBESKRIVNING ===', '').trim();
+          sc = parts[1].trim();
+        } else {
+          // Fallback parsing
+          const lines = resultText.split('\n');
+          const pbIndex = lines.findIndex(l => l.toUpperCase().includes('PROBLEMBESKRIVNING'));
+          const scIndex = lines.findIndex(l => l.toUpperCase().includes('SCOPE') || l.toUpperCase().includes('OMFATTNING'));
+          if (pbIndex !== -1 && scIndex !== -1) {
+            pb = lines.slice(pbIndex + 1, scIndex).join('\n').trim();
+            sc = lines.slice(scIndex + 1).join('\n').trim();
+          } else {
+            pb = resultText;
+            sc = compileScope(fields);
+          }
+        }
+
+        const updatedFields = {
+          ...fields,
+          generatedProblem: pb,
+          generatedScope: sc,
+          generatedProblemManuallyEdited: true,
+          generatedScopeManuallyEdited: true
+        };
+        setFields(updatedFields);
+        handleSave(items, updatedFields, notes);
+      } catch (err) {
+        console.error('Gemini error:', err);
+      } finally {
+        setAiLoading(false);
+      }
+    };
+
+    const handleApplyToCharter = () => {
+      const pText = fields.generatedProblem || compileProblem(fields);
+      const sText = fields.generatedScope || compileScope(fields);
+      
+      updateProject({
+        problemStatement: pText,
+        scope: sText
+      });
+
+      // Show beautiful success alert
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    };
+
+    const handleResetToAuto = () => {
+      const updatedFields = {
+        ...fields,
+        generatedProblem: compileProblem(fields),
+        generatedScope: compileScope(fields),
+        generatedProblemManuallyEdited: false,
+        generatedScopeManuallyEdited: false
+      };
+      setFields(updatedFields);
+      handleSave(items, updatedFields, notes);
+    };
+
+    const generatedProblem = fields.generatedProblem !== undefined ? fields.generatedProblem : compileProblem(fields);
+    const generatedScope = fields.generatedScope !== undefined ? fields.generatedScope : compileScope(fields);
+
+    const questions = [
+      { id: 'what', label: '1. VAD (What)', isField: 'whatIs', isNotField: 'whatIsNot', placeholderIs: 'T.ex. Maskinstillestånd i packlinje...', placeholderIsNot: 'T.ex. Inga problem i andra maskiner...' },
+      { id: 'where', label: '2. VAR (Where)', isField: 'whereIs', isNotField: 'whereIsNot', placeholderIs: 'T.ex. Linje 3, slutet av transportbandet...', placeholderIsNot: 'T.ex. Linje 1 och 2 fungerar normalt...' },
+      { id: 'when', label: '3. NÄR (When)', isField: 'whenIs', isNotField: 'whenIsNot', placeholderIs: 'T.ex. Sedan januari, under nattskiftet...', placeholderIsNot: 'T.ex. Aldrig under dags- eller kvällsskift...' },
+      { id: 'who', label: '4. VEM (Who)', isField: 'whoIs', isNotField: 'whoIsNot', placeholderIs: 'T.ex. Nattskiftets operatörer...', placeholderIsNot: 'T.ex. Underhållspersonalen under dagen...', },
+      { id: 'why', label: '5. VARFÖR (Why)', isField: 'whyIs', isNotField: 'whyIsNot', placeholderIs: 'T.ex. Flaskorna blockerar och stoppar flödet...', placeholderIsNot: 'T.ex. Orsakar inte skador på operatörer...' },
+      { id: 'how', label: '6. HUR (How)', isField: 'howIs', isNotField: 'howIsNot', placeholderIs: 'T.ex. Bandet hackar, flaskor faller över sand...', placeholderIsNot: 'T.ex. Inget fel med el eller signaler...' },
+      { id: 'howMuch', label: '7. HUR MYCKET (How Much)', isField: 'howMuchIs', isNotField: 'howMuchIsNot', placeholderIs: 'T.ex. 6,25% stillestånd, förlust 450kkr...', placeholderIsNot: 'T.ex. Inga biverkningar på burklinjen...' },
+    ];
+
     return (
       <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
           <div>
             <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Wrench className="w-5 h-5 text-purple-600" /> Problemformulering
+              <Wrench className="w-5 h-5 text-purple-600" /> 5W2H & Is / Is Not Generator
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-purple-50 text-purple-600 border border-purple-100">
-              Projektdefinition
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-purple-50 text-purple-600 border border-purple-100 uppercase tracking-wider mt-1 inline-block">
+              Problem- & Omfattningstolkare (Scope Builder)
             </span>
             <p className="text-sm text-slate-500 mt-1">{description}</p>
           </div>
           <button
             onClick={loadPepsiExample}
-            className="text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg border border-blue-200 transition-all flex items-center gap-1.5 shadow-sm"
+            className="text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg border border-blue-200 transition-all flex items-center gap-1.5 shadow-sm self-start"
           >
-            <Sparkles className="w-3.5 h-3.5" /> Ladda Pepsi-data
+            <Sparkles className="w-3.5 h-3.5" /> Ladda Pepsi-exempel (5W2H)
           </button>
         </div>
 
-        <div className="p-5 bg-purple-50/40 rounded-xl border border-purple-100/50 space-y-4 mb-6">
-          <h4 className="text-sm font-bold text-purple-800 flex items-center gap-2">
-            <span>⚙️</span> Interaktivt Verktyg
-          </h4>
+        {/* Matrix grid headers */}
+        <div className="grid grid-cols-12 gap-4 text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 px-1 hidden md:grid">
+          <div className="col-span-4">Fråga (5W2H)</div>
+          <div className="col-span-4 text-teal-600 bg-teal-50 px-2 py-1 rounded">Is (ÄR / In-Scope)</div>
+          <div className="col-span-4 text-red-600 bg-red-50 px-2 py-1 rounded">Is Not (INTE ÄR / Out-of-Scope)</div>
+        </div>
 
-          <div className="space-y-4">
+        {/* Row matrix */}
+        <div className="space-y-4 mb-6">
+          {questions.map((q) => (
+            <div key={q.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200/60 shadow-sm space-y-3 md:space-y-0 md:grid md:grid-cols-12 md:gap-4 md:items-center">
+              {/* Question label */}
+              <div className="col-span-4">
+                <span className="text-sm font-bold text-slate-800 block">{q.label}</span>
+                <span className="text-xs text-slate-400">Skapa tydlighet runt gränserna</span>
+              </div>
+
+              {/* IS Input */}
+              <div className="col-span-4 space-y-1">
+                <span className="text-[10px] font-bold text-teal-650 tracking-wider block md:hidden uppercase text-teal-600">✔️ Vad problemet ÄR (Is):</span>
+                <input
+                  type="text"
+                  className="w-full p-2.5 bg-white border border-teal-200 focus:ring-2 focus:ring-teal-500 rounded-lg text-xs font-medium outline-none transition-all"
+                  placeholder={q.placeholderIs}
+                  value={fields[q.isField] || ''}
+                  onChange={(e) => updateField(q.isField, e.target.value)}
+                />
+              </div>
+
+              {/* IS NOT Input */}
+              <div className="col-span-4 space-y-1">
+                <span className="text-[10px] font-bold text-red-650 tracking-wider block md:hidden uppercase text-red-650">❌ Vad det INTE är (Is Not):</span>
+                <input
+                  type="text"
+                  className="w-full p-2.5 bg-white border border-red-200 focus:ring-2 focus:ring-red-500 rounded-lg text-xs font-medium outline-none transition-all"
+                  placeholder={q.placeholderIsNot}
+                  value={fields[q.isNotField] || ''}
+                  onChange={(e) => updateField(q.isNotField, e.target.value)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Compiling result sections & editors */}
+        <div className="mt-4 border-t border-slate-200 pt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">VAD är problemet?</label>
-              <input 
-                type="text" 
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                placeholder="T.ex. Packmaskin har stannat" 
-                value={what}
-                onChange={(e) => updateField('what', e.target.value)}
+              <h4 className="text-md font-bold text-slate-800">Genererad Sammanställning & Omfattning</h4>
+              <p className="text-xs text-slate-500">De här formuleringarna är redo att appliceras på ditt Project Charter i realtid.</p>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={handleResetToAuto}
+                className="text-xs font-semibold px-3 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg border border-slate-300 transition-all shadow-sm"
+              >
+                Återställ till automatisk
+              </button>
+              <button
+                onClick={handleAIEngine}
+                disabled={aiLoading}
+                className="text-xs font-bold px-4 py-1.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg transition-all flex items-center gap-1.5 shadow-md shadow-purple-200"
+              >
+                {aiLoading ? (
+                  <>
+                    <Loader2 className="animate-spin w-3.5 h-3.5" /> Genererar med AI...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5" /> AI-Optimera med Gemini
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* PROBLEM STATEMENT BOX */}
+            <div className="bg-orange-50/50 p-4 rounded-xl border border-orange-200 shadow-inner flex flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-orange-700 flex items-center gap-1">
+                  📝 Problemformulering (Problem Statement)
+                </span>
+                <span className="text-[10px] text-orange-600/70 font-bold">Är-baserad syntes</span>
+              </div>
+              <textarea
+                rows={7}
+                className="w-full p-3 bg-white border border-orange-200 rounded-lg text-xs font-serif leading-relaxed text-slate-800 focus:ring-2 focus:ring-orange-500 outline-none resize-y"
+                value={generatedProblem}
+                onChange={(e) => {
+                  const updated = {
+                    ...fields,
+                    generatedProblem: e.target.value,
+                    generatedProblemManuallyEdited: true
+                  };
+                  setFields(updated);
+                  handleSave(items, updated, notes);
+                }}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">VAR uppstår det?</label>
-                <input 
-                  type="text" 
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                  placeholder="T.ex. Packningslinje 3" 
-                  value={where}
-                  onChange={(e) => updateField('where', e.target.value)}
-                />
+
+            {/* SCOPE BOX */}
+            <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-250 border-emerald-200 shadow-inner flex flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-800 flex items-center gap-1">
+                  🎯 Projekt omfattning (In/Out-Scope)
+                </span>
+                <span className="text-[10px] text-emerald-700/70 font-bold">Är/Inte Är-gränser</span>
               </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">NÄR uppstår det?</label>
-                <input 
-                  type="text" 
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                  placeholder="T.ex. Sedan januari 2026, dagligen" 
-                  value={when}
-                  onChange={(e) => updateField('when', e.target.value)}
-                />
-              </div>
+              <textarea
+                rows={7}
+                className="w-full p-3 bg-white border border-emerald-200 rounded-lg text-xs font-serif leading-relaxed text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none resize-y"
+                value={generatedScope}
+                onChange={(e) => {
+                  const updated = {
+                    ...fields,
+                    generatedScope: e.target.value,
+                    generatedScopeManuallyEdited: true
+                  };
+                  setFields(updated);
+                  handleSave(items, updated, notes);
+                }}
+              />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Hur STORT är det?</label>
-                <input 
-                  type="text" 
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                  placeholder="T.ex. Ca 6.25% stillestånd" 
-                  value={size}
-                  onChange={(e) => updateField('size', e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Vilken PÅVERKAN har det?</label>
-                <input 
-                  type="text" 
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 outline-none"
-                  placeholder="T.ex. Förlorade produktionstimmar" 
-                  value={impact}
-                  onChange={(e) => updateField('impact', e.target.value)}
-                />
-              </div>
-            </div>
+          </div>
+
+          {/* Sync Button */}
+          <div className="mt-5 flex justify-end">
+            <button
+              onClick={handleApplyToCharter}
+              type="button"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20 active:scale-[0.98] transition-all"
+            >
+              <Check className="w-4 h-4" /> Spara & Applicera direkt till Project Charter 🚀
+            </button>
           </div>
         </div>
 
-        {/* Real-time sentences compiling display */}
-        <div className="p-4 bg-slate-900 text-slate-100 rounded-xl mb-6 relative shadow-inner">
-          <span className="absolute top-2 right-3 text-[10px] uppercase font-mono text-slate-500 font-bold">Autogenererad output</span>
-          <h4 className="text-xs font-bold text-orange-400 mb-2 flex items-center gap-1">
-            <span>📝</span> Problemformulering:
-          </h4>
-          <p className="text-sm font-medium leading-relaxed font-serif whitespace-pre-wrap select-all">
-            {autoFormulated}
-          </p>
-        </div>
-
-        {/* Optional notes */}
-        <div className="mb-6 space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-600">Ytterligare kommentarer/anteckningar</label>
+        {/* Optional commentary notes */}
+        <div className="mt-6 space-y-1.5 border-t border-slate-100 pt-6">
+          <label className="block text-xs font-bold text-slate-600 uppercase">Ytterligare kommentarer/anteckningar</label>
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm bg-slate-50"
+            className="w-full min-h-[85px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm bg-slate-50"
             placeholder="Skriv dina kommentarer här..."
             value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            onChange={(e) => {
+              setNotes(e.target.value);
+              // Save notes
+              handleSave(items, fields, e.target.value);
+            }}
           />
         </div>
 
-        {/* Footer controls */}
-        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+        {/* Footer info box */}
+        <div className="flex items-center justify-between border-t border-slate-100 mt-4 pt-4">
           <span className="text-xs text-slate-400">
             {saveSuccess ? (
               <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
-                <Check className="w-4 h-4" /> Sparat till projektet!
+                <CheckCircle className="w-4 h-4" /> Sparat och synkroniserat till Project Charter!
               </span>
             ) : (
               'Kom ihåg att spara dina ändringar'
@@ -586,21 +853,17 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </span>
           <button
             onClick={() => handleSave(items, fields, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm shadow-slate-200 transition-all"
           >
-            <Save className="w-4 h-4" /> Spara till projekt
+            <Save className="w-4 h-4" /> Spara framsteg offline
           </button>
         </div>
 
         {/* Manual guidelines block */}
         <div className="mt-6 border-t border-slate-100 pt-4 text-[12px] text-slate-500 space-y-2">
           <div>
-            <span className="font-bold text-slate-700 block mb-0.5">💡 Användning</span>
-            Beskriv vad, var, när och omfattning - men INTE varför eller hur. Detta isolerar problemet innan ni söker rotorsaker.
-          </div>
-          <div className="bg-slate-50 p-2.5 rounded border border-slate-100 italic">
-            <span className="font-bold text-slate-600 not-italic block">Exempel:</span>
-            Vad: 15% defekter • Var: Monteringsavdelning • När: Sedan Q2 • Omfattning: 500 enheter/månad
+            <span className="font-bold text-slate-700 block mb-1">💡 Varför använda 5W2H med Is / Is Not?</span>
+            Genom att ställa frågorna Vad, Var, När, Vem, Varför, Hur och Hur mycket får du en heltäckande förståelse av problemet. Att systematiskt ange vad som <b>ÄR</b> respektive <b>INTE ÄR</b> det drabbade objektet skyddar projektet från "scope creep" och sätter skivskarpa gränser från dag ett.
           </div>
         </div>
       </div>

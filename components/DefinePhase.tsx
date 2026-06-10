@@ -43,7 +43,7 @@ const DefinePhase: React.FC<Props> = ({ project, updateProject }) => {
     setLoading(false);
   };
 
-  const explicitlyRendered = ['t_charter', 't_sipoc', 't_voc', 't_kano', 't_stakeholder'];
+  const explicitlyRendered = ['t_charter', 't_sipoc', 't_voc', 't_kano', 't_stakeholder', 't_problem'];
   const otherTools = TOOLS_LIBRARY.filter(t => t.phase === Phase.DEFINE && !explicitlyRendered.includes(t.id));
 
   return (
@@ -163,6 +163,9 @@ const DefinePhase: React.FC<Props> = ({ project, updateProject }) => {
             </div>
           </div>
       </ToolContainer>
+
+      {/* 5W2H Is / Is Not Problem & Scope Generator - Full Width */}
+      <ToolContainer toolId="t_problem" project={project} updateProject={updateProject} className="h-auto" />
 
       {/* SIPOC Section - Full Width */}
       <ToolContainer toolId="t_sipoc" project={project} updateProject={updateProject} className="h-auto">

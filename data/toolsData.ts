@@ -7,7 +7,7 @@ export const TOOLS_LIBRARY: SixSigmaTool[] = [
   { id: 't_voc', name: 'Voice of Customer (VOC)', description: 'Metod för å samla in och förstå kundernas behov och förväntningar.', phase: Phase.DEFINE, recommended: true },
   { id: 't_ctq', name: 'CTQ Tree (Critical to Quality)', description: 'Översätter kundbehov till mätbara krav.', phase: Phase.DEFINE, recommended: false },
   { id: 't_stakeholder', name: 'Intressentanalys', description: 'Identifierar och prioriterar projektets intressenter.', phase: Phase.DEFINE, recommended: true },
-  { id: 't_problem', name: 'Problemformulering', description: 'Tydlig och specifik beskrivning av problemet.', phase: Phase.DEFINE, recommended: true },
+  { id: 't_problem', name: '5W2H & Is / Is Not Generator', description: 'Definiera problemet (Problem Statement) och projektets omfattning (Scope) strukturerat med 5W2H och Is/Is-Not.', phase: Phase.DEFINE, recommended: true },
   { id: 't_kano', name: 'Kano-modell', description: 'Kategoriserar kundkrav i Basic, Performance och Delighters.', phase: Phase.DEFINE, recommended: false },
 
   // Measure

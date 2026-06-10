@@ -31,7 +31,7 @@ service cloud.firestore {
         && request.resource.data.id == request.auth.uid
         && request.resource.data.name is string && request.resource.data.name.size() > 0;
       allow update: if isSignedIn() && userId == request.auth.uid 
-        && request.resource.data.id == existing().id
+        && request.resource.data.id == request.auth.uid
         && request.resource.data.name is string && request.resource.data.name.size() > 0;
       allow delete: if false; // Profiles are immortal
     }
