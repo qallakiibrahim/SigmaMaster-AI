@@ -72,14 +72,38 @@ const App: React.FC = () => {
 
   // Check Auth on Mount & Subscribe to auth state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         console.log("User authenticated in Firebase:", firebaseUser.displayName || firebaseUser.email);
+        
+        // Synchronize auth session with our backend SQLite database to enable API routes like /api/ai/generate
+        const username = firebaseUser.email || firebaseUser.uid;
+        const password = firebaseUser.uid; // Stable predictable password for backend mapping
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.token) {
+              localStorage.setItem('sm_token', data.token);
+              console.log("Successfully synchronized authenticated session with backend API.");
+            }
+          } else {
+            console.error("Backend auth synchronization returned non-ok status:", res.status);
+          }
+        } catch (err) {
+          console.error("Failed to synchronize auth session with backend API:", err);
+        }
+
         setUser({
           id: firebaseUser.uid,
           name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Användare'
         });
       } else {
+        localStorage.removeItem('sm_token');
         setUser(null);
       }
       setAuthLoading(false);

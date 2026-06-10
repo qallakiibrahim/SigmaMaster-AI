@@ -246,6 +246,17 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
       ],
       useInstruct: 'Definiera exakt vem som gör vad när en processavvikelse inträffar för att förhindra kassation.',
       exampleText: 'Trigger: Punkt utanför gräns • Åtgärd: Stoppa & kalibrera • Ansvar: Operatör • Eskalering: Produktionschef',
+    },
+    t_implementation_plan: {
+      badge: 'Implementering',
+      fields: [
+        { id: 'aktivitet', label: 'Aktivitet / Åtgärd', placeholder: 'T.ex. Installera vibrationsdämpande fötter på linje 3...', type: 'text' },
+        { id: 'ansvarig', label: 'Ansvarig person', placeholder: 'T.ex. Underhållstekniker Erik', type: 'text' },
+        { id: 'slutdatum', label: 'Måldatum (Deadline)', placeholder: 'T.ex. 2026-06-30', type: 'text' },
+        { id: 'status', label: 'Status', placeholder: 'Ej startad', type: 'select', options: ['Ej påbörjad', 'Pågår', 'Slutförd'] }
+      ],
+      useInstruct: 'Skapa och följ upp en detaljerad plan för att genomföra förbättringarna i stor skala efter lyckad pilot.',
+      exampleText: 'Åtgärd: Montera ny givare • Ansvar: Erik • Måldatum: 2026-06-30 • Status: Pågår',
     }
   };
 
@@ -865,6 +876,848 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             <span className="font-bold text-slate-700 block mb-1">💡 Varför använda 5W2H med Is / Is Not?</span>
             Genom att ställa frågorna Vad, Var, När, Vem, Varför, Hur och Hur mycket får du en heltäckande förståelse av problemet. Att systematiskt ange vad som <b>ÄR</b> respektive <b>INTE ÄR</b> det drabbade objektet skyddar projektet från "scope creep" och sätter skivskarpa gränser från dag ett.
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE TOOL: Gage R&R / Measurement System Analysis (t_msa)
+  // ----------------------------------------------------
+  if (toolId === 't_msa' && !children) {
+    const a1_1 = parseFloat(fields.a1_1 !== undefined ? fields.a1_1 : '10.1');
+    const a1_2 = parseFloat(fields.a1_2 !== undefined ? fields.a1_2 : '10.2');
+    const a2_1 = parseFloat(fields.a2_1 !== undefined ? fields.a2_1 : '12.4');
+    const a2_2 = parseFloat(fields.a2_2 !== undefined ? fields.a2_2 : '12.3');
+    const a3_1 = parseFloat(fields.a3_1 !== undefined ? fields.a3_1 : '15.0');
+    const a3_2 = parseFloat(fields.a3_2 !== undefined ? fields.a3_2 : '15.1');
+
+    const b1_1 = parseFloat(fields.b1_1 !== undefined ? fields.b1_1 : '10.3');
+    const b1_2 = parseFloat(fields.b1_2 !== undefined ? fields.b1_2 : '10.2');
+    const b2_1 = parseFloat(fields.b2_1 !== undefined ? fields.b2_1 : '12.5');
+    const b2_2 = parseFloat(fields.b2_2 !== undefined ? fields.b2_2 : '12.6');
+    const b3_1 = parseFloat(fields.b3_1 !== undefined ? fields.b3_1 : '14.8');
+    const b3_2 = parseFloat(fields.b3_2 !== undefined ? fields.b3_2 : '15.0');
+
+    // Operator and Part calculation averages
+    const meanA1 = (a1_1 + a1_2) / 2;
+    const meanA2 = (a2_1 + a2_2) / 2;
+    const meanA3 = (a3_1 + a3_2) / 2;
+
+    const meanB1 = (b1_1 + b1_2) / 2;
+    const meanB2 = (b2_1 + b2_2) / 2;
+    const meanB3 = (b3_1 + b3_2) / 2;
+
+    const rA1 = Math.abs(a1_1 - a1_2);
+    const rA2 = Math.abs(a2_1 - a2_2);
+    const rA3 = Math.abs(a3_1 - a3_2);
+
+    const rB1 = Math.abs(b1_1 - b1_2);
+    const rB2 = Math.abs(b2_1 - b2_2);
+    const rB3 = Math.abs(b3_1 - b3_2);
+
+    const meanRangeA = (rA1 + rA2 + rA3) / 3;
+    const meanRangeB = (rB1 + rB2 + rB3) / 3;
+    const grandRange = (meanRangeA + meanRangeB) / 2;
+
+    // EV Repeatability (Equipment standard constant multiplier K1)
+    const ev = grandRange * 3.05;
+
+    // Appraiser reproduction difference (AV)
+    const grandMeanA = (meanA1 + meanA2 + meanA3) / 3;
+    const grandMeanB = (meanB1 + meanB2 + meanB3) / 3;
+    const xDiff = Math.abs(grandMeanA - grandMeanB);
+
+    // K2 standard constant for 2 operators is 3.65
+    const avVal = Math.pow(xDiff * 3.65, 2) - Math.pow(ev, 2) / 6;
+    const av = avVal > 0 ? Math.sqrt(avVal) : 0;
+
+    // Total Gage R&R standard deviation
+    const grr = Math.sqrt(ev * ev + av * av);
+
+    // Calc base parts performance
+    const meanP1 = (meanA1 + meanB1) / 2;
+    const meanP2 = (meanA2 + meanB2) / 2;
+    const meanP3 = (meanA3 + meanB3) / 2;
+    const partMean = (meanP1 + meanP2 + meanP3) / 3;
+
+    // Part sample variance
+    const partVar = (Math.pow(meanP1 - partMean, 2) + Math.pow(meanP2 - partMean, 2) + Math.pow(meanP3 - partMean, 2)) / 2;
+    const partSD = Math.sqrt(partVar > 0 ? partVar : 0.001);
+    const pv = partSD * 6.0; // Part-to-part total spread range
+
+    // Process total variation
+    const tv = Math.sqrt(grr * grr + pv * pv);
+    const pctGRR = tv > 0 ? (grr / tv) * 100 : 0;
+
+    const updateGageField = (key: string, val: string) => {
+      const parsedVal = val === '' ? '0' : val;
+      const updatedFields = { ...fields, [key]: parsedVal };
+      setFields(updatedFields);
+      handleSave(items, updatedFields, notes);
+    };
+
+    const loadPepsiGageExample = () => {
+      const pepsiData = {
+        a1_1: '10.05',
+        a1_2: '10.10',
+        a2_1: '12.00',
+        a2_2: '11.95',
+        a3_1: '14.95',
+        a3_2: '15.00',
+        b1_1: '10.10',
+        b1_2: '10.05',
+        b2_1: '11.95',
+        b2_2: '12.00',
+        b3_1: '14.90',
+        b3_2: '14.95'
+      };
+      setFields(pepsiData);
+      handleSave(items, pepsiData, notes);
+    };
+
+    // Verdict helper
+    let verdictBg = 'bg-green-50 text-green-800 border-green-250 border-green-200';
+    let verdictTitle = 'Mätsystemet är slående ACCEPTABELT! 🟢';
+    let verdictDesc = `Gage R&R är ${pctGRR.toFixed(1)}% (under 10%). Det går utmärkt att lita på dessa mätningar för processtyrning och duglighetsanalyser.`;
+    
+    if (pctGRR >= 10 && pctGRR <= 30) {
+      verdictBg = 'bg-amber-50 text-amber-805 border-amber-250 border-amber-200';
+      verdictTitle = 'Mätsystemet har MARGINELL status! ⚠️';
+      verdictDesc = `Gage R&R är ${pctGRR.toFixed(1)}% (mellan 10% och 30%). Kan godtas beroende på mätningens kritiska natur och tillhörande kostnad för förbättringar.`;
+    } else if (pctGRR > 30) {
+      verdictBg = 'bg-red-50 text-red-800 border-red-250 border-red-200';
+      verdictTitle = 'Mätsystemet är INTE ACCEPTABELT! ❌';
+      verdictDesc = `Gage R&R är ${pctGRR.toFixed(1)}% (överstiger 30%). Mätvariationen är helt dominant! Det är kritiskt att utreda felkällor (instruktioner, kalibrering eller mätnoggrannhet) innan vidare analys.`;
+    }
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-sky-600" /> MSA Gage R&R-kalkylator
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-sky-50 text-sky-600 border border-sky-100 uppercase tracking-wider mt-1 inline-block">
+              Mätsystemanalys (Repeterbarhet & Reproducerbarhet)
+            </span>
+            <p className="text-sm text-slate-500 mt-1">{description}</p>
+          </div>
+          <button
+            onClick={loadPepsiGageExample}
+            className="text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg border border-blue-200 transition-all flex items-center gap-1.5 shadow-sm self-start"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> Ladda Pepsi-mätdata
+          </button>
+        </div>
+
+        {/* Info text box */}
+        <p className="text-xs text-slate-500 mb-4">
+          Fyll i mätningar gjorda av 2 oberoende operatörer, där båda mäter 3 olika komponenter slumpmässigt i 2 turer vardera (Trial 1 & 2). Verktyget beräknar utrustningens repeterbarhet (EV) samt operatörernas reproducerbarhet (AV).
+        </p>
+
+        {/* Matrix inputs table */}
+        <div className="overflow-x-auto border border-slate-200 rounded-xl mb-6 shadow-sm">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase transition-all">
+                <th className="p-3">Operatör & Komponent</th>
+                <th className="p-3 text-center">Komponent 1</th>
+                <th className="p-3 text-center">Komponent 2</th>
+                <th className="p-3 text-center">Komponent 3</th>
+                <th className="p-3 bg-slate-100/60 text-center">Medel</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-150 divide-slate-100">
+              {/* Operator A row 1 */}
+              <tr>
+                <td className="p-3 font-semibold text-slate-700">Operatör A - Tur 1</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.a1_1 !== undefined ? fields.a1_1 : '10.1'}
+                    onChange={(e) => updateGageField('a1_1', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.a2_1 !== undefined ? fields.a2_1 : '12.4'}
+                    onChange={(e) => updateGageField('a2_1', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.a3_1 !== undefined ? fields.a3_1 : '15.0'}
+                    onChange={(e) => updateGageField('a3_1', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center bg-slate-50/50 font-mono text-slate-500 font-semibold" rowSpan={2}>
+                  {grandMeanA.toFixed(3)}
+                </td>
+              </tr>
+              {/* Operator A row 2 */}
+              <tr>
+                <td className="p-3 font-semibold text-slate-700">Operatör A - Tur 2</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.a1_2 !== undefined ? fields.a1_2 : '10.2'}
+                    onChange={(e) => updateGageField('a1_2', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.a2_2 !== undefined ? fields.a2_2 : '12.3'}
+                    onChange={(e) => updateGageField('a2_2', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.a3_2 !== undefined ? fields.a3_2 : '15.1'}
+                    onChange={(e) => updateGageField('a3_2', e.target.value)}
+                  />
+                </td>
+              </tr>
+
+              {/* Operator B row 1 */}
+              <tr className="border-t-2 border-slate-200">
+                <td className="p-3 font-semibold text-slate-700">Operatör B - Tur 1</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.b1_1 !== undefined ? fields.b1_1 : '10.3'}
+                    onChange={(e) => updateGageField('b1_1', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.b2_1 !== undefined ? fields.b2_1 : '12.5'}
+                    onChange={(e) => updateGageField('b2_1', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.b3_1 !== undefined ? fields.b3_1 : '14.8'}
+                    onChange={(e) => updateGageField('b3_1', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center bg-slate-50/50 font-mono text-slate-500 font-semibold" rowSpan={2}>
+                  {grandMeanB.toFixed(3)}
+                </td>
+              </tr>
+              {/* Operator B row 2 */}
+              <tr>
+                <td className="p-3 font-semibold text-slate-700">Operatör B - Tur 2</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.b1_2 !== undefined ? fields.b1_2 : '10.2'}
+                    onChange={(e) => updateGageField('b1_2', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.b2_2 !== undefined ? fields.b2_2 : '12.6'}
+                    onChange={(e) => updateGageField('b2_2', e.target.value)}
+                  />
+                </td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    value={fields.b3_2 !== undefined ? fields.b3_2 : '15.0'}
+                    onChange={(e) => updateGageField('b3_2', e.target.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Verdict Box Banner */}
+        <div className={`p-4 rounded-xl border mb-6 ${verdictBg}`}>
+          <h4 className="font-bold text-sm mb-1">{verdictTitle}</h4>
+          <p className="text-xs leading-relaxed">{verdictDesc}</p>
+        </div>
+
+        {/* Mathematical summary breakdown metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+            <span className="text-[10px] uppercase font-bold text-slate-500 block">Repeatability (EV)</span>
+            <span className="text-lg font-bold text-slate-800 font-mono block mt-0.5">{ev.toFixed(4)}</span>
+            <span className="text-[10px] text-slate-400">Maskin/Utrustningens fel</span>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+            <span className="text-[10px] uppercase font-bold text-slate-500 block">Reproducibility (AV)</span>
+            <span className="text-lg font-bold text-slate-800 font-mono block mt-0.5">{av.toFixed(4)}</span>
+            <span className="text-[10px] text-slate-400">Operatörens mätfel</span>
+          </div>
+
+          <div className="bg-slate-55 bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+            <span className="text-[10px] uppercase font-bold text-slate-500 block">Total Gage R&R (GRR)</span>
+            <span className="text-lg font-bold text-slate-800 font-mono block mt-0.5">{grr.toFixed(4)}</span>
+            <span className="text-[10px] text-slate-400">Kombinerat mätsystemfel</span>
+          </div>
+
+          <div className="bg-blue-50/50 border border-blue-100 p-3.5 rounded-xl">
+            <span className="text-[10px] uppercase font-bold text-blue-600 block">% Gage R&R</span>
+            <span className="text-lg font-bold text-blue-700 font-mono block mt-0.5">{pctGRR.toFixed(1)}%</span>
+            <span className="text-[10px] text-blue-500">Andel av processvariation</span>
+          </div>
+        </div>
+
+        {/* Optional notes */}
+        <div className="mb-4 space-y-1.5">
+          <label className="block text-xs font-semibold text-slate-600 uppercase">Analyskommentarer / Slutsatser</label>
+          <textarea
+            className="w-full min-h-[75px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-sm bg-slate-50"
+            placeholder="Skriv dina kommentarer om mätvariationen..."
+            value={notes}
+            onChange={(e) => {
+              setNotes(e.target.value);
+              handleSave(items, fields, e.target.value);
+            }}
+          />
+        </div>
+
+        {/* Footer controls */}
+        <div className="flex items-center justify-between border-t border-slate-150 pt-4 mt-2">
+          <span className="text-xs text-slate-450 text-slate-400">
+            {saveSuccess ? (
+              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+                <CheckCircle className="w-4 h-4" /> Sparat till mätdatabasen!
+              </span>
+            ) : (
+              'Kalkylatorn sparar automatiskt ifyllda siffror'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(items, fields, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara mätning
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE TOOL: Design of Experiments / Doe 2^2 Full Factorial (t_doe)
+  // ----------------------------------------------------
+  if (toolId === 't_doe' && !children) {
+    const fAName = fields.factorAName || 'Smälttemperatur';
+    const fALow = fields.factorALow || '140 °C (-1)';
+    const fAHigh = fields.factorAHigh || '180 °C (+1)';
+    const fBName = fields.factorBName || 'Huvudflödestryck';
+    const fBLow = fields.factorBLow || '2.0 Bar (-1)';
+    const fBHigh = fields.factorBHigh || '4.0 Bar (+1)';
+
+    const y1 = parseFloat(fields.y1 !== undefined ? fields.y1 : '24.5');
+    const y2 = parseFloat(fields.y2 !== undefined ? fields.y2 : '45.2');
+    const y3 = parseFloat(fields.y3 !== undefined ? fields.y3 : '26.8');
+    const y4 = parseFloat(fields.y4 !== undefined ? fields.y4 : '52.7');
+
+    // Calculations of general effects
+    const meanY = (y1 + y2 + y3 + y4) / 4;
+    const effectA = ((y2 + y4) - (y1 + y3)) / 2; // Average change when A is High vs Low
+    const effectB = ((y3 + y4) - (y1 + y2)) / 2; // Average change when B is High vs Low
+    const effectAB = ((y4 + y1) - (y2 + y3)) / 2; // Interaction effect
+
+    const updateDOEField = (key: string, val: any) => {
+      const up = { ...fields, [key]: val };
+      setFields(up);
+      handleSave(items, up, notes);
+    };
+
+    const loadDOEExample = () => {
+      const ex = {
+        factorAName: 'Munstyckestemp',
+        factorALow: '160 °C (Låg)',
+        factorAHigh: '190 °C (Hög)',
+        factorBName: 'Fylltryck',
+        factorBLow: '2.5 Bar (Låg)',
+        factorBHigh: '3.5 Bar (Hög)',
+        y1: '12.4', // Låg A, Låg B
+        y2: '28.6', // Hög A, Låg B  -> Stark effekt A!
+        y3: '14.2', // Låg A, Hög B
+        y4: '34.8', // Hög A, Hög B
+      };
+      setFields(ex);
+      handleSave(items, ex, notes);
+    };
+
+    // Determine optimal recipe based on direction of effects (maximizing the objective)
+    const optA = effectA > 0 ? 'HIGH (+1)' : 'LOW (-1)';
+    const optALabel = effectA > 0 ? fAHigh : fALow;
+    const optB = effectB > 0 ? 'HIGH (+1)' : 'LOW (-1)';
+    const optBLabel = effectB > 0 ? fBHigh : fBLow;
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <Sliders className="w-5 h-5 text-emerald-600" /> 2² Full Faktoriellt DOE-verktyg
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider mt-1 inline-block">
+              Försöksplanering (Design of Experiments)
+            </span>
+            <p className="text-sm text-slate-500 mt-1">{description}</p>
+          </div>
+          <button
+            onClick={loadDOEExample}
+            className="text-xs font-semibold px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5 shadow-sm self-start"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> Ladda Flaskförseglingsexempel
+          </button>
+        </div>
+
+        {/* Configurations input cells card */}
+        <div className="bg-slate-50 border border-slate-200/80 p-4 rounded-xl mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <h4 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b pb-1 dark:border-slate-100">Faktor A (T.ex. Temperatur)</h4>
+            <div>
+              <label className="block text-[10px] text-slate-500 uppercase font-bold">Namn på Faktor A</label>
+              <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fAName} onChange={(e) => updateDOEField('factorAName', e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-[10px] text-slate-400 font-bold uppercase">Låg nivå (-1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fALow} onChange={(e) => updateDOEField('factorALow', e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-[10px] text-slate-400 font-bold uppercase">Hög nivå (+1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fAHigh} onChange={(e) => updateDOEField('factorAHigh', e.target.value)} />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b pb-1 dark:border-slate-100">Faktor B (T.ex. Tryck)</h4>
+            <div>
+              <label className="block text-[10px] text-slate-500 uppercase font-bold">Namn på Faktor B</label>
+              <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fBName} onChange={(e) => updateDOEField('factorBName', e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-[10px] text-slate-400 font-bold uppercase">Låg nivå (-1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fBLow} onChange={(e) => updateDOEField('factorBLow', e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-[10px] text-slate-400 font-bold uppercase">Hög nivå (+1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fBHigh} onChange={(e) => updateDOEField('factorBHigh', e.target.value)} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Run design matrix to gather Y data */}
+        <h4 className="text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Genomförda försök & Resultat:</h4>
+        <div className="overflow-x-auto border border-slate-200 rounded-xl mb-6 shadow-sm">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase">
+                <th className="p-3">Körning</th>
+                <th className="p-3">Faktor A: {fAName}</th>
+                <th className="p-3">Faktor B: {fBName}</th>
+                <th className="p-3 text-center">Mätt Utfall (Respons Y)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr>
+                <td className="p-3 font-semibold text-slate-600">Run 1</td>
+                <td className="p-3 text-slate-500">Låg (-1): {fALow}</td>
+                <td className="p-3 text-slate-500">Låg (-1): {fBLow}</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    value={fields.y1 !== undefined ? fields.y1 : '24.5'}
+                    onChange={(e) => updateDOEField('y1', e.target.value)}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="p-3 font-semibold text-slate-600">Run 2</td>
+                <td className="p-3 text-slate-500">Hög (+1): {fAHigh}</td>
+                <td className="p-3 text-slate-500">Låg (-1): {fBLow}</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    value={fields.y2 !== undefined ? fields.y2 : '45.2'}
+                    onChange={(e) => updateDOEField('y2', e.target.value)}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="p-3 font-semibold text-slate-600">Run 3</td>
+                <td className="p-3 text-slate-500">Låg (-1): {fALow}</td>
+                <td className="p-3 text-slate-500">Hög (+1): {fBHigh}</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    value={fields.y3 !== undefined ? fields.y3 : '26.8'}
+                    onChange={(e) => updateDOEField('y3', e.target.value)}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="p-3 font-semibold text-slate-600">Run 4</td>
+                <td className="p-3 text-slate-500">Hög (+1): {fAHigh}</td>
+                <td className="p-3 text-slate-500">Hög (+1): {fBHigh}</td>
+                <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    value={fields.y4 !== undefined ? fields.y4 : '52.7'}
+                    onChange={(e) => updateDOEField('y4', e.target.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Calculated Statistical Factors & Recommendations */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* Effects summary analysis */}
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+            <h5 className="font-bold text-xs uppercase text-slate-600">Huvud- & Samspelsanalys</h5>
+            <div className="space-y-2 text-xs divide-y divide-slate-100">
+              <div className="flex justify-between items-center py-1.5">
+                <span className="font-semibold text-slate-700">Totalmedelvärde (Grand Mean):</span>
+                <span className="font-mono font-bold text-slate-800">{meanY.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center py-1.5">
+                <span className="font-semibold text-slate-700 flex items-center gap-1">
+                  Effekt av A ({fAName}):
+                </span>
+                <span className={`font-mono font-extrabold ${effectA >= 0 ? 'text-teal-600' : 'text-red-500'}`}>
+                  {effectA >= 0 ? '+' : ''}{effectA.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1.5">
+                <span className="font-semibold text-slate-700 flex items-center gap-1">
+                  Effekt av B ({fBName}):
+                </span>
+                <span className={`font-mono font-extrabold ${effectB >= 0 ? 'text-teal-600' : 'text-red-500'}`}>
+                  {effectB >= 0 ? '+' : ''}{effectB.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1.5">
+                <span className="font-semibold text-slate-700 flex items-center gap-1">
+                  Samspelseffekt (A x B):
+                </span>
+                <span className="font-mono font-bold text-blue-600">
+                  {effectAB >= 0 ? '+' : ''}{effectAB.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recommended optimization route */}
+          <div className="p-5 bg-gradient-to-br from-indigo-50 to-emerald-50 border border-emerald-150 border-indigo-200 rounded-xl flex flex-col justify-between">
+            <div>
+              <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest block mb-1">🎯 Optimerat Recept / Slutsats</span>
+              <h5 className="font-bold text-sm text-slate-800 mb-2">För att maximera utfall / respons Y:</h5>
+              <p className="text-xs leading-relaxed text-slate-600-600 text-slate-600">
+                Baserat på linjära beräkningar ska faktorerna ställas in enligt följande för att erhålla bästa möjliga processutfall:
+              </p>
+              <ul className="text-xs space-y-1.5 mt-3 font-semibold text-slate-800">
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-500">✔</span> {fAName}: <span className="text-emerald-700 font-extrabold">{optA}</span> ({optALabel})
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-emerald-500">✔</span> {fBName}: <span className="text-emerald-700 font-extrabold">{optB}</span> ({optBLabel})
+                </li>
+              </ul>
+            </div>
+            <p className="text-[10px] text-slate-400 italic mt-4">Statistiska samspel och krökning kan kräva mer avancerade full-faktoriella tester eller RSM vid komplexa flöden.</p>
+          </div>
+        </div>
+
+        {/* Optional text area */}
+        <div className="mb-4 space-y-1.5">
+          <label className="block text-xs font-semibold text-slate-600 uppercase">Observerade Slutsatser / Nästa Steg</label>
+          <textarea
+            className="w-full min-h-[75px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50"
+            placeholder="Skriv dina kommentarer om försöksresultaten..."
+            value={notes}
+            onChange={(e) => {
+              setNotes(e.target.value);
+              handleSave(items, fields, e.target.value);
+            }}
+          />
+        </div>
+
+        {/* Footer controls */}
+        <div className="flex items-center justify-between border-t border-slate-150 pt-4 mt-2">
+          <span className="text-xs text-slate-405 text-slate-400">
+            {saveSuccess ? (
+              <span className="text-emerald-600 font-semibold flex items-center gap-1 animate-pulse">
+                <CheckCircle className="w-4 h-4" /> Sparat försöksplaneringen!
+              </span>
+            ) : (
+              'Resultat och formler sparas till tillgångarna'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(items, fields, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara DOE-plan
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE TOOL: Pilotstudie / Pilot study Performance Tracker (t_pilot)
+  // ----------------------------------------------------
+  if (toolId === 't_pilot' && !children) {
+    const objective = fields.objective || 'Minska stillestånd för Pepsi linje 3 från 6.25% till under 2%';
+    const scope = fields.scope || 'Packlinje 3 nattskift under veckorna 18-19';
+    
+    // Checkboxes checklist
+    const chk1 = fields.chk1 === true;
+    const chk2 = fields.chk2 === true;
+    const chk3 = fields.chk3 === true;
+    const chk4 = fields.chk4 === true;
+    const chk5 = fields.chk5 === true;
+
+    // Metrics
+    const baseVal = parseFloat(fields.baseline || '6.25');
+    const targetVal = parseFloat(fields.target || '2.0');
+    const actualVal = parseFloat(fields.actual || '1.85');
+
+    // Calculations
+    const absoluteDelta = baseVal - actualVal;
+    const pctImprovement = baseVal > 0 ? (absoluteDelta / baseVal) * 100 : 0;
+    
+    // Target achieved progress percentage
+    const denominator = baseVal - targetVal;
+    const targetProgress = denominator !== 0 ? (absoluteDelta / denominator) * 100 : 100;
+
+    const updatePilotField = (key: string, val: any) => {
+      const up = { ...fields, [key]: val };
+      setFields(up);
+      handleSave(items, up, notes);
+    };
+
+    const loadPilotPepsiExample = () => {
+      const ex = {
+        objective: 'Verifiera vibrationsdämpande fötter och mjukvara på Pepsi OEE',
+        scope: 'Packningslinje 3 under nattskiftet och efterföljande fyllnadstester v.26-27',
+        chk1: true,
+        chk2: true,
+        chk3: true,
+        chk4: true,
+        chk5: false,
+        baseline: '6.25',
+        target: '2.00',
+        actual: '1.75'
+      };
+      setFields(ex);
+      handleSave(items, ex, notes);
+    };
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-indigo-600" /> Pilotstudie & Verifiering
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-wider mt-1 inline-block">
+              Provnings- & Pilotide-mallar
+            </span>
+            <p className="text-sm text-slate-500 mt-1">{description}</p>
+          </div>
+          <button
+            onClick={loadPilotPepsiExample}
+            className="text-xs font-semibold px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition-all flex items-center gap-1.5 shadow-sm self-start"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> Ladda Pepsi-pilotexempel
+          </button>
+        </div>
+
+        {/* Objectives input fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase">Mål & Syfte med Pilot</label>
+            <textarea
+              rows={2} className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg mt-1 focus:ring-2 focus:ring-indigo-500"
+              value={objective} onChange={(e) => updatePilotField('objective', e.target.value)}
+              placeholder="Vad ska piloten bevisa?"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 uppercase">Avgränsning / Scope för Pilot</label>
+            <textarea
+              rows={2} className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg mt-1 focus:ring-2 focus:ring-indigo-500"
+              value={scope} onChange={(e) => updatePilotField('scope', e.target.value)}
+              placeholder="Var och när sker piloten?"
+            />
+          </div>
+        </div>
+
+        {/* Milestones checklists */}
+        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2.5">📋 Milstolpar i Pilotstudien</h4>
+        <div className="p-4 bg-slate-50 border border-slate-200/60 rounded-xl space-y-3 mb-6 shadow-inner">
+          <label className="flex items-start gap-3 cursor-pointer select-none text-xs">
+            <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk1} onChange={(e) => updatePilotField('chk1', e.target.checked)} />
+            <div>
+              <span className="font-bold text-slate-700 block text-xs">1. Handhavandeutbildning (SOP)</span>
+              <span className="text-[11px] text-slate-400">Har operatörer samt berörda parter utbildats i den nya processmetoden?</span>
+            </div>
+          </label>
+
+          <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
+            <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk2} onChange={(e) => updatePilotField('chk2', e.target.checked)} />
+            <div>
+              <span className="font-bold text-slate-700 block text-xs">2. Säkrad back-up plan</span>
+              <span className="text-[11px] text-slate-400">Har vi en plan B för att snabbt avbryta piloten om allvarliga drift- eller maskinfel uppstår?</span>
+            </div>
+          </label>
+
+          <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
+            <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk3} onChange={(e) => updatePilotField('chk3', e.target.checked)} />
+            <div>
+              <span className="font-bold text-slate-700 block text-xs">3. Mätsystem kontrollera</span>
+              <span className="text-[11px] text-slate-400">Är mätutrustningen validerad (Gage R&R) så att mätpunkter under piloten är tillförlitliga?</span>
+            </div>
+          </label>
+
+          <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
+            <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk4} onChange={(e) => updatePilotField('chk4', e.target.checked)} />
+            <div>
+              <span className="font-bold text-slate-700 block text-xs">4. Avgränsad körning</span>
+              <span className="text-[11px] text-slate-400">Har pilotstudien driftsatts enligt plan i en avskärmad produktionsmiljö?</span>
+            </div>
+          </label>
+
+          <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
+            <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk5} onChange={(e) => updatePilotField('chk5', e.target.checked)} />
+            <div>
+              <span className="font-bold text-slate-700 block text-xs">5. Formellt godkännande</span>
+              <span className="text-[11px] text-slate-400">Är mätresultaten analyserade och verifierade för full-skalig driftsättning (Control)?</span>
+            </div>
+          </label>
+        </div>
+
+        {/* Mathematical performance parameters inputs */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+            <h5 className="font-bold text-xs uppercase text-slate-600">Mättal (Performance KPI)</h5>
+            <div className="space-y-2">
+              <div>
+                <label className="block text-[10px] text-slate-500">Nuläge (Post-analyse baseline)</label>
+                <input
+                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 rounded text-xs font-mono font-bold bg-white"
+                  value={fields.baseline || '6.25'} onChange={(e) => updatePilotField('baseline', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-slate-500">Önskat Mål (Target value)</label>
+                <input
+                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 rounded text-xs font-mono font-bold bg-white"
+                  value={fields.target || '2.0'} onChange={(e) => updatePilotField('target', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-slate-500">Uppmätt under Pilot (Actual)</label>
+                <input
+                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 rounded text-xs font-mono font-bold bg-white"
+                  value={fields.actual || '1.85'} onChange={(e) => updatePilotField('actual', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Graphical Progress Bar card */}
+          <div className="p-5 bg-indigo-50/55 border border-indigo-150 border-indigo-100 rounded-xl flex flex-col justify-between md:col-span-2">
+            <div>
+              <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest block mb-2">📊 Framgångsanalys</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-700">Minskning av felen (Defect Reduction %):</span>
+                  <span className="font-bold text-teal-650 font-mono text-teal-600">{pctImprovement.toFixed(1)}%</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-700">Måluppfyllelse (Pct of target achieved):</span>
+                  <span className="font-bold text-indigo-700 font-mono">{targetProgress.toFixed(1)}%</span>
+                </div>
+              </div>
+
+              {/* Real CSS progress bar */}
+              <div className="h-4 bg-slate-200 w-full mt-4 rounded-full overflow-hidden relative shadow-inner">
+                <div
+                  className="h-full bg-gradient-to-r from-teal-500 to-indigo-600 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, Math.max(0, targetProgress))}%` }}
+                />
+                <span className="absolute inset-0 flex items-center justify-center font-bold font-mono text-[9px] text-slate-700">
+                  {targetProgress.toFixed(0)}% av målet nått
+                </span>
+              </div>
+            </div>
+
+            {/* Verdict text */}
+            <div className="text-xs text-slate-700 mt-3 border-t pt-2 border-indigo-200/50">
+              {targetProgress >= 100 ? (
+                <span className="font-extrabold text-teal-600 flex items-center gap-1">
+                  🎉 PILOTEN ÄR HELT LYCKAD! Skillnaden är verifierad och redo för storskalig standardisering i Control-fasen!
+                </span>
+              ) : targetProgress >= 50 ? (
+                <span className="font-bold text-indigo-600 flex items-center gap-1">
+                  🔔 PILOTEN ÄR DELVIS LYCKAD. Vi har uppnått god progress men inte nått hela vägen till drömmålet. Finjustera metoden.
+                </span>
+              ) : (
+                <span className="font-bold text-red-500 flex items-center gap-1">
+                  ⚠ PILOTEN UPPNÅDDE INTE MÅLET. Vänligen utred felaktigheter i SOP eller bakomliggande rotorsaker i fiskbensdiagrammet.
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Optional notes commentary */}
+        <div className="mb-4 space-y-1.5">
+          <label className="block text-xs font-semibold text-slate-600 uppercase">Pilotstudie Logg & Kommentarer</label>
+          <textarea
+            className="w-full min-h-[75px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            placeholder="Skriv dina egna logganteckningar om pilottestet..."
+            value={notes}
+            onChange={(e) => {
+              setNotes(e.target.value);
+              handleSave(items, fields, e.target.value);
+            }}
+          />
+        </div>
+
+        {/* Footer controls */}
+        <div className="flex items-center justify-between border-t border-slate-150 pt-4 mt-2">
+          <span className="text-xs text-slate-410 text-slate-400">
+            {saveSuccess ? (
+              <span className="text-indigo-600 font-semibold flex items-center gap-1 animate-pulse">
+                <CheckCircle className="w-4 h-4" /> Sparat pilotstudien framgångsrikt!
+              </span>
+            ) : (
+              'Checklistor och framsteg sparas till din lokala hårddisk'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(items, fields, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara pilotdata
+          </button>
         </div>
       </div>
     );
@@ -2972,6 +3825,1116 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <button
             onClick={() => handleSave(activeSteps, fields, notes)}
             className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara till projekt
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE TOOL: Kano Model Classifier (t_kano)
+  // ----------------------------------------------------
+  if (toolId === 't_kano' && !children) {
+    const defaultKano = [
+      { id: 'k1', name: 'Snabbkopplad slangadapter', func: '1', dys: '3' },
+      { id: 'k2', name: 'Tätande gummipackning', func: '2', dys: '5' },
+      { id: 'k3', name: 'Aluminiumförstärkt hölje', func: '1', dys: '5' },
+      { id: 'k4', name: 'Skräddarsydd bärväska', func: '3', dys: '3' }
+    ];
+
+    const activeKano = items.length > 0 ? items : defaultKano;
+
+    const funcValueMap: Record<string, string> = { '1': '1', '2': '2', '3': '3', '4': '4', '5': '5' };
+    const kanoBetygLabelMap: Record<string, string> = {
+      '1': 'Gillar',
+      '2': 'Måste ha',
+      '3': 'Neutral',
+      '4': 'Leva med',
+      '5': 'Ogillar'
+    };
+
+    // Standard Kano evaluation matrix:
+    // Functional score: 1=Like (Gillar), 2=Must-be (Förväntar), 3=Neutral (Neutral), 4=Live with (Kan leva med), 5=Dislike (Ogillar)
+    // Dysfunctional score: 1=Like, 2=Must-be, 3=Neutral, 4=Live with, 5=Dislike
+    // Return M (Must-be), A (Attractive), O (One-dimensional), I (Indifferent), R (Reverse), Q (Questionable)
+    const classifyKanoRule = (f: string, d: string): { code: string; label: string; color: string } => {
+      const func = parseInt(funcValueMap[f] || f);
+      const dys = parseInt(funcValueMap[d] || d);
+
+      if (func === 1) {
+        if (dys === 1) return { code: 'Q', label: 'Tveksamt (Q)', color: 'bg-indigo-100 text-indigo-700' };
+        if (dys === 2 || dys === 3 || dys === 4) return { code: 'A', label: 'Hänförelse (A)', color: 'bg-emerald-100 text-emerald-800 font-bold border border-emerald-300' };
+        if (dys === 5) return { code: 'O', label: 'Prestanda (O)', color: 'bg-blue-100 text-blue-800 font-bold border border-blue-300' };
+      }
+      if (func === 2 || func === 3 || func === 4) {
+        if (dys === 1) return { code: 'R', label: 'Omvänt (R)', color: 'bg-red-100 text-red-700' };
+        if (dys === 2 || dys === 3 || dys === 4) return { code: 'I', label: 'Ointressant (I)', color: 'bg-slate-100 text-slate-500' };
+        if (dys === 5) return { code: 'M', label: 'Måste-krav (M)', color: 'bg-amber-100 text-amber-800 font-bold border border-amber-300' };
+      }
+      if (func === 5) {
+        if (dys === 5) return { code: 'Q', label: 'Tveksamt (Q)', color: 'bg-indigo-100 text-indigo-700' };
+        return { code: 'R', label: 'Omvänt (R)', color: 'bg-red-100 text-red-700' };
+      }
+      return { code: 'I', label: 'Ointressant (I)', color: 'bg-slate-100 text-slate-400' };
+    };
+
+    const handleAddKano = () => {
+      const name = draftInputs.kanoName || '';
+      const func = draftInputs.kanoFunc || '1';
+      const dys = draftInputs.kanoDys || '3';
+      if (name) {
+        const updated = [...activeKano, { id: Date.now().toString(), name, func, dys }];
+        setItems(updated);
+        setDraftInputs(prev => ({ ...prev, kanoName: '' }));
+        handleSave(updated, fields, notes);
+      }
+    };
+
+    const handleRemoveKano = (id: string) => {
+      const updated = activeKano.filter(x => x.id !== id);
+      setItems(updated);
+      handleSave(updated, fields, notes);
+    };
+
+    const loadKanoExample = () => {
+      const ex = [
+        { id: '1', name: 'Luftkonditionering i hytt', func: '2', dys: '5' },
+        { id: '2', name: 'Inbyggt Bluetooth-ljudsystem', func: '1', dys: '3' },
+        { id: '3', name: 'Bränsleförbrukning reducerad med 15%', func: '1', dys: '5' },
+        { id: '4', name: 'Mugghållare (extra stor)', func: '3', dys: '3' },
+        { id: '5', name: 'Sätesvärmare bak', func: '1', dys: '4' }
+      ];
+      setItems(ex);
+      handleSave(ex, fields, notes);
+    };
+
+    const categorySummary = activeKano.reduce((acc, item) => {
+      const res = classifyKanoRule(item.func, item.dys).code;
+      acc[res] = (acc[res] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-indigo-600" /> Kano Kundtillfredsställelsemodell
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mt-1 inline-block">
+              Kundfokus (VOC-prioritering)
+            </span>
+            <p className="text-xs text-slate-500 mt-1">{description}</p>
+          </div>
+          <button
+            onClick={loadKanoExample}
+            className="text-xs font-semibold px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition-all flex items-center gap-1.5 shadow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> Ladda exempel
+          </button>
+        </div>
+
+        {/* Kano classification cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl mb-6 border border-slate-150">
+          <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
+            <span className="text-[10px] text-emerald-600 font-extrabold uppercase font-mono block">A: Hänförelse-krav</span>
+            <span className="text-2xl font-black text-slate-800 block">{categorySummary['A'] || 0}</span>
+            <span className="text-[9px] text-slate-400">Skapar stor förtjusning</span>
+          </div>
+          <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
+            <span className="text-[10px] text-blue-600 font-extrabold uppercase font-mono block">O: Prestanda-krav</span>
+            <span className="text-2xl font-black text-slate-800 block">{categorySummary['O'] || 0}</span>
+            <span className="text-[9px] text-slate-400">Ju mer desto nöjdare kund</span>
+          </div>
+          <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
+            <span className="text-[10px] text-amber-600 font-extrabold uppercase font-mono block">M: Måste-krav</span>
+            <span className="text-2xl font-black text-slate-800 block">{categorySummary['M'] || 0}</span>
+            <span className="text-[9px] text-slate-400">Tas för givet (kritisk risk)</span>
+          </div>
+          <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
+            <span className="text-[10px] text-slate-500 font-extrabold uppercase font-mono block">I: Ointressanta</span>
+            <span className="text-2xl font-black text-slate-800 block">{categorySummary['I'] || 0}</span>
+            <span className="text-[9px] text-slate-400">Det kvittar för kunden</span>
+          </div>
+        </div>
+
+        {/* Add item bar */}
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Lägg till ny egenskap & märk betyg</h4>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <div className="md:col-span-5">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-5">Kundkrav / Egenskap</label>
+              <input
+                type="text"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                placeholder="T.ex. Slitstark ytlackering..."
+                value={draftInputs.kanoName || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, kanoName: e.target.value }))}
+              />
+            </div>
+            <div className="md:col-span-3">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Närvarande (Funktionell)</label>
+              <select
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none"
+                value={draftInputs.kanoFunc || '1'}
+                onChange={(e) => setDraftInputs(p => ({ ...p, kanoFunc: e.target.value }))}
+              >
+                <option value="1">1: Jag gillar det</option>
+                <option value="2">2: Det måste vara så</option>
+                <option value="3">3: Jag är neutral</option>
+                <option value="4">4: Jag kan leva med det</option>
+                <option value="5">5: Jag ogillar det</option>
+              </select>
+            </div>
+            <div className="md:col-span-3">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Frånvarande (Dysfunktionell)</label>
+              <select
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none"
+                value={draftInputs.kanoDys || '3'}
+                onChange={(e) => setDraftInputs(p => ({ ...p, kanoDys: e.target.value }))}
+              >
+                <option value="1">1: Jag gillar det</option>
+                <option value="2">2: Det måste vara så</option>
+                <option value="3">3: Jag är neutral</option>
+                <option value="4">4: Jag kan leva med det</option>
+                <option value="5">5: Jag ogillar det</option>
+              </select>
+            </div>
+            <div className="md:col-span-1">
+              <button
+                onClick={handleAddKano}
+                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shrink-0 flex items-center justify-center transition-all cursor-pointer"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Requirements interactive table */}
+        <div className="overflow-x-auto border border-slate-200 rounded-xl mb-6 shadow-sm">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 font-bold text-slate-600 uppercase text-[10px]">
+                <th className="p-3 w-8">#</th>
+                <th className="p-3">Produkt-/Tjänsteegenskap</th>
+                <th className="p-3 text-center">Närvarande</th>
+                <th className="p-3 text-center">Frånvarande</th>
+                <th className="p-3 text-center w-36">Klassificering</th>
+                <th className="p-3 text-center w-12">Åtgärd</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-150">
+              {activeKano.map((k, idx) => {
+                const spec = classifyKanoRule(k.func, k.dys);
+                const showFuncText = kanoBetygLabelMap[k.func] || k.func;
+                const showDysText = kanoBetygLabelMap[k.dys] || k.dys;
+                return (
+                  <tr key={k.id} className="hover:bg-slate-50/50">
+                    <td className="p-3 text-slate-400 font-semibold font-mono">{idx + 1}</td>
+                    <td className="p-3 font-semibold text-slate-800">{k.name}</td>
+                    <td className="p-3 text-center text-slate-600 font-medium">{showFuncText}</td>
+                    <td className="p-3 text-center text-slate-600 font-medium">{showDysText}</td>
+                    <td className="p-3 text-center">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide block text-center uppercase ${spec.color}`}>
+                        {spec.label}
+                      </span>
+                    </td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => handleRemoveKano(k.id)}
+                        className="text-slate-400 hover:text-red-600 transition-colors p-1"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mb-6 space-y-1.5">
+          <textarea
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            placeholder="Skriv kommentarer eller slutsatser gällande er Kano-analys..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="text-xs text-slate-400">
+            {saveSuccess ? (
+              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+                <Check className="w-4 h-4" /> Sparat Kano-analys till projektet!
+              </span>
+            ) : (
+              'Klicka för att spara resultat'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(activeKano, fields, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara till projekt
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE CALCULATOR: DPMO & Process Sigma Level (t_dpmo & t_sigma)
+  // ----------------------------------------------------
+  if ((toolId === 't_dpmo' || toolId === 't_sigma') && !children) {
+    const units = parseFloat(fields.units || '10000');
+    const defects = parseFloat(fields.defects || '120');
+    const opps = parseFloat(fields.opps || '5');
+
+    // Calculations
+    const totalOpps = Math.max(1, units * opps);
+    const dpo = Math.max(0, defects / totalOpps);
+    const dpmo = dpo * 1000000;
+    const dpu = defects / Math.max(1, units);
+    const yieldPct = Math.max(0.0, Math.min(100.0, (1 - dpo) * 100));
+
+    // Calculate Sigma level (with 1.5 sigma shift standard)
+    let calculatedSigma = 0;
+    if (dpo >= 0.999999) {
+      calculatedSigma = 0.5; // low limit
+    } else if (dpo <= 0.0000001) {
+      calculatedSigma = 6.0; // high limit
+    } else {
+      // Normal Inverse approximation
+      const zScore = normSinv(1 - dpo);
+      calculatedSigma = zScore + 1.5;
+    }
+
+    if (calculatedSigma < 0.5) calculatedSigma = 0.5;
+    if (calculatedSigma > 6.0) calculatedSigma = 6.0;
+
+    const setFieldLocal = (key: string, v: string) => {
+      const updated = { ...fields, [key]: v };
+      setFields(updated);
+    };
+
+    const loadPepsiDPMO = () => {
+      const up = { units: '25000', defects: '45', opps: '6' };
+      setFields(up);
+      handleSave(items, up, notes);
+    };
+
+    // SVG Gauge calculation
+    const gaugeAngle = -180 + ((calculatedSigma - 1) / (6 - 1)) * 180;
+    const arrowRotationTransform = `rotate(${gaugeAngle} 100 100)`;
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-emerald-600" /> DPMO & Process Sigma-kalkylator
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 mt-1 inline-block">
+              Statistiska Mätetal (Defekttaktsanalys)
+            </span>
+            <p className="text-xs text-slate-500 mt-1">{description}</p>
+          </div>
+          <button
+            onClick={loadPepsiDPMO}
+            className="text-xs font-semibold px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5 shadow-sm focus:outline-none"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> Pepsi Flaskfyllning exempel
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          {/* Inputs Column */}
+          <div className="lg:col-span-5 space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-widest border-b border-slate-150 pb-1.5">Mätdata Parametrar</h4>
+            
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">Totala enheter inspekterade (N)</label>
+                <input
+                  type="number"
+                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm font-bold font-mono"
+                  value={units}
+                  onChange={(e) => setFieldLocal('units', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">Antal defekter funna (D)</label>
+                <input
+                  type="number"
+                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm font-bold font-mono text-red-650"
+                  value={defects}
+                  onChange={(e) => setFieldLocal('defects', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">Felmöjligheter per enhet (O)</label>
+                <input
+                  type="number"
+                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm font-bold font-mono text-slate-700"
+                  value={opps}
+                  onChange={(e) => setFieldLocal('opps', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="bg-slate-900 text-slate-300 p-3 rounded-lg text-[11px] font-mono leading-relaxed">
+              <span className="font-bold text-amber-400 block mb-1">📐 Formel för DPMO:</span>
+              DPMO = (Defekter / (Enheter × Möjligheter)) × 1 000 000 = <br/>
+              <b>{(defects).toLocaleString('sv-SE')} / ({(units).toLocaleString('sv-SE')} × {opps}) × 10⁶</b>
+            </div>
+          </div>
+
+          {/* Results dashboard */}
+          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* Visual Gauge */}
+            <div className="p-4 bg-slate-900 text-white rounded-xl flex flex-col items-center justify-between border border-slate-950">
+              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold block mb-1">Process Sigma-nivå</span>
+              
+              <div className="relative w-40 h-24 mt-2">
+                <svg viewBox="0 0 200 100" className="w-full h-full">
+                  <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#dc2626" strokeWidth="20" strokeLinecap="round" />
+                  <path d="M 40 96 A 70 70 0 0 1 160 96" fill="none" stroke="#f59e0b" strokeWidth="15" />
+                  <path d="M 60 96 A 55 55 0 0 1 140 96" fill="none" stroke="#10b981" strokeWidth="15" />
+                  <polygon points="100,10 95,95 105,95" fill="#f8fafc" transform={arrowRotationTransform} className="origin-[100px_95px] transition-transform duration-700" />
+                  <circle cx="100" cy="95" r="8" fill="#e2e8f0" />
+                </svg>
+                <div className="absolute bottom-1 left-0 right-0 text-center">
+                  <span className="text-3xl font-black font-mono text-emerald-400">{calculatedSigma.toFixed(2)}σ</span>
+                  <p className="text-[9px] text-slate-400 font-semibold uppercase">Inkl. 1.5σ skift</p>
+                </div>
+              </div>
+
+              <div className="text-[10px] bg-slate-800 text-slate-200 p-2.5 rounded-lg text-center w-full mt-2 leading-relaxed">
+                {calculatedSigma >= 5.0 
+                  ? '🌟 Gränsar till perfektion! Exceptionell processkontroll.' 
+                  : calculatedSigma >= 3.8 
+                    ? '👍 Mycket robust kvalitet. Fortsätt bevaka spridningen.' 
+                    : '⚠️ Behöver förbättras kraftigt! Sänk risken och utför kapabilitetskontroll.'}
+              </div>
+            </div>
+
+            {/* Numeric Indicators */}
+            <div className="space-y-3">
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block">DPMO (Defects Per Million Opps)</span>
+                <span className="text-2xl font-black font-mono text-emerald-600 block mt-0.5">
+                  {dpmo >= 100000 ? `${(dpmo/1000).toFixed(0)}k` : dpmo.toLocaleString('sv-SE', { maximumFractionDigits: 0 })}
+                </span>
+                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                  <div className="bg-emerald-500 h-full" style={{ width: `${Math.min(100, (1 - (dpmo/1000000)) * 100)}%` }} />
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block">Process Yield (Utbyte %)</span>
+                <span className="text-2xl font-black font-mono text-blue-600 block mt-0.5">
+                  {yieldPct.toFixed(4)}%
+                </span>
+                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                  <div className="bg-blue-500 h-full" style={{ width: `${yieldPct}%` }} />
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block">Defekter Per Enhet (DPU)</span>
+                <span className="text-2xl font-black font-mono text-orange-600 block mt-0.5">
+                  {dpu.toFixed(4)}
+                </span>
+                <span className="text-[9px] text-slate-400 block">Genomsnittligt antal fel per producerad flaska/enhet.</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div className="mb-6 space-y-1.5">
+          <textarea
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-555 focus:ring-emerald-500 text-sm bg-slate-50"
+            placeholder="Skriv kommentarer om DPMO och Process Sigma mätetalen..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="text-xs text-slate-400">
+            {saveSuccess ? (
+              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+                <Check className="w-4 h-4" /> Sparat framgångsrikt till mätetal!
+              </span>
+            ) : (
+              'Kom ihåg att trycka på Spara'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(items, { units, defects, opps }, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara till projekt
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE TOOL: Voice of Customer & CTQ Translation Matrix (t_voc & t_ctq)
+  // ----------------------------------------------------
+  if ((toolId === 't_voc' || toolId === 't_ctq') && !children) {
+    const defaultVoc = [
+      { id: 'v1', voc: 'Korken ska vara enkel att öppna men flaskan får absolut inte läcka.', driver: 'Gängningsprecision & tätningsgrepp', ctq: 'Öppningsmoment mellan 1.5 och 2.8 Nm', status: 'Pass' },
+      { id: 'v2', voc: 'Läsken ska upplevas extremt bubblig och fräsch vid konsumtion.', driver: 'Kolsyretryck vid buteljering', ctq: 'Kolsyrenivå: 4.0 ± 0.2 volymer CO2', status: 'Review' },
+      { id: 'v3', voc: 'Snabba leveransbesked vid grossistbeställningar.', driver: 'Affärssystemets orderhantering', ctq: 'Orderbekräftelse skickad inom ≤ 15 minuter', status: 'In Progress' }
+    ];
+
+    const activeVoc = items.length > 0 ? items : defaultVoc;
+
+    const handleAddVoc = () => {
+      const voc = draftInputs.vocText || '';
+      const driver = draftInputs.vocDriver || '';
+      const ctq = draftInputs.vocCtq || '';
+      const status = draftInputs.vocStatus || 'In Progress';
+      
+      if (voc) {
+        const updated = [...activeVoc, { id: Date.now().toString(), voc, driver, ctq, status }];
+        setItems(updated);
+        setDraftInputs(prev => ({ ...prev, vocText: '', vocDriver: '', vocCtq: '', vocStatus: 'In Progress' }));
+        handleSave(updated, fields, notes);
+      }
+    };
+
+    const handleRemoveVoc = (id: string) => {
+      const updated = activeVoc.filter(x => x.id !== id);
+      setItems(updated);
+      handleSave(updated, fields, notes);
+    };
+
+    const loadVocExample = () => {
+      setItems(defaultVoc);
+      handleSave(defaultVoc, fields, notes);
+    };
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-indigo-600" /> VOC & CTQ Translation Tree
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mt-1 inline-block">
+              Från Kundbehov till Mätbara Kvalitetskrav
+            </span>
+            <p className="text-xs text-slate-500 mt-1">{description}</p>
+          </div>
+          <button
+            onClick={loadVocExample}
+            className="text-xs font-semibold px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition-all flex items-center gap-1.5 shadow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> Ladda standardexempel
+          </button>
+        </div>
+
+        {/* VOC Form */}
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Översätt kundens röst (VOC) till CTQ</h4>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <div className="md:col-span-4">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Voice of Customer (Kundbehov)</label>
+              <textarea
+                rows={1}
+                className="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs resize-none"
+                placeholder="T.ex: Flaskan ska inte läcka i liggande läge..."
+                value={draftInputs.vocText || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, vocText: e.target.value }))}
+              />
+            </div>
+            <div className="md:col-span-3">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Kvalitets-Driver (Processfokus)</label>
+              <input
+                type="text"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                placeholder="T.ex: Kapsylens tätningsgrepp"
+                value={draftInputs.vocDriver || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, vocDriver: e.target.value }))}
+              />
+            </div>
+            <div className="md:col-span-3">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">CTQ (Mätbart specifikt krav)</label>
+              <input
+                type="text"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                placeholder="T.ex: Kolsyrehållfasthet ≥ 98% efter 60 dagar"
+                value={draftInputs.vocCtq || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, vocCtq: e.target.value }))}
+              />
+            </div>
+            <div className="md:col-span-1.5">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-2">Status</label>
+              <select
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none"
+                value={draftInputs.vocStatus || 'In Progress'}
+                onChange={(e) => setDraftInputs(p => ({ ...p, vocStatus: e.target.value }))}
+              >
+                <option value="Pass">Pass (Godkänd)</option>
+                <option value="In Progress">Processing (Pågår)</option>
+                <option value="Review">Review (Analys)</option>
+              </select>
+            </div>
+            <div className="md:col-span-0.5">
+              <button
+                onClick={handleAddVoc}
+                className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg flex items-center justify-center transition-all shadow-sm cursor-pointer"
+              >
+                <Plus className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Requirements Tree table mapping */}
+        <div className="space-y-4 mb-6">
+          {activeVoc.map((item) => {
+            const statusClass = 
+              item.status === 'Pass' ? 'bg-green-50 text-green-700 border border-green-200' :
+              item.status === 'Review' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+              'bg-blue-50 text-blue-700 border border-blue-200';
+            return (
+              <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch p-4 bg-white border border-slate-205 rounded-xl border border-slate-200 relative hover:shadow-md transition-all">
+                {/* VOC segment */}
+                <div className="md:col-span-4 bg-slate-50/50 p-3 rounded-lg flex flex-col justify-between">
+                  <div>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono block">VOC - Kundens Röst</span>
+                    <p className="text-xs font-semibold text-slate-800 leading-relaxed mt-1">"{item.voc}"</p>
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-2 font-bold">Steg 1 (Identifiera behov)</span>
+                </div>
+
+                {/* Arrow */}
+                <div className="hidden md:flex md:col-span-0.5 items-center justify-center text-slate-300">
+                  <ChevronRight className="w-5 h-5" />
+                </div>
+
+                {/* Driver segment */}
+                <div className="md:col-span-3 bg-indigo-50/10 p-3 rounded-lg flex flex-col justify-between">
+                  <div>
+                    <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-widest font-mono block font-extrabold">Kvalitets-Driver</span>
+                    <p className="text-xs text-slate-700 font-medium leading-relaxed mt-1 font-semibold">{item.driver || 'Ej definierad'}</p>
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-2 font-bold">Steg 2 (Hitta fokusområde)</span>
+                </div>
+
+                {/* Arrow */}
+                <div className="hidden md:flex md:col-span-0.5 items-center justify-center text-slate-300">
+                  <ChevronRight className="w-5 h-5" />
+                </div>
+
+                {/* CTQ Specific requirement */}
+                <div className="md:col-span-4 bg-emerald-50/10 p-3 rounded-lg border border-dashed border-emerald-300/30 flex flex-col justify-between">
+                  <div className="flex justify-between items-start gap-1">
+                    <div>
+                      <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-widest font-mono block font-extrabold">CTQ (Mätbart Krav)</span>
+                      <p className="text-xs text-emerald-950 leading-relaxed mt-1 font-black font-mono">{item.ctq || 'Ej specificerad'}</p>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase shrink-0 ${statusClass}`}>
+                      {item.status}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-2 font-bold">Steg 3 (Specificera tolerans)</span>
+                </div>
+
+                {/* Delete button absolutely positioned on card */}
+                <button
+                  onClick={() => handleRemoveVoc(item.id)}
+                  className="absolute top-2 right-2 text-slate-300 hover:text-red-500 p-1 font-bold text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mb-6 space-y-1.5">
+          <textarea
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            placeholder="Skriv dina övergripande tankar om er CTQ toleransdefinition och mätmetoder..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="text-xs text-slate-400">
+            {saveSuccess ? (
+              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+                <Check className="w-4 h-4" /> Sparat framgångsrikt till CTQ-databas!
+              </span>
+            ) : (
+              'Kom ihåg att trycka på Spara'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(activeVoc, fields, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara till projekt
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE TOOL: Poka-Yoke Error Proofing (t_pokayoke)
+  // ----------------------------------------------------
+  if (toolId === 't_pokayoke' && !children) {
+    const defaultPoka = [
+      { id: 'p1', process: 'Påskruvning av kapsyl på PET-flaska', error: 'Snedgängad eller lös kapsyl passerar osedd', type: 'Control', solution: 'Vridmomentsensor integrerad i skruvhuvud stannar bandet direkt vid avvikelse.', sevBefore: 7, occBefore: 6, detBefore: 8, sevAfter: 7, occAfter: 1, detAfter: 1 }
+    ];
+
+    const activePoka = items.length > 0 ? items : defaultPoka;
+
+    const calculateRPN = (sev: number, occ: number, det: number) => sev * occ * det;
+
+    const handleAddPoka = () => {
+      const process = draftInputs.pokaProc || '';
+      const error = draftInputs.pokaErr || '';
+      const type = draftInputs.pokaType || 'Control';
+      const solution = draftInputs.pokaSol || '';
+      
+      const sevBefore = parseInt(draftInputs.pokaSevB || '5');
+      const occBefore = parseInt(draftInputs.pokaOccB || '5');
+      const detBefore = parseInt(draftInputs.pokaDetB || '5');
+
+      const sevAfter = parseInt(draftInputs.pokaSevA || '5');
+      const occAfter = parseInt(draftInputs.pokaOccA || '1');
+      const detAfter = parseInt(draftInputs.pokaDetA || '1');
+      
+      if (process && solution) {
+        const updated = [...activePoka, { 
+          id: Date.now().toString(), 
+          process, error, type, solution,
+          sevBefore, occBefore, detBefore,
+          sevAfter, occAfter, detAfter
+        }];
+        setItems(updated);
+        setDraftInputs(prev => ({ 
+          ...prev, 
+          pokaProc: '', pokaErr: '', pokaSol: '',
+          pokaSevB: '5', pokaOccB: '5', pokaDetB: '5',
+          pokaSevA: '5', pokaOccA: '1', pokaDetA: '1' 
+        }));
+        handleSave(updated, fields, notes);
+      }
+    };
+
+    const handleRemovePoka = (id: string) => {
+      const updated = activePoka.filter(x => x.id !== id);
+      setItems(updated);
+      handleSave(updated, fields, notes);
+    };
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-indigo-700" /> Poka-Yoke / Felsäkringsanalys
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 mt-1 inline-block">
+              Förbättra processer (Utforma bort fel)
+            </span>
+            <p className="text-xs text-slate-500 mt-1">{description}</p>
+          </div>
+        </div>
+
+        {/* Input Form for Poka-Yoke */}
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Ny Felsäkringsåtgärd & Riskreduktion</h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+            <div className="md:col-span-2">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Processsteg & Felkälla</label>
+              <input
+                type="text"
+                className="w-full p-2 bg-white border border-slate-200 rounded text-xs"
+                placeholder="T.ex: Inmatning av pall"
+                value={draftInputs.pokaProc || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, pokaProc: e.target.value }))}
+              />
+              <input
+                type="text"
+                className="w-full p-2 bg-white border border-slate-200 rounded text-xs mt-1.5"
+                placeholder="T.ex: Pallen placeras sned"
+                value={draftInputs.pokaErr || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, pokaErr: e.target.value }))}
+              />
+            </div>
+
+            <div className="md:col-span-1">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-1">Poka-Yoke Typ</label>
+              <select
+                className="w-full p-2 bg-white border border-slate-200 rounded text-xs"
+                value={draftInputs.pokaType || 'Control'}
+                onChange={(e) => setDraftInputs(p => ({ ...p, pokaType: e.target.value }))}
+              >
+                <option value="Control">Shutoff (Stoppar)</option>
+                <option value="Warning">Warning (Varnar)</option>
+                <option value="Contact">Contact (Mekanisk)</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-3">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Teknisk Felsäkringslösning</label>
+              <textarea
+                rows={2}
+                className="w-full p-2.5 bg-white border border-slate-200 rounded text-xs resize-none"
+                placeholder="T.ex: Styrklackar svetsas på bandet som mekaniskt tvingar pallen i rätt spår..."
+                value={draftInputs.pokaSol || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, pokaSol: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-2 border-t border-slate-200">
+            {/* Before parameters */}
+            <div className="bg-red-50/50 p-2.5 rounded-lg border border-red-100 flex flex-col gap-1.5 md:col-span-3">
+              <span className="text-[10px] font-bold text-red-800 uppercase">Risk FÖRE felsäkring</span>
+              <div className="grid grid-cols-3 gap-1.5">
+                <div>
+                  <label className="text-[9px] text-slate-500 block">Allvar (S)</label>
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaSevB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaSevB: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-[9px] text-slate-500 block">Sannol (O)</label>
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaOccB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaOccB: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-[9px] text-slate-500 block">Detekt (D)</label>
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaDetB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaDetB: e.target.value }))} />
+                </div>
+              </div>
+            </div>
+
+            {/* After parameters */}
+            <div className="bg-green-50/50 p-2.5 rounded-lg border border-green-200 flex flex-col gap-1.5 md:col-span-3 pb-2 relative">
+              <span className="text-[10px] font-bold text-green-800 uppercase">Risk EFTER felsäkring</span>
+              <div className="grid grid-cols-3 gap-1.5">
+                <div>
+                  <label className="text-[9px] text-slate-500 block">Allvar (S)</label>
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaSevA || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaSevA: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-[9px] text-slate-500 block">Sannol (O)</label>
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaOccA || '1'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaOccA: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-[9px] text-slate-500 block">Detekt (D)</label>
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaDetA || '1'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaDetA: e.target.value }))} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <button
+              onClick={handleAddPoka}
+              className="py-1.5 px-4 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-lg shrink-0 flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
+            >
+              <Plus className="w-4 h-4" /> Lägg till Poka-Yoke registrering
+            </button>
+          </div>
+        </div>
+
+        {/* List of active Poka-Yoke entries */}
+        <div className="space-y-4 mb-6">
+          {activePoka.map((p) => {
+            const rpnBefore = calculateRPN(p.sevBefore, p.occBefore, p.detBefore);
+            const rpnAfter = calculateRPN(p.sevAfter, p.occAfter, p.detAfter);
+            const riskReduction = Math.round(((rpnBefore - rpnAfter) / rpnBefore) * 100);
+
+            return (
+              <div key={p.id} className="p-4 bg-white border border-slate-200 rounded-xl relative hover:shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                  
+                  {/* Process details */}
+                  <div className="md:col-span-8 space-y-2">
+                    <span className="text-[9px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full uppercase tracking-wider inline-block">
+                      {p.type || 'Felsäkring'}
+                    </span>
+                    <h4 className="text-xs font-bold text-slate-800">Processsteg: {p.process}</h4>
+                    <p className="text-xs text-slate-500 italic"><b>Potentiellt Fel:</b> {p.error}</p>
+                    <div className="p-3 bg-indigo-50/10 border border-indigo-100 rounded-lg text-xs font-semibold leading-relaxed text-slate-705">
+                      <span className="text-[10px] text-indigo-700 font-bold block mb-0.5">💡 Teknisk lösning:</span>
+                      {p.solution}
+                    </div>
+                  </div>
+
+                  {/* Risk analysis charts prior versus after */}
+                  <div className="md:col-span-4 flex flex-col justify-between border-t md:border-t-0 md:border-l border-slate-100/70 pt-3 md:pt-0 md:pl-4">
+                    <div className="grid grid-cols-2 gap-2 text-center text-xs font-bold">
+                      <div className="bg-red-50 p-2 rounded-lg border border-red-100">
+                        <span className="text-[9px] text-red-700 block uppercase">RPN FÖRE</span>
+                        <div className="text-lg font-black font-mono text-red-650">{rpnBefore}</div>
+                        <span className="text-[8px] text-slate-400 font-mono">S:{p.sevBefore} × O:{p.occBefore} × D:{p.detBefore}</span>
+                      </div>
+                      <div className="bg-green-50 p-2 rounded-lg border border-green-150">
+                        <span className="text-[9px] text-green-700 block uppercase">RPN EFTER</span>
+                        <div className="text-lg font-black font-mono text-green-750">{rpnAfter}</div>
+                        <span className="text-[8px] text-slate-400 font-mono font-medium">S:{p.sevAfter} × O:{p.occAfter} × D:{p.detAfter}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-900 text-white text-center p-2 rounded-lg mt-3">
+                      <span className="text-[9px] uppercase tracking-wider text-slate-400 font-mono block">Riskreducering</span>
+                      <span className="text-base font-black text-emerald-400 font-mono">{riskReduction}%</span>
+                    </div>
+                  </div>
+
+                </div>
+
+                <button
+                  onClick={() => handleRemovePoka(p.id)}
+                  className="absolute top-2 right-2 text-slate-300 hover:text-red-500 p-1"
+                >
+                  ✕
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mb-6 space-y-1.5">
+          <textarea
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-700 text-sm bg-slate-50"
+            placeholder="Skriv dina egna slutsatser eller reaktionsplaner gällande felsäkringen..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="text-xs text-slate-400">
+            {saveSuccess ? (
+              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+                <Check className="w-4 h-4" /> Sparat framgångsrikt!
+              </span>
+            ) : (
+              'Kom ihåg att trycka på Spara'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(activePoka, fields, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+          >
+            <Save className="w-4 h-4" /> Spara till projekt
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // SPECIALIZED INTERACTIVE TOOL: Stakeholder Analysis (t_stakeholder)
+  // ----------------------------------------------------
+  if (toolId === 't_stakeholder' && !children) {
+    const defaultStakeholders = [
+      { id: 'st1', label: 'Produktionschef', influence: 'Hög', interest: 'Hög', support: 'Förespråkare', strategy: 'Visa konkreta Cpk-resultat och resursbesparing.' },
+      { id: 'st2', label: 'Operatörer på lina 3', influence: 'Låg', interest: 'Hög', support: 'Neutral', strategy: 'Involvera tidigt i 5S-revisioner och lyssna på ergonomiaspekter.' },
+      { id: 'st3', label: 'Inköpsdirektör', influence: 'Hög', interest: 'Låg', support: 'Neutral', strategy: 'Håll informerad angående val av underleverantörer.' }
+    ];
+
+    const activeStakeholders = items.length > 0 ? items : defaultStakeholders;
+
+    // Classification based on interest & influence
+    const classifyStakeholder = (inf: string, intr: string) => {
+      if (inf === 'Hög') {
+        return intr === 'Hög' ? 'Key Player - Hantera nära' : 'Keep Satisfied - Håll tillfredsställd';
+      }
+      return intr === 'Hög' ? 'Keep Informed - Håll informerad' : 'Minimal Effort - Övervaka sporadiskt';
+    };
+
+    const handleAddStakeholder = () => {
+      const label = draftInputs.stLabel || '';
+      const influence = draftInputs.stInfluence || 'Hög';
+      const interest = draftInputs.stInterest || 'Hög';
+      const support = draftInputs.stSupport || 'Neutral';
+      const strategy = draftInputs.stStrategy || '';
+      
+      if (label) {
+        const updated = [...activeStakeholders, { id: Date.now().toString(), label, influence, interest, support, strategy }];
+        setItems(updated);
+        setDraftInputs(prev => ({ ...prev, stLabel: '', stStrategy: '' }));
+        handleSave(updated, fields, notes);
+      }
+    };
+
+    const handleRemoveStakeholder = (id: string) => {
+      const updated = activeStakeholders.filter(x => x.id !== id);
+      setItems(updated);
+      handleSave(updated, fields, notes);
+    };
+
+    return (
+      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-indigo-700" /> Intressentanalys & Makt/Intresse-matris
+            </h3>
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-150 mt-1 inline-block">
+              Projektomgivning (Define-fas)
+            </span>
+            <p className="text-xs text-slate-500 mt-1">{description}</p>
+          </div>
+        </div>
+
+        {/* Form add stakeholder */}
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Lägg till intressent och hanteringsstrategi</h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <div className="md:col-span-3">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Intressent / Roll</label>
+              <input
+                type="text"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                placeholder="T.ex: Produktionsledare"
+                value={draftInputs.stLabel || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, stLabel: e.target.value }))}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Beslutsmakt (Inflytande)</label>
+              <select className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none" value={draftInputs.stInfluence || 'Hög'} onChange={(e) => setDraftInputs(p => ({ ...p, stInfluence: e.target.value }))}>
+                <option value="Hög">Hög makt</option>
+                <option value="Låg">Låg makt</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Engagemangsgrad (Intresse)</label>
+              <select className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none" value={draftInputs.stInterest || 'Hög'} onChange={(e) => setDraftInputs(p => ({ ...p, stInterest: e.target.value }))}>
+                <option value="Hög">Höggradigt intresserad</option>
+                <option value="Låg">Låggradigt intresserad</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1">Nuvarande Inställning</label>
+              <select className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none" value={draftInputs.stSupport || 'Neutral'} onChange={(e) => setDraftInputs(p => ({ ...p, stSupport: e.target.value }))}>
+                <option value="Sponsor">Sponsor / Aktiv ledare</option>
+                <option value="Förespråkare">Förespråkare (Positiv)</option>
+                <option value="Neutral">Neutral</option>
+                <option value="Motståndare">Motståndare (Negativ)</option>
+              </select>
+            </div>
+            <div className="md:col-span-3">
+              <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-3">Hanteringsstrategi (Åtgärd)</label>
+              <input
+                type="text"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                placeholder="T.ex: Skicka månadsbrev etc."
+                value={draftInputs.stStrategy || ''}
+                onChange={(e) => setDraftInputs(p => ({ ...p, stStrategy: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end pt-1">
+            <button
+              onClick={handleAddStakeholder}
+              className="py-1.5 px-4 bg-indigo-700 hover:bg-indigo-800 text-white font-bold rounded-lg shrink-0 flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
+            >
+              <Plus className="w-4 h-4" /> Lägg till intressent
+            </button>
+          </div>
+        </div>
+
+        {/* Interactive List of Registered Stakeholders */}
+        <div className="space-y-3 mb-6">
+          {activeStakeholders.map((s) => {
+            const cls = classifyStakeholder(s.influence, s.interest);
+            const supportColor = 
+              s.support === 'Sponsor' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold' :
+              s.support === 'Förespråkare' ? 'bg-green-50 text-green-700 border border-green-200' :
+              s.support === 'Motståndare' ? 'bg-rose-100 text-rose-800 border border-rose-300 font-bold' :
+              'bg-slate-100 text-slate-600 border border-slate-200';
+            
+            const positionClass = 
+              cls.startsWith('Key Player') ? 'bg-indigo-900 text-white font-bold border border-indigo-950' :
+              cls.startsWith('Keep Satisfied') ? 'bg-sky-50 text-sky-800 border border-sky-200' :
+              cls.startsWith('Keep Informed') ? 'bg-amber-50 text-amber-800 border border-amber-200' :
+              'bg-slate-50 text-slate-500 border border-slate-200';
+
+            return (
+              <div key={s.id} className="p-4 bg-white border border-slate-200 rounded-xl relative hover:shadow-sm grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                <div className="md:col-span-4">
+                  <h4 className="text-xs font-black text-slate-800">{s.label}</h4>
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    <span className="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-200">
+                      Makt: {s.influence}
+                    </span>
+                    <span className="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-200">
+                      Intresse: {s.interest}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="md:col-span-5 space-y-1">
+                  <span className="text-[8px] font-black uppercase text-slate-400 font-mono block">Intressentstrategi:</span>
+                  <p className="text-xs text-slate-700 font-medium leading-relaxed">{s.strategy || 'Hantera löpande enligt standardförfarande.'}</p>
+                </div>
+
+                <div className="md:col-span-3 flex flex-row md:flex-col gap-1.5 items-end justify-between md:justify-center border-t md:border-t-0 border-dashed border-slate-100 pt-3 md:pt-0">
+                  <span className={`px-2 py-1 rounded-full text-[9px] uppercase text-center block w-full max-w-[150px] font-bold ${supportColor}`}>
+                    {s.support}
+                  </span>
+                  <span className={`px-2 py-1 rounded text-[9px] font-extrabold uppercase text-center block w-full max-w-[150px] ${positionClass}`}>
+                    {cls}
+                  </span>
+                </div>
+
+                <button onClick={() => handleRemoveStakeholder(s.id)} className="absolute top-2 right-2 text-slate-300 hover:text-red-500">
+                  ✕
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mb-6 space-y-1.5">
+          <textarea
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-700 text-sm bg-slate-50 shadow-inner rounded-xl"
+            placeholder="Skriv dina egna slutsatser eller hanteringsplaner gällande intressentanalysen..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+          <span className="text-xs text-slate-400">
+            {saveSuccess ? (
+              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+                <Check className="w-4 h-4" /> Sparat framgångsrikt!
+              </span>
+            ) : (
+              'Kom ihåg att trycka på Spara'
+            )}
+          </span>
+          <button
+            onClick={() => handleSave(activeStakeholders, fields, notes)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
           >
             <Save className="w-4 h-4" /> Spara till projekt
           </button>
