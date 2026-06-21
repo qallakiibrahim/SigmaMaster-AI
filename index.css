@@ -2,7 +2,15 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #f1f5f9;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body:not(.dark) {
+  background-color: #f1f5f9; /* slate-100 */
+}
+
+body.dark {
+  background-color: #020617; /* slate-950 */
 }
 
 /* Custom styles for high-contrast visibility */

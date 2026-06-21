@@ -19,7 +19,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot, updateDoc, setDoc, collection, query, orderBy, limit } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from './services/firebase';
 import { TOOLS_LIBRARY } from './data/toolsData';
-import { Activity, Target, Search, Settings, ShieldCheck, BarChart3, ChevronRight, Menu, RotateCcw, Map, LayoutDashboard, FileText, Users, Wifi, WifiOff, LogOut, Clock } from 'lucide-react';
+import { Activity, Target, Search, Settings, ShieldCheck, BarChart3, ChevronRight, Menu, RotateCcw, Map, LayoutDashboard, FileText, Users, Wifi, WifiOff, LogOut, Clock, Sun, Moon } from 'lucide-react';
 
 // Mock Initial Data
 const initialProject: ProjectData = {
@@ -69,6 +69,23 @@ const App: React.FC = () => {
   const [authLoading, setAuthLoading] = useState(true);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return 'light';
+  });
+
+  // Track and apply theme changes across the HTML layers
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   // Check Auth on Mount & Subscribe to auth state
   useEffect(() => {
@@ -341,11 +358,11 @@ const App: React.FC = () => {
   const isProjectView = currentView !== View.PROJECT_LIST;
 
   return (
-    <div className="flex h-screen bg-slate-100 overflow-hidden">
+    <div className="flex h-screen bg-slate-100 dark:bg-slate-950 text-slate-950 dark:text-slate-100 overflow-hidden transition-colors duration-200">
       {/* Sidebar */}
       {isProjectView && (
         <aside 
-          className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-slate-900 text-slate-300 transition-all duration-300 flex flex-col shadow-2xl z-10 print:hidden`}
+          className={`${isSidebarOpen ? 'w-64' : 'w-20'} bg-slate-900 dark:bg-slate-900 text-slate-300 transition-all duration-300 flex flex-col shadow-2xl z-10 print:hidden`}
         >
           <div className="p-6 flex items-center gap-3 border-b border-slate-800">
             <div className="bg-blue-600 p-2 rounded-lg">
@@ -385,7 +402,7 @@ const App: React.FC = () => {
                 onClick={() => setCurrentView(item.id as View)}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all ${
                   isActive 
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' 
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-950/50' 
                     : 'hover:bg-slate-800 text-slate-400 hover:text-white'
                 }`}
               >
@@ -419,58 +436,66 @@ const App: React.FC = () => {
           onSaveVersion={saveVersion}
         />
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-8 shadow-sm print:hidden">
+        <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 h-16 flex items-center justify-between px-8 shadow-sm print:hidden transition-colors duration-200">
           <div className="flex items-center gap-4">
              {isProjectView && project ? (
                  <>
                     <button 
                         onClick={() => setCurrentView(View.PROJECT_LIST)}
-                        className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors"
+                        className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 dark:text-slate-500 transition-colors"
                         title="Tillbaka till projekt"
                     >
                         <RotateCcw className="w-5 h-5" />
                     </button>
-                    <div className="h-8 w-[1px] bg-slate-200"></div>
-                    <h2 className="text-xl font-bold text-slate-800">{project.name}</h2>
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full border uppercase ${isPhaseView ? 'bg-blue-50 text-blue-700 border-blue-100' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                    <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+                    <h2 className="text-xl font-bold text-slate-800 dark:text-white">{project.name}</h2>
+                    <span className={`px-3 py-1 text-xs font-bold rounded-full border uppercase ${isPhaseView ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'}`}>
                     {currentView}
                     </span>
                  </>
              ) : (
                 <div className="flex items-center gap-3">
                     <BarChart3 className="text-blue-600 h-6 w-6" />
-                    <h1 className="font-bold text-slate-900 tracking-tight">SigmaMaster AI</h1>
+                    <h1 className="font-bold text-slate-900 dark:text-white tracking-tight">SigmaMaster AI</h1>
                 </div>
              )}
              
-             <div className={`flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${isConnected ? 'text-emerald-600 bg-emerald-50' : 'text-slate-400 bg-slate-50'}`}>
+             <div className={`flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${isConnected ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20' : 'text-slate-400 bg-slate-50 dark:bg-slate-800/30'}`}>
                 {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
                 {isConnected ? 'Live Sync' : 'Offline'}
              </div>
           </div>
           <div className="flex items-center gap-6">
             <button 
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              title={theme === 'dark' ? 'Byt till ljust tema' : 'Byt till mörkt tema'}
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-500 animate-pulse" /> : <Moon className="w-5 h-5 text-slate-500" />}
+            </button>
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+            <button 
               onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-              className={`p-2 rounded-lg transition-colors ${isHistoryOpen ? 'bg-blue-50 text-blue-600' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
+              className={`p-2 rounded-lg transition-colors ${isHistoryOpen ? 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300' : 'text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200'}`}
               title="Visa Historik"
             >
               <Clock className="w-5 h-5" />
             </button>
-            <div className="h-8 w-[1px] bg-slate-200"></div>
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
             <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold shadow-sm" title="Du">DU</div>
-                <div className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold shadow-sm" title="Kvalitetsansvarig">KA</div>
-                <div className="w-8 h-8 rounded-full bg-amber-500 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold shadow-sm" title="Produktionschef">PC</div>
+                <div className="w-8 h-8 rounded-full bg-blue-500 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] text-white font-bold shadow-sm" title="Du">DU</div>
+                <div className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] text-white font-bold shadow-sm" title="Kvalitetsansvarig">KA</div>
+                <div className="w-8 h-8 rounded-full bg-amber-500 border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] text-white font-bold shadow-sm" title="Produktionschef">PC</div>
             </div>
-            <div className="h-8 w-[1px] bg-slate-200"></div>
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
             <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
-                <div className="text-sm font-medium text-slate-900">{user.name}</div>
-                <div className="text-xs text-slate-500">Black Belt Engineer</div>
+                <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{user.name}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Black Belt Engineer</div>
                 </div>
                 <button 
                   onClick={handleLogout}
-                  className="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-sm flex items-center justify-center text-slate-500 font-bold hover:bg-red-50 hover:text-red-500 transition-colors group"
+                  className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-white dark:border-slate-900 shadow-sm flex items-center justify-center text-slate-500 dark:text-slate-350 font-bold hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-500 transition-colors group"
                   title="Logga ut"
                 >
                   <LogOut className="w-5 h-5 group-hover:block hidden" />

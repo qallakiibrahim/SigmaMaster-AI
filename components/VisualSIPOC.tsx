@@ -26,11 +26,11 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({ title, column, color, data, updateItem, removeItem, addItem }) => (
-  <div className="flex-1 min-w-[180px] bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+  <div className="flex-1 min-w-[180px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
     <div className={`p-3 ${color} text-white font-bold text-center text-sm uppercase tracking-wider`}>
       {title}
     </div>
-    <div className="p-3 flex-1 space-y-2 bg-slate-50/50">
+    <div className="p-3 flex-1 space-y-2 bg-slate-50/50 dark:bg-slate-950/20">
       {data[column].map((item, idx) => (
         <div key={`${column}-${idx}`} className="group relative">
           <input
@@ -38,7 +38,7 @@ const Column: React.FC<ColumnProps> = ({ title, column, color, data, updateItem,
             value={item}
             onChange={(e) => updateItem(column, idx, e.target.value)}
             placeholder="..."
-            className="w-full p-2 pr-8 text-xs border border-slate-200 rounded bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            className="w-full p-2 pr-8 text-xs border border-slate-200 dark:border-slate-850 rounded bg-white dark:bg-slate-950 text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
           />
           <button
             onClick={() => removeItem(column, idx)}
@@ -50,7 +50,7 @@ const Column: React.FC<ColumnProps> = ({ title, column, color, data, updateItem,
       ))}
       <button
         onClick={() => addItem(column)}
-        className="w-full py-2 border-2 border-dashed border-slate-200 rounded text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase"
+        className="w-full py-2 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded text-slate-400 dark:text-slate-500 hover:border-blue-300 dark:hover:border-blue-800 hover:text-blue-500 transition-all flex items-center justify-center gap-1 text-[10px] font-bold uppercase"
       >
         <Plus className="w-3 h-3" /> Lägg till
       </button>
@@ -114,9 +114,9 @@ const VisualSIPOC: React.FC<Props> = ({ project, updateProject }) => {
         <Column title="Customers" column="customers" color="bg-indigo-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
       </div>
       
-      <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-        <h4 className="text-xs font-bold text-blue-800 uppercase mb-2">Tips för SIPOC</h4>
-        <p className="text-xs text-blue-700 leading-relaxed">
+      <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-xl border border-blue-100 dark:border-blue-900/60">
+        <h4 className="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase mb-2">Tips för SIPOC</h4>
+        <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
           Börja med <strong>Process</strong> (5-7 steg) och <strong>Outputs</strong>. Identifiera sedan vem som tar emot dessa (Customers) och vad som krävs för att starta processen (Inputs/Suppliers).
         </p>
       </div>

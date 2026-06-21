@@ -114,9 +114,9 @@ const Dashboard: React.FC<Props> = ({ project, onViewChange }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Phase Progress List */}
             <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-blue-600" /> DMAIC Status
+                <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                        <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" /> DMAIC Status
                     </h3>
                     <div className="space-y-5">
                         {phases.map((phase) => {
@@ -128,17 +128,17 @@ const Dashboard: React.FC<Props> = ({ project, onViewChange }) => {
                                 <div key={phase.id} className="group cursor-pointer" onClick={() => onViewChange(phase.id)}>
                                     <div className="flex justify-between items-end mb-2">
                                         <div className="flex items-center gap-3">
-                                            <div className={`p-2 rounded-lg ${isCompleted ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'}`}>
+                                            <div className={`p-2 rounded-lg ${isCompleted ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
                                                 <phase.icon className="w-4 h-4" />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-bold text-slate-800">{phase.title}</div>
-                                                <div className="text-[10px] text-slate-400 uppercase font-bold">{status}</div>
+                                                <div className="text-sm font-bold text-slate-800 dark:text-white">{phase.title}</div>
+                                                <div className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-bold">{status}</div>
                                             </div>
                                         </div>
-                                        <div className="text-sm font-mono font-bold text-slate-600">{progress}%</div>
+                                        <div className="text-sm font-mono font-bold text-slate-600 dark:text-slate-350">{progress}%</div>
                                     </div>
-                                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                                         <div 
                                             className="h-full transition-all duration-1000 ease-out rounded-full"
                                             style={{ width: `${progress}%`, backgroundColor: phase.color }}
@@ -152,21 +152,21 @@ const Dashboard: React.FC<Props> = ({ project, onViewChange }) => {
 
                 {/* Metrics Summary */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-wider">
-                            <ListChecks className="w-4 h-4 text-emerald-600" /> Förbättringsåtgärder
+                    <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wider">
+                            <ListChecks className="w-4 h-4 text-emerald-600 dark:text-emerald-450" /> Förbättringsåtgärder
                         </h3>
                         <div className="flex items-center justify-between">
                             <div className="space-y-1">
-                                <div className="text-3xl font-black text-slate-800">{improvementStats.total}</div>
-                                <div className="text-xs text-slate-500">Totalt identifierade</div>
+                                <div className="text-3xl font-black text-slate-800 dark:text-white">{improvementStats.total}</div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400">Totalt identifierade</div>
                             </div>
                             <div className="text-right space-y-1">
-                                <div className="text-lg font-bold text-emerald-600">{improvementStats.done} Klara</div>
-                                <div className="text-xs text-slate-400">{improvementStats.inProgress} Pågående</div>
+                                <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{improvementStats.done} Klara</div>
+                                <div className="text-xs text-slate-400 dark:text-slate-500">{improvementStats.inProgress} Pågående</div>
                             </div>
                         </div>
-                        <div className="mt-4 w-full bg-slate-100 h-1.5 rounded-full overflow-hidden flex">
+                        <div className="mt-4 w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden flex">
                             <div 
                                 className="bg-emerald-500 h-full" 
                                 style={{ width: `${(improvementStats.done / (improvementStats.total || 1)) * 100}%` }}
@@ -178,20 +178,20 @@ const Dashboard: React.FC<Props> = ({ project, onViewChange }) => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-wider">
-                            <AlertTriangle className="w-4 h-4 text-amber-600" /> Riskanalys (FMEA)
+                    <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2 uppercase tracking-wider">
+                            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-450" /> Riskanalys (FMEA)
                         </h3>
                         <div className="flex items-center justify-between">
                             <div className="space-y-1">
-                                <div className="text-3xl font-black text-slate-800">
+                                <div className="text-3xl font-black text-slate-800 dark:text-white">
                                     {project.toolData['t_fmea']?.rows?.length || 0}
                                 </div>
-                                <div className="text-xs text-slate-500">Identifierade risker</div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400">Identifierade risker</div>
                             </div>
                             <div className="text-right">
-                                <div className="text-xs font-bold text-slate-400 uppercase mb-1">Högsta RPN</div>
-                                <div className="text-2xl font-mono font-bold text-red-600">
+                                <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Högsta RPN</div>
+                                <div className="text-2xl font-mono font-bold text-red-600 dark:text-red-400">
                                     {Math.max(...(project.toolData['t_fmea']?.rows?.map((r: any) => r.rpn) || [0]))}
                                 </div>
                             </div>
@@ -202,34 +202,34 @@ const Dashboard: React.FC<Props> = ({ project, onViewChange }) => {
 
             {/* Sidebar Stats */}
             <div className="space-y-6">
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider">Mätdata (Y)</h3>
-                    <div className="h-40 w-full">
+                <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 uppercase tracking-wider">Mätdata (Y)</h3>
+                    <div className="h-40 w-full animate-fadeIn">
                         <ResponsiveContainer width="100%" height="100%">
                             <ReBarChart data={project.measurements.slice(-10).map((m, i) => ({ name: i, val: m }))}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
                                 <XAxis dataKey="name" hide />
                                 <YAxis hide domain={['auto', 'auto']} />
-                                <ReTooltip />
+                                <ReTooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '8px' }} />
                                 <Bar dataKey="val" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                             </ReBarChart>
                         </ResponsiveContainer>
                     </div>
                     <div className="mt-4 grid grid-cols-2 gap-4">
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <div className="text-[10px] text-slate-400 font-bold uppercase">Medelvärde</div>
-                            <div className="text-lg font-mono font-bold text-slate-700">
+                        <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                            <div className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase">Medelvärde</div>
+                            <div className="text-lg font-mono font-bold text-slate-700 dark:text-slate-300">
                                 {(project.measurements.reduce((a, b) => a + b, 0) / (project.measurements.length || 1)).toFixed(2)}
                             </div>
                         </div>
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <div className="text-[10px] text-slate-400 font-bold uppercase">Antal</div>
-                            <div className="text-lg font-mono font-bold text-slate-700">{project.measurements.length}</div>
+                        <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                            <div className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase">Antal</div>
+                            <div className="text-lg font-mono font-bold text-slate-700 dark:text-slate-300">{project.measurements.length}</div>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-blue-600 p-6 rounded-2xl text-white shadow-lg shadow-blue-200">
+                <div className="bg-blue-600 p-6 rounded-2xl text-white shadow-lg shadow-blue-200 dark:shadow-none">
                     <h3 className="font-bold mb-2 flex items-center gap-2">
                         <ShieldCheck className="w-5 h-5" /> Nästa Steg
                     </h3>

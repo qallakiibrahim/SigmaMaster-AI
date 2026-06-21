@@ -114,8 +114,8 @@ För att lösa detta för din Vercel-sida eller denna miljö:
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-slate-900 dark:bg-slate-950 flex items-center justify-center p-4 transition-colors duration-200">
+      <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl border dark:border-slate-800 shadow-2xl overflow-hidden">
         <div className="p-8 bg-blue-600 text-white text-center">
           <div className="inline-block p-3 bg-white/20 rounded-xl mb-4">
             <BarChart3 className="h-8 w-8 text-white" />
@@ -127,22 +127,22 @@ För att lösa detta för din Vercel-sida eller denna miljö:
         <div className="p-8">
           {isForgotPassword ? (
             <div className="mb-6">
-              <h2 className="text-lg font-bold text-slate-800">Återställ lösenord</h2>
-              <p className="text-xs text-slate-500 mt-1">Ange ditt användarnamn och ditt nya önskade lösenord nedan.</p>
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white">Återställ lösenord</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Ange ditt användarnamn och ditt nya önskade lösenord nedan.</p>
             </div>
           ) : (
-            <div className="flex gap-4 mb-8 border-b border-slate-100 pb-2">
+            <div className="flex gap-4 mb-8 border-b border-slate-100 dark:border-slate-800 pb-2">
               <button
                 type="button"
                 onClick={() => { setIsLogin(true); setError(''); }}
-                className={`pb-2 text-sm font-bold uppercase tracking-wider transition-colors ${isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`pb-2 text-sm font-bold uppercase tracking-wider transition-colors ${isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-350'}`}
               >
                 Logga in
               </button>
               <button
                 type="button"
                 onClick={() => { setIsLogin(false); setError(''); }}
-                className={`pb-2 text-sm font-bold uppercase tracking-wider transition-colors ${!isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`pb-2 text-sm font-bold uppercase tracking-wider transition-colors ${!isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-350'}`}
               >
                 Skapa konto
               </button>
@@ -152,15 +152,15 @@ För att lösa detta för din Vercel-sida eller denna miljö:
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && !isForgotPassword && (
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Namn</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Namn</label>
                 <div className="relative">
-                  <UserIcon className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <UserIcon className="absolute left-3 top-3 h-4 w-4 text-slate-400 dark:text-slate-550" />
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
                     placeholder="Ditt namn"
                   />
                 </div>
@@ -168,32 +168,32 @@ För att lösa detta för din Vercel-sida eller denna miljö:
             )}
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Användarnamn</label>
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Användarnamn</label>
               <div className="relative">
-                <UserIcon className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <UserIcon className="absolute left-3 top-3 h-4 w-4 text-slate-400 dark:text-slate-550" />
                 <input
                   type="text"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                  className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
                   placeholder="användarnamn"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
                 {isForgotPassword ? 'Nytt Lösenord' : 'Lösenord'}
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-slate-400 dark:text-slate-550" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                  className="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
                   placeholder="••••••••"
                 />
               </div>
@@ -215,7 +215,7 @@ För att lösa detta för din Vercel-sida eller denna miljö:
             )}
 
             {error && (
-              <div className={`p-3 rounded-lg text-xs font-medium whitespace-pre-line ${error.includes('skapat') || error.includes('uppdaterats') ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+              <div className={`p-3 rounded-lg text-xs font-medium whitespace-pre-line ${error.includes('skapat') || error.includes('uppdaterats') ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300'}`}>
                 {error}
               </div>
             )}
@@ -239,16 +239,16 @@ För att lösa detta för din Vercel-sida eller denna miljö:
                 <>
                   <div className="relative my-4 flex items-center justify-center">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-200"></div>
+                      <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
                     </div>
-                    <span className="relative px-3 bg-white text-xs text-slate-400 uppercase font-medium">Eller</span>
+                    <span className="relative px-3 bg-white dark:bg-slate-900 text-xs text-slate-400 dark:text-slate-500 uppercase font-medium">Eller</span>
                   </div>
 
                   <button
                     type="button"
                     disabled={loading}
                     onClick={handleGoogleLogin}
-                    className="w-full py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-98 disabled:opacity-50 cursor-pointer text-sm"
+                    className="w-full py-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg font-bold transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-98 disabled:opacity-50 cursor-pointer text-sm"
                   >
                     <Chrome className="h-4 w-4 text-rose-500" />
                     <span>Logga in med Google</span>
@@ -272,10 +272,10 @@ För att lösa detta för din Vercel-sida eller denna miljö:
           </form>
 
           <div className="mt-8 text-center space-y-4">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 dark:text-slate-500">
               Genom att logga in godkänner du våra villkor för samarbete och datadelning.
             </p>
-            <div className="pt-4 border-t border-slate-100">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
               <p className="text-[10px] text-slate-500 italic">
                 Tips: Om du har problem med att logga in, testa att öppna appen i en ny flik för att tillåta cookies.
               </p>

@@ -44,24 +44,24 @@ const Tollgate: React.FC<Props> = ({ phase, project, updateProject }) => {
   };
 
   return (
-    <div className={`border-t-4 p-6 rounded-lg shadow-sm transition-colors ${isApproved ? 'bg-green-50 border-green-500' : 'bg-white border-slate-300'}`}>
+    <div className={`border-t-4 p-6 rounded-lg shadow-sm transition-colors ${isApproved ? 'bg-green-50 dark:bg-green-950/20 border-green-500' : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800'}`}>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             
             <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-xl font-bold text-slate-800">Tollgate: {phase} Review</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${isApproved ? 'bg-green-200 text-green-800' : 'bg-slate-200 text-slate-700'}`}>
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-white">Tollgate: {phase} Review</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${isApproved ? 'bg-green-200 dark:bg-green-905/40 text-green-800 dark:text-green-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}>
                         {status}
                     </span>
                 </div>
-                <p className="text-slate-600 mb-4">
+                <p className="text-slate-600 dark:text-slate-400 mb-4">
                     Verifiera att följande steg är klara innan du stänger fasen och går vidare.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {getChecklist().map((item, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm text-slate-700">
-                             <CheckCircle className={`w-4 h-4 ${isApproved ? 'text-green-600' : 'text-slate-300'}`} />
+                        <div key={i} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                             <CheckCircle className={`w-4 h-4 ${isApproved ? 'text-green-600' : 'text-slate-300 dark:text-slate-600'}`} />
                              {item}
                         </div>
                     ))}
@@ -72,7 +72,7 @@ const Tollgate: React.FC<Props> = ({ phase, project, updateProject }) => {
                 {isApproved ? (
                     <button 
                         onClick={handleReopen}
-                        className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-300 text-slate-600 rounded-md font-medium hover:bg-slate-50 transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-350 rounded-md font-medium hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors shadow-sm"
                     >
                         <Unlock className="w-4 h-4" /> Öppna Fas
                     </button>
@@ -84,7 +84,7 @@ const Tollgate: React.FC<Props> = ({ phase, project, updateProject }) => {
                         <Lock className="w-4 h-4" /> Godkänn Fas
                     </button>
                 )}
-                <span className="text-xs text-slate-400 mt-1">Signeras av Black Belt</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500 mt-1">Signeras av Black Belt</span>
             </div>
         </div>
     </div>
