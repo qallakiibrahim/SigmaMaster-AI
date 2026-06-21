@@ -58,8 +58,8 @@ const ImprovePhase: React.FC<Props> = ({ project, updateProject }) => {
         
         <ToolContainer toolId="t_brainstorm" project={project} updateProject={updateProject}>
         <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Improve: Lösningsgenerering & Åtgärder</h2>
-            <p className="text-slate-600 mb-6">Brainstorma fram lösningar och spåra implementering.</p>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Improve: Lösningsgenerering & Åtgärder</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">Brainstorma fram lösningar och spåra implementering.</p>
 
             <div className="flex gap-4 mb-8">
             <input
@@ -67,7 +67,7 @@ const ImprovePhase: React.FC<Props> = ({ project, updateProject }) => {
                 value={newAction}
                 onChange={(e) => setNewAction(e.target.value)}
                 placeholder="Beskriv en förbättringsåtgärd..."
-                className="flex-1 p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-green-500 outline-none"
+                className="flex-1 p-3 border border-slate-300 dark:border-slate-800 rounded-md bg-white dark:bg-slate-950 text-slate-800 dark:text-white focus:ring-2 focus:ring-green-500 outline-none"
             />
             <button
                 onClick={addAction}
@@ -79,23 +79,23 @@ const ImprovePhase: React.FC<Props> = ({ project, updateProject }) => {
 
             <div className="space-y-3">
             {project.improvements.length === 0 && (
-                <p className="text-slate-400 text-center py-8">Inga åtgärder planerade ännu.</p>
+                <p className="text-slate-400 dark:text-slate-500 text-center py-8">Inga åtgärder planerade ännu.</p>
             )}
             {project.improvements.map((imp) => (
                 <div
                 key={imp.id}
                 onClick={() => toggleStatus(imp.id)}
-                className="flex items-center p-4 border border-slate-100 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+                className="flex items-center p-4 border border-slate-100 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900/40 cursor-pointer transition-colors"
                 >
                 <div className="mr-4">
                     {getStatusIcon(imp.status)}
                 </div>
                 <div className="flex-1">
-                    <p className={`font-medium ${imp.status === 'Done' ? 'text-slate-400 line-through' : 'text-slate-800'}`}>
+                    <p className={`font-medium ${imp.status === 'Done' ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-800 dark:text-slate-200'}`}>
                     {imp.action}
                     </p>
                 </div>
-                <div className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 text-slate-500 uppercase tracking-wide">
+                <div className="text-xs font-semibold px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                     {imp.status}
                 </div>
                 </div>

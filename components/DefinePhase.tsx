@@ -58,23 +58,23 @@ const DefinePhase: React.FC<Props> = ({ project, updateProject }) => {
         {/* Project Charter Section - Full Width */}
         <ToolContainer toolId="t_charter" project={project} updateProject={updateProject} className="h-auto">
           <div className="space-y-6">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800 mb-1">Define: Project Charter</h2>
-                    <p className="text-slate-600">Grunden för projektet. Definiera problemet och målet tydligt.</p>
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">Define: Project Charter</h2>
+                    <p className="text-slate-400 dark:text-slate-400 text-sm">Grunden för projektet. Definiera problemet och målet tydligt.</p>
                 </div>
-                <div className="bg-blue-50 p-3 rounded-lg">
-                    <FileText className="w-6 h-6 text-blue-600" />
+                <div className="bg-blue-50 dark:bg-blue-950/30 p-3 rounded-lg">
+                    <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
             </div>
 
             <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Projektnamn</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Projektnamn</label>
                 <input
                 type="text"
                 value={project.name}
                 onChange={(e) => updateProject({ name: e.target.value })}
-                className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-lg font-medium"
+                className="w-full p-3 border border-slate-300 dark:border-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-lg font-medium bg-white dark:bg-slate-950 text-slate-800 dark:text-white"
                 placeholder="T.ex. Optimering av..."
                 />
             </div>
@@ -82,41 +82,41 @@ const DefinePhase: React.FC<Props> = ({ project, updateProject }) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column: Context */}
                 <div className="space-y-5">
-                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-2">
-                        <Briefcase className="w-5 h-5 text-slate-500" /> Strategisk Kontext
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                        <Briefcase className="w-5 h-5 text-slate-500 dark:text-slate-400" /> Strategisk Kontext
                     </h3>
                     
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Problemformulering</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Problemformulering</label>
                         <textarea
                         value={project.problemStatement}
                         onChange={(e) => updateProject({ problemStatement: e.target.value })}
                         rows={5}
-                        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-slate-50"
+                        className="w-full p-3 border border-slate-300 dark:border-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-zinc-200"
                         placeholder="Vad är felet? Var uppstår det? Hur ofta?"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Affärsnytta (Business Case)</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Affärsnytta (Business Case)</label>
                         <textarea
                         value={project.businessCase}
                         onChange={(e) => updateProject({ businessCase: e.target.value })}
                         rows={4}
-                        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-slate-50"
+                        className="w-full p-3 border border-slate-300 dark:border-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-zinc-200"
                         placeholder="Hur påverkar detta sista raden? Kostnader, intäkter, risker?"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Nyckelintressenter</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nyckelintressenter</label>
                         <div className="relative">
-                            <Users className="absolute top-3 left-3 w-4 h-4 text-slate-400" />
+                            <Users className="absolute top-3 left-3 w-4 h-4 text-slate-400 dark:text-slate-550" />
                             <input
                             type="text"
                             value={project.stakeholders}
                             onChange={(e) => updateProject({ stakeholders: e.target.value })}
-                            className="w-full p-3 pl-10 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                            className="w-full p-3 pl-10 border border-slate-300 dark:border-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-white dark:bg-slate-950 text-slate-800 dark:text-zinc-200"
                             placeholder="Sponsor, Processägare, Kunder..."
                             />
                         </div>
@@ -125,14 +125,14 @@ const DefinePhase: React.FC<Props> = ({ project, updateProject }) => {
 
                 {/* Right Column: Goals & AI */}
                 <div className="space-y-5">
-                    <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <Target className="w-5 h-5 text-slate-500" /> Mål & Omfattning
+                    <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+                        <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <Target className="w-5 h-5 text-slate-500 dark:text-slate-400" /> Mål & Omfattning
                         </h3>
                         <button
                         onClick={handleAICharter}
                         disabled={loading || !project.problemStatement}
-                        className="flex items-center gap-2 bg-purple-100 text-purple-700 px-3 py-1.5 rounded-md hover:bg-purple-200 transition-colors text-xs font-bold uppercase tracking-wider disabled:opacity-50"
+                        className="flex items-center gap-2 bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 px-3 py-1.5 rounded-md hover:bg-purple-200 dark:hover:bg-purple-900/30 transition-colors text-xs font-bold uppercase tracking-wider disabled:opacity-50"
                         >
                         {loading ? <Loader2 className="animate-spin h-3 w-3" /> : <Wand2 className="h-3 w-3" />}
                         AI-Hjälp
@@ -140,22 +140,22 @@ const DefinePhase: React.FC<Props> = ({ project, updateProject }) => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Målformulering (SMART)</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Målformulering (SMART)</label>
                         <textarea
                         value={project.goal}
                         onChange={(e) => updateProject({ goal: e.target.value })}
                         rows={6}
-                        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                        className="w-full p-3 border border-slate-300 dark:border-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-white dark:bg-slate-950 text-slate-800 dark:text-zinc-200"
                         placeholder="Specific, Measurable, Achievable, Relevant, Time-bound..."
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Omfattning (Scope)</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Omfattning (Scope)</label>
                         <textarea
                         value={project.scope}
                         onChange={(e) => updateProject({ scope: e.target.value })}
                         rows={5}
-                        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                        className="w-full p-3 border border-slate-300 dark:border-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-white dark:bg-slate-950 text-slate-800 dark:text-zinc-200"
                         placeholder="Vad ingår i projektet? Vad ingår INTE?"
                         />
                     </div>
@@ -170,13 +170,13 @@ const DefinePhase: React.FC<Props> = ({ project, updateProject }) => {
       {/* SIPOC Section - Full Width */}
       <ToolContainer toolId="t_sipoc" project={project} updateProject={updateProject} className="h-auto">
           <div className="space-y-6">
-            <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-800 mb-1">Define: SIPOC</h2>
-                    <p className="text-slate-600">Visualisera processen på hög nivå från leverantör till kund.</p>
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">Define: SIPOC</h2>
+                    <p className="text-slate-400 dark:text-slate-400 text-sm">Visualisera processen på hög nivå från leverantör till kund.</p>
                 </div>
-                <div className="bg-emerald-50 p-3 rounded-lg">
-                    <MapIcon className="w-6 h-6 text-emerald-600" />
+                <div className="bg-emerald-50 dark:bg-emerald-950/20 p-3 rounded-lg">
+                    <MapIcon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
             </div>
             <VisualSIPOC project={project} updateProject={updateProject} />

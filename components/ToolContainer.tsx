@@ -295,11 +295,11 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
                 <Wrench className="w-5 h-5 text-blue-500" /> {title}
               </h3>
               <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-blue-50 text-blue-600 border border-blue-100">
@@ -311,19 +311,19 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Form Container to Add Rows */}
-        <div className="p-5 bg-blue-50/50 rounded-xl border border-blue-100/60 mb-6">
-          <h4 className="text-sm font-bold text-blue-800 flex items-center gap-2 mb-4">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-100 text-blue-700 text-[10px]">📁</span>
+        <div className="p-5 bg-blue-50/50 dark:bg-blue-950/10 rounded-xl border border-blue-100/60 dark:border-blue-900/30 mb-6 text-slate-800 dark:text-zinc-100 dark:text-zinc-100">
+          <h4 className="text-sm font-bold text-blue-800 dark:text-blue-300 flex items-center gap-2 mb-4">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:text-blue-400 text-[10px]">📁</span>
             Interaktivt Verktyg
           </h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {matchedSchema.fields.map((f) => (
               <div key={f.id} className="space-y-1.5Fixed overflow-hidden">
-                <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">{f.label}</label>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">{f.label}</label>
                 {f.type === 'select' ? (
                   <select
-                    className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                     value={draftInputs[f.id] || (f.options ? f.options[0] : '')}
                     onChange={(e) => setDraftInputs(prev => ({ ...prev, [f.id]: e.target.value }))}
                   >
@@ -334,7 +334,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 ) : (
                   <input
                     type="text"
-                    className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                     placeholder={f.placeholder}
                     value={draftInputs[f.id] || ''}
                     onChange={(e) => setDraftInputs(prev => ({ ...prev, [f.id]: e.target.value }))}
@@ -357,9 +357,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Table of active items */}
         {items.length > 0 ? (
-          <div className="mb-6 overflow-x-auto border border-slate-200 rounded-lg">
+          <div className="mb-6 overflow-x-auto border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded-lg">
             <table className="w-full text-left border-collapse text-sm">
-              <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider text-[11px] border-b border-slate-200">
+              <thead className="bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 dark:text-slate-350 uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800/80">
                 <tr>
                   <th className="p-3">#</th>
                   {matchedSchema.fields.map(f => (
@@ -371,15 +371,15 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   <th className="p-3 text-center">Ta bort</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {items.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
                     <td className="p-3 text-slate-400 font-medium">{idx + 1}</td>
                     {matchedSchema.fields.map(f => (
-                      <td key={f.id} className="p-3 text-slate-800 break-words max-w-[200px]">{row[f.id] || '-'}</td>
+                      <td key={f.id} className="p-3 text-slate-800 dark:text-zinc-100 break-words max-w-[200px]">{row[f.id] || '-'}</td>
                     ))}
                     {matchedSchema.calcRow && (
-                      <td className="p-3 text-blue-700 font-semibold bg-blue-50/20">
+                      <td className="p-3 text-blue-700 dark:text-blue-400 font-semibold bg-blue-50/20">
                         {row.strategi || row.klassificering || '-'}
                       </td>
                     )}
@@ -397,16 +397,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             </table>
           </div>
         ) : (
-          <div className="text-center py-6 bg-slate-50 rounded-lg border border-dashed border-slate-200 mb-6 text-sm text-slate-500">
+          <div className="text-center py-6 bg-slate-50 dark:bg-slate-950/40 rounded-lg border border-dashed border-slate-200 dark:border-slate-800/80 dark:border-slate-850 text-slate-800 dark:text-zinc-100 dark:text-slate-400 mb-6 text-sm text-slate-500">
             Inga rader sparade. Fyll i fälten ovan och tryck på "Lägg till".
           </div>
         )}
 
         {/* Optional notes textarea */}
         <div className="mb-6 space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-600 uppercase">Ytterligare anteckningar (valfritt)</label>
+          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">Ytterligare anteckningar (valfritt)</label>
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50 dark:bg-slate-950 text-slate-850 dark:text-zinc-100"
             placeholder="Skriv eventuella slutsatser eller noteringar för detta verktyg..."
             value={notes}
             onChange={(e) => {
@@ -438,11 +438,11 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         {/* Tool instructional footer */}
         <div className="mt-6 border-t border-slate-100 pt-4 text-[12px] text-slate-500 space-y-2">
           <div>
-            <span className="font-bold text-slate-700 block mb-0.5">💡 Användning</span>
+            <span className="font-bold text-slate-700 dark:text-slate-300 block mb-0.5">💡 Användning</span>
             {matchedSchema.useInstruct}
           </div>
-          <div className="bg-slate-50 p-2.5 rounded border border-slate-100 italic">
-            <span className="font-bold text-slate-600 non-italic block not-italic">Exempel:</span>
+          <div className="bg-slate-50 dark:bg-slate-950/40 p-2.5 rounded border border-slate-100 dark:border-slate-850 italic">
+            <span className="font-bold text-slate-600 dark:text-slate-400 non-italic block not-italic">Exempel:</span>
             {matchedSchema.exampleText}
           </div>
         </div>
@@ -678,48 +678,48 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     ];
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Wrench className="w-5 h-5 text-purple-600" /> 5W2H & Is / Is Not Generator
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
+              <Wrench className="w-5 h-5 text-purple-600 dark:text-purple-400" /> 5W2H & Is / Is Not Generator
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-purple-50 text-purple-600 border border-purple-100 uppercase tracking-wider mt-1 inline-block">
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-650 dark:text-purple-300 border border-purple-105 dark:border-purple-900/50 uppercase tracking-wider mt-1 inline-block">
               Problem- & Omfattningstolkare (Scope Builder)
             </span>
-            <p className="text-sm text-slate-500 mt-1">{description}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{description}</p>
           </div>
           <button
             onClick={loadPepsiExample}
-            className="text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg border border-blue-200 transition-all flex items-center gap-1.5 shadow-sm self-start"
+            className="text-xs font-semibold px-3 py-1.5 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-lg border border-blue-200 dark:border-blue-800 transition-all flex items-center gap-1.5 shadow-sm self-start"
           >
             <Sparkles className="w-3.5 h-3.5" /> Ladda Pepsi-exempel (5W2H)
           </button>
         </div>
 
         {/* Matrix grid headers */}
-        <div className="grid grid-cols-12 gap-4 text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 px-1 hidden md:grid">
+        <div className="grid grid-cols-12 gap-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 px-1 hidden md:grid">
           <div className="col-span-4">Fråga (5W2H)</div>
-          <div className="col-span-4 text-teal-600 bg-teal-50 px-2 py-1 rounded">Is (ÄR / In-Scope)</div>
-          <div className="col-span-4 text-red-600 bg-red-50 px-2 py-1 rounded">Is Not (INTE ÄR / Out-of-Scope)</div>
+          <div className="col-span-4 text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/20 px-2 py-1 rounded">Is (ÄR / In-Scope)</div>
+          <div className="col-span-4 text-red-650 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-2 py-1 rounded">Is Not (INTE ÄR / Out-of-Scope)</div>
         </div>
 
         {/* Row matrix */}
         <div className="space-y-4 mb-6">
           {questions.map((q) => (
-            <div key={q.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200/60 shadow-sm space-y-3 md:space-y-0 md:grid md:grid-cols-12 md:gap-4 md:items-center">
+            <div key={q.id} className="p-4 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3 md:space-y-0 md:grid md:grid-cols-12 md:gap-4 md:items-center">
               {/* Question label */}
               <div className="col-span-4">
-                <span className="text-sm font-bold text-slate-800 block">{q.label}</span>
-                <span className="text-xs text-slate-400">Skapa tydlighet runt gränserna</span>
+                <span className="text-sm font-bold text-slate-800 dark:text-zinc-100 block">{q.label}</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">Skapa tydlighet runt gränserna</span>
               </div>
 
               {/* IS Input */}
               <div className="col-span-4 space-y-1">
-                <span className="text-[10px] font-bold text-teal-650 tracking-wider block md:hidden uppercase text-teal-600">✔️ Vad problemet ÄR (Is):</span>
+                <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 tracking-wider block md:hidden uppercase">✔️ Vad problemet ÄR (Is):</span>
                 <input
                   type="text"
-                  className="w-full p-2.5 bg-white border border-teal-200 focus:ring-2 focus:ring-teal-500 rounded-lg text-xs font-medium outline-none transition-all"
+                  className="w-full p-2.5 bg-white dark:bg-slate-950 border border-teal-200 dark:border-teal-900/40 text-slate-850 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 rounded-lg text-xs font-medium outline-none transition-all"
                   placeholder={q.placeholderIs}
                   value={fields[q.isField] || ''}
                   onChange={(e) => updateField(q.isField, e.target.value)}
@@ -728,10 +728,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
               {/* IS NOT Input */}
               <div className="col-span-4 space-y-1">
-                <span className="text-[10px] font-bold text-red-650 tracking-wider block md:hidden uppercase text-red-650">❌ Vad det INTE är (Is Not):</span>
+                <span className="text-[10px] font-bold text-red-600 dark:text-red-400 tracking-wider block md:hidden uppercase">❌ Vad det INTE är (Is Not):</span>
                 <input
                   type="text"
-                  className="w-full p-2.5 bg-white border border-red-200 focus:ring-2 focus:ring-red-500 rounded-lg text-xs font-medium outline-none transition-all"
+                  className="w-full p-2.5 bg-white dark:bg-slate-950 border border-red-200 dark:border-red-900/40 text-slate-850 dark:text-slate-100 focus:ring-2 focus:ring-red-500 rounded-lg text-xs font-medium outline-none transition-all"
                   placeholder={q.placeholderIsNot}
                   value={fields[q.isNotField] || ''}
                   onChange={(e) => updateField(q.isNotField, e.target.value)}
@@ -742,17 +742,17 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Compiling result sections & editors */}
-        <div className="mt-4 border-t border-slate-200 pt-6">
+        <div className="mt-4 border-t border-slate-200 dark:border-slate-800/80 pt-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
             <div>
-              <h4 className="text-md font-bold text-slate-800">Genererad Sammanställning & Omfattning</h4>
+              <h4 className="text-md font-bold text-slate-800 dark:text-zinc-100">Genererad Sammanställning & Omfattning</h4>
               <p className="text-xs text-slate-500">De här formuleringarna är redo att appliceras på ditt Project Charter i realtid.</p>
             </div>
             
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={handleResetToAuto}
-                className="text-xs font-semibold px-3 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg border border-slate-300 transition-all shadow-sm"
+                className="text-xs font-semibold px-3 py-1.5 bg-slate-100 text-slate-700 dark:text-slate-300 hover:bg-slate-200 rounded-lg border border-slate-300 transition-all shadow-sm"
               >
                 Återställ till automatisk
               </button>
@@ -776,16 +776,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* PROBLEM STATEMENT BOX */}
-            <div className="bg-orange-50/50 p-4 rounded-xl border border-orange-200 shadow-inner flex flex-col">
+            <div className="bg-orange-50/50 dark:bg-orange-950/20 p-4 rounded-xl border border-orange-200 dark:border-amber-900/35 shadow-inner flex flex-col">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-orange-700 flex items-center gap-1">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-orange-700 dark:text-orange-400 dark:text-orange-400 flex items-center gap-1">
                   📝 Problemformulering (Problem Statement)
                 </span>
                 <span className="text-[10px] text-orange-600/70 font-bold">Är-baserad syntes</span>
               </div>
               <textarea
                 rows={7}
-                className="w-full p-3 bg-white border border-orange-200 rounded-lg text-xs font-serif leading-relaxed text-slate-800 focus:ring-2 focus:ring-orange-500 outline-none resize-y"
+                className="w-full p-3 bg-white dark:bg-slate-950 border border-orange-200 dark:border-orange-900/30 rounded-lg text-xs font-serif leading-relaxed text-slate-800 dark:text-zinc-100 dark:text-slate-105 focus:ring-2 focus:ring-orange-500 outline-none resize-y"
                 value={generatedProblem}
                 onChange={(e) => {
                   const updated = {
@@ -800,16 +800,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             </div>
 
             {/* SCOPE BOX */}
-            <div className="bg-emerald-50/50 p-4 rounded-xl border border-emerald-250 border-emerald-200 shadow-inner flex flex-col">
+            <div className="bg-emerald-50/50 dark:bg-emerald-950/15 p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/40 shadow-inner flex flex-col">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-800 flex items-center gap-1">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-emerald-800 dark:text-emerald-305 dark:text-emerald-400 flex items-center gap-1">
                   🎯 Projekt omfattning (In/Out-Scope)
                 </span>
-                <span className="text-[10px] text-emerald-700/70 font-bold">Är/Inte Är-gränser</span>
+                <span className="text-[10px] text-emerald-700 dark:text-emerald-400/70 font-bold">Är/Inte Är-gränser</span>
               </div>
               <textarea
                 rows={7}
-                className="w-full p-3 bg-white border border-emerald-200 rounded-lg text-xs font-serif leading-relaxed text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none resize-y"
+                className="w-full p-3 bg-white dark:bg-slate-950 border border-emerald-200 dark:border-emerald-900/30 rounded-lg text-xs font-serif leading-relaxed text-slate-800 dark:text-zinc-100 dark:text-slate-105 focus:ring-2 focus:ring-emerald-500 outline-none resize-y"
                 value={generatedScope}
                 onChange={(e) => {
                   const updated = {
@@ -838,9 +838,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Optional commentary notes */}
         <div className="mt-6 space-y-1.5 border-t border-slate-100 pt-6">
-          <label className="block text-xs font-bold text-slate-600 uppercase">Ytterligare kommentarer/anteckningar</label>
+          <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">Ytterligare kommentarer/anteckningar</label>
           <textarea
-            className="w-full min-h-[85px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm bg-slate-50"
+            className="w-full min-h-[85px] p-2.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm bg-slate-50 dark:bg-slate-950 text-slate-850 dark:text-zinc-100"
             placeholder="Skriv dina kommentarer här..."
             value={notes}
             onChange={(e) => {
@@ -873,7 +873,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         {/* Manual guidelines block */}
         <div className="mt-6 border-t border-slate-100 pt-4 text-[12px] text-slate-500 space-y-2">
           <div>
-            <span className="font-bold text-slate-700 block mb-1">💡 Varför använda 5W2H med Is / Is Not?</span>
+            <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">💡 Varför använda 5W2H med Is / Is Not?</span>
             Genom att ställa frågorna Vad, Var, När, Vem, Varför, Hur och Hur mycket får du en heltäckande förståelse av problemet. Att systematiskt ange vad som <b>ÄR</b> respektive <b>INTE ÄR</b> det drabbade objektet skyddar projektet från "scope creep" och sätter skivskarpa gränser från dag ett.
           </div>
         </div>
@@ -992,10 +992,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     }
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <Calculator className="w-5 h-5 text-sky-600" /> MSA Gage R&R-kalkylator
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-sky-50 text-sky-600 border border-sky-100 uppercase tracking-wider mt-1 inline-block">
@@ -1017,10 +1017,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </p>
 
         {/* Matrix inputs table */}
-        <div className="overflow-x-auto border border-slate-200 rounded-xl mb-6 shadow-sm">
+        <div className="overflow-x-auto border border-slate-200 dark:border-slate-800/80 rounded-xl mb-6 shadow-sm">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase transition-all">
+              <tr className="bg-slate-50 border-b border-slate-200 dark:border-slate-800/80 text-slate-600 dark:text-slate-400 font-bold uppercase transition-all">
                 <th className="p-3">Operatör & Komponent</th>
                 <th className="p-3 text-center">Komponent 1</th>
                 <th className="p-3 text-center">Komponent 2</th>
@@ -1028,27 +1028,27 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 <th className="p-3 bg-slate-100/60 text-center">Medel</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-150 divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {/* Operator A row 1 */}
               <tr>
-                <td className="p-3 font-semibold text-slate-700">Operatör A - Tur 1</td>
+                <td className="p-3 font-semibold text-slate-700 dark:text-slate-300">Operatör A - Tur 1</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.a1_1 !== undefined ? fields.a1_1 : '10.1'}
                     onChange={(e) => updateGageField('a1_1', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.a2_1 !== undefined ? fields.a2_1 : '12.4'}
                     onChange={(e) => updateGageField('a2_1', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.a3_1 !== undefined ? fields.a3_1 : '15.0'}
                     onChange={(e) => updateGageField('a3_1', e.target.value)}
                   />
@@ -1059,24 +1059,24 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               </tr>
               {/* Operator A row 2 */}
               <tr>
-                <td className="p-3 font-semibold text-slate-700">Operatör A - Tur 2</td>
+                <td className="p-3 font-semibold text-slate-700 dark:text-slate-300">Operatör A - Tur 2</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.a1_2 !== undefined ? fields.a1_2 : '10.2'}
                     onChange={(e) => updateGageField('a1_2', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.a2_2 !== undefined ? fields.a2_2 : '12.3'}
                     onChange={(e) => updateGageField('a2_2', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.a3_2 !== undefined ? fields.a3_2 : '15.1'}
                     onChange={(e) => updateGageField('a3_2', e.target.value)}
                   />
@@ -1084,25 +1084,25 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               </tr>
 
               {/* Operator B row 1 */}
-              <tr className="border-t-2 border-slate-200">
-                <td className="p-3 font-semibold text-slate-700">Operatör B - Tur 1</td>
+              <tr className="border-t-2 border-slate-200 dark:border-slate-800/80">
+                <td className="p-3 font-semibold text-slate-700 dark:text-slate-300">Operatör B - Tur 1</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.b1_1 !== undefined ? fields.b1_1 : '10.3'}
                     onChange={(e) => updateGageField('b1_1', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.b2_1 !== undefined ? fields.b2_1 : '12.5'}
                     onChange={(e) => updateGageField('b2_1', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.b3_1 !== undefined ? fields.b3_1 : '14.8'}
                     onChange={(e) => updateGageField('b3_1', e.target.value)}
                   />
@@ -1113,24 +1113,24 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               </tr>
               {/* Operator B row 2 */}
               <tr>
-                <td className="p-3 font-semibold text-slate-700">Operatör B - Tur 2</td>
+                <td className="p-3 font-semibold text-slate-700 dark:text-slate-300">Operatör B - Tur 2</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.b1_2 !== undefined ? fields.b1_2 : '10.2'}
                     onChange={(e) => updateGageField('b1_2', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.b2_2 !== undefined ? fields.b2_2 : '12.6'}
                     onChange={(e) => updateGageField('b2_2', e.target.value)}
                   />
                 </td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 rounded text-center font-semibold bg-white"
+                    type="number" step="0.01" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center font-semibold bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100"
                     value={fields.b3_2 !== undefined ? fields.b3_2 : '15.0'}
                     onChange={(e) => updateGageField('b3_2', e.target.value)}
                   />
@@ -1148,36 +1148,36 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Mathematical summary breakdown metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+          <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 p-3.5 rounded-xl">
             <span className="text-[10px] uppercase font-bold text-slate-500 block">Repeatability (EV)</span>
-            <span className="text-lg font-bold text-slate-800 font-mono block mt-0.5">{ev.toFixed(4)}</span>
+            <span className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-mono block mt-0.5">{ev.toFixed(4)}</span>
             <span className="text-[10px] text-slate-400">Maskin/Utrustningens fel</span>
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+          <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 p-3.5 rounded-xl">
             <span className="text-[10px] uppercase font-bold text-slate-500 block">Reproducibility (AV)</span>
-            <span className="text-lg font-bold text-slate-800 font-mono block mt-0.5">{av.toFixed(4)}</span>
+            <span className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-mono block mt-0.5">{av.toFixed(4)}</span>
             <span className="text-[10px] text-slate-400">Operatörens mätfel</span>
           </div>
 
-          <div className="bg-slate-55 bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+          <div className="bg-slate-55 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 p-3.5 rounded-xl">
             <span className="text-[10px] uppercase font-bold text-slate-500 block">Total Gage R&R (GRR)</span>
-            <span className="text-lg font-bold text-slate-800 font-mono block mt-0.5">{grr.toFixed(4)}</span>
+            <span className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-mono block mt-0.5">{grr.toFixed(4)}</span>
             <span className="text-[10px] text-slate-400">Kombinerat mätsystemfel</span>
           </div>
 
-          <div className="bg-blue-50/50 border border-blue-100 p-3.5 rounded-xl">
-            <span className="text-[10px] uppercase font-bold text-blue-600 block">% Gage R&R</span>
-            <span className="text-lg font-bold text-blue-700 font-mono block mt-0.5">{pctGRR.toFixed(1)}%</span>
-            <span className="text-[10px] text-blue-500">Andel av processvariation</span>
+          <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-3.5 rounded-xl">
+            <span className="text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400 block">% Gage R&R</span>
+            <span className="text-lg font-bold text-blue-700 dark:text-blue-400 dark:text-blue-300 font-mono block mt-0.5">{pctGRR.toFixed(1)}%</span>
+            <span className="text-[10px] text-blue-500 dark:text-blue-400">Andel av processvariation</span>
           </div>
         </div>
 
         {/* Optional notes */}
         <div className="mb-4 space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-600 uppercase">Analyskommentarer / Slutsatser</label>
+          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">Analyskommentarer / Slutsatser</label>
           <textarea
-            className="w-full min-h-[75px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 text-sm bg-slate-50"
+            className="w-full min-h-[75px] p-2.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-sky-500 text-sm bg-slate-50 dark:bg-slate-950/60 dark:text-slate-100"
             placeholder="Skriv dina kommentarer om mätvariationen..."
             value={notes}
             onChange={(e) => {
@@ -1261,120 +1261,127 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     const optBLabel = effectB > 0 ? fBHigh : fBLow;
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Sliders className="w-5 h-5 text-emerald-600" /> 2² Full Faktoriellt DOE-verktyg
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
+              <Sliders className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> 2² Full Faktoriellt DOE-verktyg
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider mt-1 inline-block">
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/60 uppercase tracking-wider mt-1 inline-block">
               Försöksplanering (Design of Experiments)
             </span>
-            <p className="text-sm text-slate-500 mt-1">{description}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{description}</p>
           </div>
           <button
             onClick={loadDOEExample}
-            className="text-xs font-semibold px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5 shadow-sm self-start"
+            className="text-xs font-semibold px-3 py-1.5 bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-slate-700 rounded-lg border border-emerald-200 dark:border-slate-700 transition-all flex items-center gap-1.5 shadow-sm self-start"
           >
             <Sparkles className="w-3.5 h-3.5" /> Ladda Flaskförseglingsexempel
           </button>
         </div>
 
         {/* Configurations input cells card */}
-        <div className="bg-slate-50 border border-slate-200/80 p-4 rounded-xl mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 p-4 rounded-xl mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <h4 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b pb-1 dark:border-slate-100">Faktor A (T.ex. Temperatur)</h4>
+            <h4 className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-1">Faktor A (T.ex. Temperatur)</h4>
             <div>
-              <label className="block text-[10px] text-slate-500 uppercase font-bold">Namn på Faktor A</label>
-              <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fAName} onChange={(e) => updateDOEField('factorAName', e.target.value)} />
+              <label className="block text-[10px] text-slate-500 dark:text-slate-450 uppercase font-bold">Namn på Faktor A</label>
+              <input type="text" className="w-full text-xs p-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-zinc-100 rounded mt-0.5" value={fAName} onChange={(e) => updateDOEField('factorAName', e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-[10px] text-slate-400 font-bold uppercase">Låg nivå (-1)</label>
-                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fALow} onChange={(e) => updateDOEField('factorALow', e.target.value)} />
+                <label className="block text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase">Låg nivå (-1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-zinc-100 rounded mt-0.5" value={fALow} onChange={(e) => updateDOEField('factorALow', e.target.value)} />
               </div>
               <div>
-                <label className="block text-[10px] text-slate-400 font-bold uppercase">Hög nivå (+1)</label>
-                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fAHigh} onChange={(e) => updateDOEField('factorAHigh', e.target.value)} />
+                <label className="block text-[10px] text-slate-400 dark:text-slate-505 font-bold uppercase">Hög nivå (+1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-zinc-100 rounded mt-0.5" value={fAHigh} onChange={(e) => updateDOEField('factorAHigh', e.target.value)} />
               </div>
             </div>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-xs font-extrabold text-slate-700 uppercase tracking-wider border-b pb-1 dark:border-slate-100">Faktor B (T.ex. Tryck)</h4>
+            <h4 className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-1">Faktor B (T.ex. Tryck)</h4>
             <div>
-              <label className="block text-[10px] text-slate-500 uppercase font-bold">Namn på Faktor B</label>
-              <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fBName} onChange={(e) => updateDOEField('factorBName', e.target.value)} />
+              <label className="block text-[10px] text-slate-500 dark:text-slate-455 uppercase font-bold">Namn på Faktor B</label>
+              <input type="text" className="w-full text-xs p-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-zinc-100 rounded mt-0.5" value={fBName} onChange={(e) => updateDOEField('factorBName', e.target.value)} />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-[10px] text-slate-400 font-bold uppercase">Låg nivå (-1)</label>
-                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fBLow} onChange={(e) => updateDOEField('factorBLow', e.target.value)} />
+                <label className="block text-[10px] text-slate-400 dark:text-slate-505 font-bold uppercase">Låg nivå (-1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-205 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-850 dark:text-zinc-100 rounded mt-0.5" value={fBLow} onChange={(e) => updateDOEField('factorBLow', e.target.value)} />
               </div>
               <div>
-                <label className="block text-[10px] text-slate-400 font-bold uppercase">Hög nivå (+1)</label>
-                <input type="text" className="w-full text-xs p-2 border border-slate-200 rounded mt-0.5" value={fBHigh} onChange={(e) => updateDOEField('factorBHigh', e.target.value)} />
+                <label className="block text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase">Hög nivå (+1)</label>
+                <input type="text" className="w-full text-xs p-2 border border-slate-205 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-850 dark:text-zinc-100 rounded mt-0.5" value={fBHigh} onChange={(e) => updateDOEField('factorBHigh', e.target.value)} />
               </div>
             </div>
           </div>
         </div>
 
         {/* Run design matrix to gather Y data */}
-        <h4 className="text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">Genomförda försök & Resultat:</h4>
-        <div className="overflow-x-auto border border-slate-200 rounded-xl mb-6 shadow-sm">
+        <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wide">Genomförda försök & Resultat:</h4>
+        <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl mb-6 shadow-sm">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase">
+              <tr className="bg-slate-50 dark:bg-slate-950/60 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold uppercase">
                 <th className="p-3">Körning</th>
                 <th className="p-3">Faktor A: {fAName}</th>
                 <th className="p-3">Faktor B: {fBName}</th>
                 <th className="p-3 text-center">Mätt Utfall (Respons Y)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               <tr>
-                <td className="p-3 font-semibold text-slate-600">Run 1</td>
-                <td className="p-3 text-slate-500">Låg (-1): {fALow}</td>
-                <td className="p-3 text-slate-500">Låg (-1): {fBLow}</td>
+                <td className="p-3 font-semibold text-slate-600 dark:text-zinc-300">Run 1</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Låg (-1): {fALow}</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Låg (-1): {fBLow}</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800 rounded text-center bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100 font-mono font-bold"
                     value={fields.y1 !== undefined ? fields.y1 : '24.5'}
                     onChange={(e) => updateDOEField('y1', e.target.value)}
                   />
                 </td>
               </tr>
               <tr>
-                <td className="p-3 font-semibold text-slate-600">Run 2</td>
-                <td className="p-3 text-slate-500">Hög (+1): {fAHigh}</td>
-                <td className="p-3 text-slate-500">Låg (-1): {fBLow}</td>
+                <td className="p-3 font-semibold text-slate-600 dark:text-zinc-300">Run 2</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Hög (+1): {fAHigh}</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Låg (-1): {fBLow}</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800 rounded text-center bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100 font-mono font-bold"
                     value={fields.y2 !== undefined ? fields.y2 : '45.2'}
                     onChange={(e) => updateDOEField('y2', e.target.value)}
                   />
                 </td>
               </tr>
               <tr>
-                <td className="p-3 font-semibold text-slate-600">Run 3</td>
-                <td className="p-3 text-slate-500">Låg (-1): {fALow}</td>
-                <td className="p-3 text-slate-500">Hög (+1): {fBHigh}</td>
+                <td className="p-3 font-semibold text-slate-600 dark:text-zinc-300">Run 3</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Låg (-1): {fALow}</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Hög (+1): {fBHigh}</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800 rounded text-center bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100 font-mono font-bold"
                     value={fields.y3 !== undefined ? fields.y3 : '26.8'}
                     onChange={(e) => updateDOEField('y3', e.target.value)}
                   />
                 </td>
               </tr>
               <tr>
-                <td className="p-3 font-semibold text-slate-600">Run 4</td>
-                <td className="p-3 text-slate-500">Hög (+1): {fAHigh}</td>
-                <td className="p-3 text-slate-500">Hög (+1): {fBHigh}</td>
+                <td className="p-3 font-semibold text-slate-600 dark:text-zinc-300">Run 4</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Hög (+1): {fAHigh}</td>
+                <td className="p-3 text-slate-500 dark:text-zinc-400">Hög (+1): {fBHigh}</td>
                 <td className="p-3 text-center">
                   <input
-                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 rounded text-center bg-white font-mono font-bold"
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800 rounded text-center bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100 font-mono font-bold"
+                    value={fields.y4 !== undefined ? fields.y4 : '52.7'}
+                    onChange={(e) => updateDOEField('y4', e.target.value)}
+                  />
+                </td>
+              </tr>    <td className="p-3 text-center">
+                  <input
+                    type="number" step="0.1" className="w-24 p-1.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded text-center bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-100 font-mono font-bold"
                     value={fields.y4 !== undefined ? fields.y4 : '52.7'}
                     onChange={(e) => updateDOEField('y4', e.target.value)}
                   />
@@ -1387,15 +1394,15 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         {/* Calculated Statistical Factors & Recommendations */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* Effects summary analysis */}
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-            <h5 className="font-bold text-xs uppercase text-slate-600">Huvud- & Samspelsanalys</h5>
+          <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-xl space-y-3">
+            <h5 className="font-bold text-xs uppercase text-slate-600 dark:text-slate-400">Huvud- & Samspelsanalys</h5>
             <div className="space-y-2 text-xs divide-y divide-slate-100">
               <div className="flex justify-between items-center py-1.5">
-                <span className="font-semibold text-slate-700">Totalmedelvärde (Grand Mean):</span>
-                <span className="font-mono font-bold text-slate-800">{meanY.toFixed(2)}</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Totalmedelvärde (Grand Mean):</span>
+                <span className="font-mono font-bold text-slate-800 dark:text-zinc-100">{meanY.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center py-1.5">
-                <span className="font-semibold text-slate-700 flex items-center gap-1">
+                <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   Effekt av A ({fAName}):
                 </span>
                 <span className={`font-mono font-extrabold ${effectA >= 0 ? 'text-teal-600' : 'text-red-500'}`}>
@@ -1403,7 +1410,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 </span>
               </div>
               <div className="flex justify-between items-center py-1.5">
-                <span className="font-semibold text-slate-700 flex items-center gap-1">
+                <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   Effekt av B ({fBName}):
                 </span>
                 <span className={`font-mono font-extrabold ${effectB >= 0 ? 'text-teal-600' : 'text-red-500'}`}>
@@ -1411,7 +1418,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 </span>
               </div>
               <div className="flex justify-between items-center py-1.5">
-                <span className="font-semibold text-slate-700 flex items-center gap-1">
+                <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   Samspelseffekt (A x B):
                 </span>
                 <span className="font-mono font-bold text-blue-600">
@@ -1425,16 +1432,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <div className="p-5 bg-gradient-to-br from-indigo-50 to-emerald-50 border border-emerald-150 border-indigo-200 rounded-xl flex flex-col justify-between">
             <div>
               <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest block mb-1">🎯 Optimerat Recept / Slutsats</span>
-              <h5 className="font-bold text-sm text-slate-800 mb-2">För att maximera utfall / respons Y:</h5>
-              <p className="text-xs leading-relaxed text-slate-600-600 text-slate-600">
+              <h5 className="font-bold text-sm text-slate-800 dark:text-zinc-100 mb-2">För att maximera utfall / respons Y:</h5>
+              <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400-600 text-slate-600 dark:text-slate-400">
                 Baserat på linjära beräkningar ska faktorerna ställas in enligt följande för att erhålla bästa möjliga processutfall:
               </p>
-              <ul className="text-xs space-y-1.5 mt-3 font-semibold text-slate-800">
+              <ul className="text-xs space-y-1.5 mt-3 font-semibold text-slate-800 dark:text-zinc-100">
                 <li className="flex items-center gap-2">
-                  <span className="text-emerald-500">✔</span> {fAName}: <span className="text-emerald-700 font-extrabold">{optA}</span> ({optALabel})
+                  <span className="text-emerald-500">✔</span> {fAName}: <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">{optA}</span> ({optALabel})
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-emerald-500">✔</span> {fBName}: <span className="text-emerald-700 font-extrabold">{optB}</span> ({optBLabel})
+                  <span className="text-emerald-500">✔</span> {fBName}: <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">{optB}</span> ({optBLabel})
                 </li>
               </ul>
             </div>
@@ -1444,9 +1451,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Optional text area */}
         <div className="mb-4 space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-600 uppercase">Observerade Slutsatser / Nästa Steg</label>
+          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">Observerade Slutsatser / Nästa Steg</label>
           <textarea
-            className="w-full min-h-[75px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50"
+            className="w-full min-h-[75px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50"
             placeholder="Skriv dina kommentarer om försöksresultaten..."
             value={notes}
             onChange={(e) => {
@@ -1529,10 +1536,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-indigo-600" /> Pilotstudie & Verifiering
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-wider mt-1 inline-block">
@@ -1551,17 +1558,17 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         {/* Objectives input fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase">Mål & Syfte med Pilot</label>
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">Mål & Syfte med Pilot</label>
             <textarea
-              rows={2} className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg mt-1 focus:ring-2 focus:ring-indigo-500"
+              rows={2} className="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg mt-1 focus:ring-2 focus:ring-indigo-500"
               value={objective} onChange={(e) => updatePilotField('objective', e.target.value)}
               placeholder="Vad ska piloten bevisa?"
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-600 uppercase">Avgränsning / Scope för Pilot</label>
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">Avgränsning / Scope för Pilot</label>
             <textarea
-              rows={2} className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg mt-1 focus:ring-2 focus:ring-indigo-500"
+              rows={2} className="w-full text-xs p-2.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg mt-1 focus:ring-2 focus:ring-indigo-500"
               value={scope} onChange={(e) => updatePilotField('scope', e.target.value)}
               placeholder="Var och när sker piloten?"
             />
@@ -1569,12 +1576,12 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Milestones checklists */}
-        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2.5">📋 Milstolpar i Pilotstudien</h4>
-        <div className="p-4 bg-slate-50 border border-slate-200/60 rounded-xl space-y-3 mb-6 shadow-inner">
+        <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2.5">📋 Milstolpar i Pilotstudien</h4>
+        <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100/60 rounded-xl space-y-3 mb-6 shadow-inner">
           <label className="flex items-start gap-3 cursor-pointer select-none text-xs">
             <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk1} onChange={(e) => updatePilotField('chk1', e.target.checked)} />
             <div>
-              <span className="font-bold text-slate-700 block text-xs">1. Handhavandeutbildning (SOP)</span>
+              <span className="font-bold text-slate-700 dark:text-slate-300 block text-xs">1. Handhavandeutbildning (SOP)</span>
               <span className="text-[11px] text-slate-400">Har operatörer samt berörda parter utbildats i den nya processmetoden?</span>
             </div>
           </label>
@@ -1582,7 +1589,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
             <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk2} onChange={(e) => updatePilotField('chk2', e.target.checked)} />
             <div>
-              <span className="font-bold text-slate-700 block text-xs">2. Säkrad back-up plan</span>
+              <span className="font-bold text-slate-700 dark:text-slate-300 block text-xs">2. Säkrad back-up plan</span>
               <span className="text-[11px] text-slate-400">Har vi en plan B för att snabbt avbryta piloten om allvarliga drift- eller maskinfel uppstår?</span>
             </div>
           </label>
@@ -1590,7 +1597,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
             <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk3} onChange={(e) => updatePilotField('chk3', e.target.checked)} />
             <div>
-              <span className="font-bold text-slate-700 block text-xs">3. Mätsystem kontrollera</span>
+              <span className="font-bold text-slate-700 dark:text-slate-300 block text-xs">3. Mätsystem kontrollera</span>
               <span className="text-[11px] text-slate-400">Är mätutrustningen validerad (Gage R&R) så att mätpunkter under piloten är tillförlitliga?</span>
             </div>
           </label>
@@ -1598,7 +1605,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
             <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk4} onChange={(e) => updatePilotField('chk4', e.target.checked)} />
             <div>
-              <span className="font-bold text-slate-700 block text-xs">4. Avgränsad körning</span>
+              <span className="font-bold text-slate-700 dark:text-slate-300 block text-xs">4. Avgränsad körning</span>
               <span className="text-[11px] text-slate-400">Har pilotstudien driftsatts enligt plan i en avskärmad produktionsmiljö?</span>
             </div>
           </label>
@@ -1606,7 +1613,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <label className="flex items-start gap-3 cursor-pointer select-none border-t border-slate-150 pt-3 text-xs border-slate-100">
             <input type="checkbox" className="w-4 h-4 rounded mt-0.5 text-indigo-600 border-slate-300 focus:ring-indigo-500" checked={chk5} onChange={(e) => updatePilotField('chk5', e.target.checked)} />
             <div>
-              <span className="font-bold text-slate-700 block text-xs">5. Formellt godkännande</span>
+              <span className="font-bold text-slate-700 dark:text-slate-300 block text-xs">5. Formellt godkännande</span>
               <span className="text-[11px] text-slate-400">Är mätresultaten analyserade och verifierade för full-skalig driftsättning (Control)?</span>
             </div>
           </label>
@@ -1614,27 +1621,27 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Mathematical performance parameters inputs */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-            <h5 className="font-bold text-xs uppercase text-slate-600">Mättal (Performance KPI)</h5>
+          <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-xl space-y-3">
+            <h5 className="font-bold text-xs uppercase text-slate-600 dark:text-slate-400">Mättal (Performance KPI)</h5>
             <div className="space-y-2">
               <div>
                 <label className="block text-[10px] text-slate-500">Nuläge (Post-analyse baseline)</label>
                 <input
-                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 rounded text-xs font-mono font-bold bg-white"
+                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 dark:border-slate-800/80 rounded text-xs font-mono font-bold bg-white"
                   value={fields.baseline || '6.25'} onChange={(e) => updatePilotField('baseline', e.target.value)}
                 />
               </div>
               <div>
                 <label className="block text-[10px] text-slate-500">Önskat Mål (Target value)</label>
                 <input
-                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 rounded text-xs font-mono font-bold bg-white"
+                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 dark:border-slate-800/80 rounded text-xs font-mono font-bold bg-white"
                   value={fields.target || '2.0'} onChange={(e) => updatePilotField('target', e.target.value)}
                 />
               </div>
               <div>
                 <label className="block text-[10px] text-slate-500">Uppmätt under Pilot (Actual)</label>
                 <input
-                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 rounded text-xs font-mono font-bold bg-white"
+                  type="number" step="0.01" className="w-full p-2 border border-slate-250 border-slate-200 dark:border-slate-800/80 rounded text-xs font-mono font-bold bg-white"
                   value={fields.actual || '1.85'} onChange={(e) => updatePilotField('actual', e.target.value)}
                 />
               </div>
@@ -1647,11 +1654,11 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest block mb-2">📊 Framgångsanalys</span>
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold text-slate-700">Minskning av felen (Defect Reduction %):</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Minskning av felen (Defect Reduction %):</span>
                   <span className="font-bold text-teal-650 font-mono text-teal-600">{pctImprovement.toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold text-slate-700">Måluppfyllelse (Pct of target achieved):</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Måluppfyllelse (Pct of target achieved):</span>
                   <span className="font-bold text-indigo-700 font-mono">{targetProgress.toFixed(1)}%</span>
                 </div>
               </div>
@@ -1662,14 +1669,14 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   className="h-full bg-gradient-to-r from-teal-500 to-indigo-600 rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(100, Math.max(0, targetProgress))}%` }}
                 />
-                <span className="absolute inset-0 flex items-center justify-center font-bold font-mono text-[9px] text-slate-700">
+                <span className="absolute inset-0 flex items-center justify-center font-bold font-mono text-[9px] text-slate-700 dark:text-slate-300">
                   {targetProgress.toFixed(0)}% av målet nått
                 </span>
               </div>
             </div>
 
             {/* Verdict text */}
-            <div className="text-xs text-slate-700 mt-3 border-t pt-2 border-indigo-200/50">
+            <div className="text-xs text-slate-700 dark:text-slate-300 mt-3 border-t pt-2 border-indigo-200/50">
               {targetProgress >= 100 ? (
                 <span className="font-extrabold text-teal-600 flex items-center gap-1">
                   🎉 PILOTEN ÄR HELT LYCKAD! Skillnaden är verifierad och redo för storskalig standardisering i Control-fasen!
@@ -1689,9 +1696,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Optional notes commentary */}
         <div className="mb-4 space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-600 uppercase">Pilotstudie Logg & Kommentarer</label>
+          <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">Pilotstudie Logg & Kommentarer</label>
           <textarea
-            className="w-full min-h-[75px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            className="w-full min-h-[75px] p-2.5 border border-slate-205 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-indigo-550 text-sm bg-slate-50 dark:bg-slate-950 text-slate-850 dark:text-zinc-100"
             placeholder="Skriv dina egna logganteckningar om pilottestet..."
             value={notes}
             onChange={(e) => {
@@ -1702,10 +1709,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Footer controls */}
-        <div className="flex items-center justify-between border-t border-slate-150 pt-4 mt-2">
-          <span className="text-xs text-slate-410 text-slate-400">
+        <div className="flex items-center justify-between border-t border-slate-150 dark:border-slate-800 pt-4 mt-2">
+          <span className="text-xs text-slate-400 dark:text-slate-500">
             {saveSuccess ? (
-              <span className="text-indigo-600 font-semibold flex items-center gap-1 animate-pulse">
+              <span className="text-indigo-600 dark:text-indigo-400 font-semibold flex items-center gap-1 animate-pulse">
                 <CheckCircle className="w-4 h-4" /> Sparat pilotstudien framgångsrikt!
               </span>
             ) : (
@@ -1714,7 +1721,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </span>
           <button
             onClick={() => handleSave(items, fields, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-750 dark:hover:bg-slate-700 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
           >
             <Save className="w-4 h-4" /> Spara pilotdata
           </button>
@@ -1753,46 +1760,46 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     const levels = [
-      { num: 1, key: 'w1', placeholder: 'Varför gick säkringen? (Direkt orsak till symptom)', label: 'Symptomnivå 1', colorClass: 'bg-rose-50 border-rose-150 text-rose-850', labelColor: 'bg-rose-100 text-rose-800' },
-      { num: 2, key: 'w2', placeholder: 'Varför inträffade rotorsak 1? (Sekundär orsak)', label: 'Symptomnivå 2', colorClass: 'bg-orange-50 border-orange-150 text-orange-850', labelColor: 'bg-orange-100 text-orange-800' },
-      { num: 3, key: 'w3', placeholder: 'Varför inträffade rotorsak 2? (Mellankoppling)', label: 'Indirekt orsak', colorClass: 'bg-amber-50 border-amber-150 text-amber-850', labelColor: 'bg-amber-100 text-amber-805 text-amber-800' },
-      { num: 4, key: 'w4', placeholder: 'Varför inträffade rotorsak 3? (Processbrist)', label: 'Processrelaterad', colorClass: 'bg-teal-50 border-teal-150 text-teal-850', labelColor: 'bg-teal-100 text-teal-800' },
-      { num: 5, key: 'w5', placeholder: 'Varför inträffade rotorsak 4? (Systemfel/Rotorsak)', label: 'Systemomfattande (Rotorsak)', colorClass: 'bg-emerald-50 border-emerald-150 text-emerald-850 font-semibold', labelColor: 'bg-emerald-500 text-white font-bold' }
+      { num: 1, key: 'w1', placeholder: 'Varför gick säkringen? (Direkt orsak till symptom)', label: 'Symptomnivå 1', colorClass: 'bg-rose-50/70 dark:bg-rose-950/20 border-rose-150/50 dark:border-rose-900/40 text-rose-850 dark:text-rose-250', labelColor: 'bg-rose-100 dark:bg-rose-900/40 text-rose-900 dark:text-rose-300' },
+      { num: 2, key: 'w2', placeholder: 'Varför inträffade rotorsak 1? (Sekundär orsak)', label: 'Symptomnivå 2', colorClass: 'bg-orange-50/70 dark:bg-orange-950/20 border-orange-150/50 dark:border-orange-900/40 text-orange-850 dark:text-orange-250', labelColor: 'bg-orange-100 dark:bg-orange-900/40 text-orange-900 dark:text-orange-300' },
+      { num: 3, key: 'w3', placeholder: 'Varför inträffade rotorsak 2? (Mellankoppling)', label: 'Indirekt orsak', colorClass: 'bg-amber-50/70 dark:bg-amber-950/20 border-amber-150/50 dark:border-amber-900/40 text-amber-850 dark:text-amber-250', labelColor: 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-300' },
+      { num: 4, key: 'w4', placeholder: 'Varför inträffade rotorsak 3? (Processbrist)', label: 'Processrelaterad', colorClass: 'bg-teal-50/70 dark:bg-teal-950/20 border-teal-150/50 dark:border-teal-900/40 text-teal-850 dark:text-teal-250', labelColor: 'bg-teal-100 dark:bg-teal-900/40 text-teal-900 dark:text-teal-300' },
+      { num: 5, key: 'w5', placeholder: 'Varför inträffade rotorsak 4? (Systemfel/Rotorsak)', label: 'Systemomfattande (Rotorsak)', colorClass: 'bg-emerald-50/70 dark:bg-emerald-950/25 border-emerald-150/50 dark:border-emerald-900/40 text-emerald-850 dark:text-emerald-200 font-semibold', labelColor: 'bg-emerald-500 text-white font-bold' }
     ];
 
     const filledCount = [w1, w2, w3, w4, w5].filter(Boolean).length;
     const progressPercent = (filledCount / 5) * 100;
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex flex-wrap items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-wrap items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800 pb-3 gap-2">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Wrench className="w-5 h-5 text-teal-600" /> 5 Varför (5 Whys Causal Diagram)
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
+              <Wrench className="w-5 h-5 text-teal-650 dark:text-teal-400" /> 5 Varför (5 Whys Causal Diagram)
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-teal-50 text-teal-600 border border-teal-100 mt-1 inline-block">
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-teal-50 dark:bg-teal-950/30 text-teal-655 dark:text-teal-300 border border-teal-100 dark:border-teal-900 mt-1 inline-block">
               Rotorsakshierarki (Root Cause Chain)
             </span>
-            <p className="text-xs text-slate-500 mt-1">{description}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{description}</p>
           </div>
           
           <button
             onClick={loadClassicExample}
-            className="text-xs px-3 py-2 bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 hover:from-teal-100 hover:to-emerald-100 rounded-lg border border-teal-200 transition-all font-bold flex items-center gap-1.5 shadow-sm hover:scale-102"
+            className="text-xs px-3 py-2 bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-slate-800 dark:to-slate-850 text-teal-700 dark:text-teal-305 hover:from-teal-100 hover:to-emerald-100 dark:hover:from-slate-750 dark:hover:to-slate-800 rounded-lg border border-teal-200 dark:border-slate-750 transition-all font-bold flex items-center gap-1.5 shadow-sm hover:scale-102"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Ladda klassiskt Lean-exempel
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Ladda klassiskt Lean-exempel
           </button>
         </div>
 
         {/* Visual progress bar bar */}
-        <div className="mb-6 bg-slate-100 p-3 rounded-xl border border-slate-200/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="w-full sm:w-2/3 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+        <div className="mb-6 bg-slate-100 dark:bg-slate-950/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="w-full sm:w-2/3 bg-slate-200 dark:bg-slate-805 h-2.5 rounded-full overflow-hidden">
             <div 
-              className="bg-gradient-to-r from-teal-500 to-emerald-500 h-full transition-all duration-500" 
+               className="bg-gradient-to-r from-teal-500 to-emerald-500 h-full transition-all duration-500" 
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="font-bold text-slate-600 shrink-0 uppercase tracking-wider text-[10px]">
+          <span className="font-bold text-slate-600 dark:text-slate-400 shrink-0 uppercase tracking-wider text-[10px]">
             Nedbrytning: {filledCount} av 5 Varför ({progressPercent.toFixed(0)}%)
           </span>
         </div>
@@ -1800,7 +1807,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         {/* Causal Chain Area */}
         <div className="space-y-4 mb-6">
           {/* PROBLEM CARD at top */}
-          <div className="p-4 bg-slate-900 text-slate-100 rounded-xl shadow-md border border-slate-950 relative overflow-hidden">
+          <div className="p-4 bg-slate-900 border border-slate-950 text-slate-100 rounded-xl shadow-md relative overflow-hidden">
             <div className="absolute top-2 right-2 flex gap-1">
               <span className="h-2 w-2 rounded-full bg-red-500 animate-ping" />
               <span className="h-2 w-2 rounded-full bg-red-500" />
@@ -1832,7 +1839,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 <div key={lvl.key} className="transition-all duration-300">
                   {/* Dynamic Connector Arrow */}
                   <div className="flex justify-center -my-1 relative z-10 select-none">
-                    <svg className={`w-8 h-8 transition-colors duration-300 ${isSelfFilled ? 'text-teal-500' : 'text-slate-200'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <svg className={`w-8 h-8 transition-colors duration-300 ${isSelfFilled ? 'text-teal-500 dark:text-teal-400' : 'text-slate-200 dark:text-slate-800'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                     </svg>
                   </div>
@@ -1840,10 +1847,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   {/* Node Panel */}
                   <div className={`p-3 border rounded-xl transition-all duration-350 ${
                     !isPrevFilled 
-                      ? 'opacity-40 select-none border-slate-100 bg-slate-50/50' 
+                      ? 'opacity-40 select-none border-slate-100 bg-slate-50/50 dark:bg-slate-950/20 dark:border-slate-900' 
                       : isSelfFilled 
-                        ? `${lvl.colorClass} border-teal-200 shadow-sm shadow-teal-500/5` 
-                        : 'bg-white border-slate-200 hover:border-slate-300'
+                        ? `${lvl.colorClass} border-teal-200 dark:border-teal-900/50 shadow-sm shadow-teal-500/5` 
+                        : 'bg-white dark:bg-slate-950 border-slate-205 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-750 text-slate-800 dark:text-zinc-100'
                   }`}>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                       {/* Badge indicator */}
@@ -1851,13 +1858,13 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                         <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] uppercase font-mono font-bold tracking-widest ${lvl.labelColor}`}>
                           Varför {lvl.num}
                         </span>
-                        <span className="sm:hidden text-[9px] text-slate-400 italic">
+                        <span className="sm:hidden text-[9px] text-slate-400 dark:text-slate-500 italic">
                           {lvl.label}
                         </span>
                       </div>
 
                       {/* Heading side label for desktop */}
-                      <span className="hidden sm:inline text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                      <span className="hidden sm:inline text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">
                         ({lvl.label})
                       </span>
 
@@ -1866,7 +1873,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                         <input
                           type="text"
                           disabled={!isPrevFilled}
-                          className="w-full p-2 bg-white/70 border border-slate-200/80 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-teal-550 focus:ring-teal-500 focus:bg-white disabled:cursor-not-allowed"
+                          className="w-full p-2 bg-white/70 dark:bg-slate-900/60 border border-slate-205 dark:border-slate-800 text-slate-850 dark:text-slate-100 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-teal-505 focus:bg-white dark:focus:bg-slate-900 disabled:cursor-not-allowed"
                           placeholder={lvl.placeholder}
                           value={currentVal}
                           onChange={(e) => updateF(lvl.key, e.target.value)}
@@ -1881,21 +1888,21 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Dynamic educational assessment box */}
-        <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-250 border-emerald-200 mb-6 flex gap-3 text-xs leading-relaxed">
+        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-250 dark:border-emerald-900/30 mb-6 flex gap-3 text-xs leading-relaxed text-emerald-850 dark:text-emerald-305">
           <span className="text-xl">💡</span>
           <div>
-            <h4 className="text-xs font-black text-emerald-850 text-emerald-850 uppercase tracking-widest">Utvärderad Rotorsak (Root Cause):</h4>
-            <p className="text-sm text-emerald-950 font-extrabold mt-1">
+            <h4 className="text-xs font-black uppercase tracking-widest">Utvärderad Rotorsak (Root Cause):</h4>
+            <p className="text-sm font-extrabold mt-1 text-emerald-950 dark:text-emerald-200">
               {w5 
                 ? `✔️ ${w5}` 
                 : w4 
                   ? `🔍 ${w4} (Mellannivå)` 
                   : w1 
-                    ? `Symptom började benas ut. Fyll i mer detaljer nedåt i kedjan.` 
+                    ? `Symptom började benas ut. Fyll i more detaljer nedåt i kedjan.` 
                     : 'Fortsätt att ställa frågan "Varför" och bryt ner mekaniska/processproblem för att nå den grundläggande systematiska rotorsaken.'}
             </p>
             {w5 && (
-              <p className="text-[11px] text-emerald-800 mt-2">
+              <p className="text-[11px] text-emerald-800 dark:text-emerald-400 mt-2">
                 <b>Rekommendation:</b> Etablera en felsäkring (Poka-Yoke) eller korrigerande åtgärd speciellt utformad för att helt eliminera denna rotorsak.
               </p>
             )}
@@ -1904,17 +1911,17 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-205 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-teal-555 text-sm bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-zinc-100"
             placeholder="Analysera kopplingarna här, fyll i deltagande operatörer och ifall det krävs en ändrad underhållsplan (PM-kontroll) eller standardiserat arbetssätt (SOP)..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-          <span className="text-xs text-slate-400">
+        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
+          <span className="text-xs text-slate-400 dark:text-slate-500">
             {saveSuccess ? (
-              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+              <span className="text-green-600 dark:text-green-400 font-semibold flex items-center gap-1 animate-pulse">
                 <Check className="w-4 h-4" /> Sparat rotorsakerna!
               </span>
             ) : (
@@ -1923,133 +1930,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </span>
           <button
             onClick={() => handleSave(items, fields, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-850 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
-          >
-            <Save className="w-4 h-4" /> Spara till projekt
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ----------------------------------------------------
-  // SPECIALIZED INTERACTIVE CALCULATOR: DPMO / Sigma-nivå (t_dpmo & t_sigma)
-  // ----------------------------------------------------
-  if ((toolId === 't_dpmo' || toolId === 't_sigma') && !children) {
-    const defects = parseFloat(fields.defects || '15');
-    const units = parseFloat(fields.units || '1000');
-    const opportunities = parseFloat(fields.opportunities || '5');
-
-    const calculatedDPMO = (defects / (units * opportunities)) * 1000000;
-    
-    // Exact standard 1.5 sigma shift calculation using our premium rational normSinv!
-    const calculatedRate = calculatedDPMO / 1000000;
-    const invN = normSinv(1 - calculatedRate);
-    const calculatedSigma = 1.5 + invN;
-
-    const updateCalc = (key: string, val: string) => {
-      const up = { ...fields, [key]: val };
-      setFields(up);
-    };
-
-    return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
-          <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-indigo-600" /> {title}
-            </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100">
-              Kvalitetsmått
-            </span>
-            <p className="text-sm text-slate-500 mt-1">{description}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="p-5 bg-indigo-50/40 rounded-xl border border-indigo-100/50 space-y-3">
-            <h4 className="text-sm font-bold text-indigo-800 flex items-center gap-1">
-              <span>🎛️</span> Parametrar
-            </h4>
-            
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Antal defekter</label>
-                <input
-                  type="number"
-                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm"
-                  value={fields.defects || '15'}
-                  onChange={(e) => updateCalc('defects', e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Totalt antal enheter (Units)</label>
-                <input
-                  type="number"
-                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm"
-                  value={fields.units || '1000'}
-                  onChange={(e) => updateCalc('units', e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Möjligheter till fel per enhet</label>
-                <input
-                  type="number"
-                  className="w-full p-2 bg-white border border-slate-200 rounded-lg text-sm"
-                  value={fields.opportunities || '5'}
-                  onChange={(e) => updateCalc('opportunities', e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-between p-5 bg-slate-900 text-slate-100 rounded-xl shadow-inner border border-slate-800">
-            <div>
-              <span className="text-[10px] uppercase font-mono text-slate-400 font-bold tracking-widest block">Statistiskt Resultat</span>
-              <div className="mt-4 space-y-4">
-                <div>
-                  <div className="text-xs text-slate-400">Beräknad DPMO</div>
-                  <div className="text-3xl font-extrabold text-orange-400 font-mono tracking-tight">
-                    {calculatedDPMO.toLocaleString('sv-SE', { maximumFractionDigits: 1 })}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xs text-slate-400">Sigma-nivå (med +1.5σ shift)</div>
-                  <div className="text-4xl font-extrabold text-emerald-400 font-mono tracking-tight flex items-baseline gap-2">
-                    {calculatedSigma.toFixed(2)}
-                    <span className="text-sm font-semibold text-emerald-300">σ</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="text-[11px] text-slate-400 border-t border-slate-800 pt-3 mt-3">
-              Mål: 6σ = 3.4 DPMO • Branschstandard: ≥ 4.0σ
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-6 space-y-1.5">
-          <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
-            placeholder="Fyll i eventuella slutsatser..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-          <span className="text-xs text-slate-400">
-            {saveSuccess ? (
-              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
-                <Check className="w-4 h-4" /> Sparat till mätetal!
-              </span>
-            ) : (
-              'Kom ihåg att spara dina beräkningar.'
-            )}
-          </span>
-          <button
-            onClick={() => handleSave(items, fields, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-750 dark:hover:bg-slate-700 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
           >
             <Save className="w-4 h-4" /> Spara till projekt
           </button>
@@ -2187,24 +2068,24 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     }
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex flex-wrap items-center justify-between mb-4 border-b border-slate-100 pb-3 gap-2">
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-wrap items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-850 pb-3 gap-2">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-emerald-600" /> Processkapacitet / Duglighet ({title})
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Processkapacitet / Duglighet ({title})
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 mt-1 inline-block">
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-305 border border-emerald-100 dark:border-emerald-900/50 mt-1 inline-block">
               Statistisk Analys (Cp & Cpk)
             </span>
-            <p className="text-xs text-slate-500 mt-1">{description}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-450 mt-1">{description}</p>
           </div>
 
           {/* Tab Selection */}
-          <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+          <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs">
             <button
               onClick={() => updateCapabilityField('capMode', 'direct')}
               className={`px-3 py-1.5 rounded-md font-medium transition-all ${
-                rawMode === 'direct' ? 'bg-white text-slate-800 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-800'
+                rawMode === 'direct' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-300'
               }`}
             >
               Ange parametrar
@@ -2212,7 +2093,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             <button
               onClick={() => updateCapabilityField('capMode', 'data')}
               className={`px-3 py-1.5 rounded-md font-medium transition-all ${
-                rawMode === 'data' ? 'bg-white text-slate-800 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-800'
+                rawMode === 'data' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-300'
               }`}
             >
               Beräkna från mätdata
@@ -2223,13 +2104,13 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           {/* Controls column */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 bg-slate-50/70 border border-slate-200/60 rounded-xl space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-200/50 pb-1.5">
-                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+            <div className="p-4 bg-slate-50/70 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-xl space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-1.5">
+                <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1">
                   <span>⚙️</span> {rawMode === 'data' ? 'Process Specifikationer' : 'Inmatningsparametrar'}
                 </h4>
                 {rawMode === 'data' && (
-                  <span className="text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold px-1.5 py-0.5 rounded-md">
+                  <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold px-1.5 py-0.5 rounded-md">
                     Rådata Läge: {rawCount} st
                   </span>
                 )}
@@ -2238,18 +2119,18 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               {rawMode === 'data' ? (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1 flex justify-between">
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1 flex justify-between">
                       <span>Mätdata (kommaseparerad)</span>
-                      <span className="font-mono text-slate-400 text-[10px]">Ex: 10.1, 9.8, 10.3</span>
+                      <span className="font-mono text-slate-400 dark:text-slate-500 text-[10px]">Ex: 10.1, 9.8, 10.3</span>
                     </label>
                     <textarea
-                      className="w-full h-24 p-2 bg-white border border-slate-200 rounded-lg text-xs font-mono resize-none focus:ring-2 focus:ring-emerald-550 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full h-24 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-lg text-xs font-mono resize-none focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                       value={rawDataText}
                       onChange={(e) => updateCapabilityField('rawDataText', e.target.value)}
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-900 text-slate-200 p-2.5 rounded-lg font-mono">
+                  <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-900 dark:bg-slate-950 text-slate-200 dark:text-slate-300 p-2.5 rounded-lg font-mono border border-slate-800">
                     <div>Medel (μ): <b className="text-emerald-400">{rawAvg.toFixed(4)}</b></div>
                     <div>StdAvv (σ): <b className="text-amber-400">{rawStdDev.toFixed(4)}</b></div>
                     <div>N-analys: <b>{rawCount} rader</b></div>
@@ -2258,21 +2139,21 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase">LSL (Nedre gräns)</label>
+                      <label className="block text-[10px] font-bold text-slate-505 dark:text-slate-400 uppercase">LSL (Nedre gräns)</label>
                       <input
                         type="number"
                         step="0.01"
-                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-500"
                         value={fields.lsl || '9.5'}
                         onChange={(e) => updateCapabilityField('lsl', e.target.value)}
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase">USL (Övre gräns)</label>
+                      <label className="block text-[10px] font-bold text-slate-505 dark:text-slate-400 uppercase">USL (Övre gräns)</label>
                       <input
                         type="number"
                         step="0.01"
-                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-500"
                         value={fields.usl || '10.5'}
                         onChange={(e) => updateCapabilityField('usl', e.target.value)}
                       />
@@ -2283,56 +2164,56 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase">LSL (Nedre gräns)</label>
+                      <label className="block text-[10px] font-bold text-slate-505 dark:text-slate-400 uppercase">LSL (Nedre gräns)</label>
                       <input
                         type="number"
                         step="0.01"
-                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-500"
                         value={fields.lsl || '9.5'}
                         onChange={(e) => updateCapabilityField('lsl', e.target.value)}
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase">USL (Övre gräns)</label>
+                      <label className="block text-[10px] font-bold text-slate-505 dark:text-slate-400 uppercase">USL (Övre gräns)</label>
                       <input
                         type="number"
                         step="0.01"
-                        className="w-full p-2 bg-white border border-slate-200 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-550"
+                        className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-md text-xs font-semibold focus:ring-1 focus:ring-emerald-500"
                         value={fields.usl || '10.5'}
                         onChange={(e) => updateCapabilityField('usl', e.target.value)}
                       />
                     </div>
                   </div>
 
-                  <div className="border-t border-slate-200/50 my-2 pt-2"></div>
+                  <div className="border-t border-slate-200 dark:border-slate-800 my-2 pt-2"></div>
 
                   <div>
-                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase mb-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-505 dark:text-slate-400 uppercase mb-1">
                       <span>Medelvärde (μ)</span>
-                      <span className="text-slate-800 font-mono text-xs">{mean.toFixed(2)}</span>
+                      <span className="text-slate-800 dark:text-zinc-100 font-mono text-xs">{mean.toFixed(2)}</span>
                     </div>
                     <input
                       type="range"
                       min={(lsl - 0.5 * (usl - lsl)).toString()}
                       max={(usl + 0.5 * (usl - lsl)).toString()}
                       step="0.01"
-                      className="w-full h-1 bg-slate-200 accent-emerald-600 rounded-md cursor-pointer"
+                      className="w-full h-1 bg-slate-250 dark:bg-slate-800 accent-emerald-600 rounded-md cursor-pointer"
                       value={mean.toString()}
                       onChange={(e) => updateCapabilityField('mean', e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase mb-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-505 dark:text-slate-400 uppercase mb-1">
                       <span>Standardavvikelse (σ)</span>
-                      <span className="text-slate-800 font-mono text-xs">{stdDev.toFixed(3)}</span>
+                      <span className="text-slate-800 dark:text-zinc-100 font-mono text-xs">{stdDev.toFixed(3)}</span>
                     </div>
                     <input
                       type="range"
                       min="0.01"
                       max={(0.5 * (usl - lsl)).toString()}
                       step="0.005"
-                      className="w-full h-1 bg-slate-200 accent-emerald-600 rounded-md cursor-pointer"
+                      className="w-full h-1 bg-slate-250 dark:bg-slate-800 accent-emerald-600 rounded-md cursor-pointer"
                       value={stdDev.toString()}
                       onChange={(e) => updateCapabilityField('stdDev', e.target.value)}
                     />
@@ -2342,9 +2223,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             </div>
 
             {/* Quality thresholds widget card */}
-            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex gap-2.5 items-start">
+            <div className="p-3 bg-emerald-555/10 dark:bg-emerald-950/20 rounded-xl border border-emerald-500/20 dark:border-emerald-900/30 flex gap-2.5 items-start">
               <span className="text-lg">📈</span>
-              <div className="text-[11px] text-emerald-850 text-emerald-800 space-y-0.5">
+              <div className="text-[11px] text-emerald-850 dark:text-emerald-300 space-y-0.5">
                 <p className="font-bold">Duglighetsstandarder (Cp & Cpk):</p>
                 <div className="grid grid-cols-2 gap-x-2 font-medium">
                   <div>• &lt; 1.00: Brister (Underkänd)</div>
@@ -2360,7 +2241,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
             
             {/* Visual Bell curve graph */}
-            <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-2xl flex flex-col items-center">
               <h4 className="w-full text-[10px] font-bold text-slate-500 uppercase tracking-widest text-left mb-2">
                 Processfördelning vs Specifikationsgränser
               </h4>
@@ -2443,8 +2324,8 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
             <div className={`p-3 rounded-xl border text-xs font-semibold leading-relaxed flex items-center gap-2 ${
               cpk >= 1.33 
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
-                : 'bg-rose-50 border-rose-200 text-rose-800'
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-250 dark:border-emerald-900/30 text-emerald-800 dark:text-emerald-305' 
+                : 'bg-rose-50 dark:bg-rose-950/20 border-rose-220 dark:border-rose-900/30 text-rose-800 dark:text-rose-300'
             }`}>
               <span>{cpk >= 1.33 ? '✅' : '⚠️'}</span>
               <span>
@@ -2458,17 +2339,17 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-550 focus:ring-emerald-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-zinc-100"
             placeholder="Fyll i kommentarer om duglighetsanalysen och planerade korrigerande åtgärder..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-          <span className="text-xs text-slate-400">
+        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
+          <span className="text-xs text-slate-400 dark:text-slate-500">
             {saveSuccess ? (
-              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+              <span className="text-green-600 dark:text-green-400 font-semibold flex items-center gap-1 animate-pulse">
                 <Check className="w-4 h-4" /> Sparat framgångsrikt till mätetal!
               </span>
             ) : (
@@ -2477,7 +2358,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </span>
           <button
             onClick={() => handleSave(items, fields, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all animate-fade"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-750 dark:hover:bg-slate-700 text-white rounded-lg font-bold text-xs shadow-sm shadow-slate-200 dark:shadow-none transition-all animate-fade"
           >
             <Save className="w-4 h-4" /> Spara till projekt
           </button>
@@ -2524,10 +2405,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <Calculator className="w-5 h-5 text-orange-600" /> 5S Audit & Poängräknare
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-orange-50 text-orange-600 border border-orange-100">
@@ -2538,7 +2419,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* 5S Score Output Ring */}
-        <div className="p-4 bg-orange-50 rounded-xl mb-6 flex flex-col md:flex-row items-center gap-6 border border-orange-100">
+        <div className="p-4 bg-orange-50 dark:bg-amber-950/15 rounded-xl mb-6 flex flex-col md:flex-row items-center gap-6 border border-orange-100 dark:border-amber-900/30">
           <div className="relative shrink-0 flex items-center justify-center">
             <svg className="w-24 h-24 transform -rotate-90">
               <circle cx="48" cy="48" r="40" stroke="#ffedd5" strokeWidth="8" fill="transparent" />
@@ -2547,16 +2428,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 strokeDashoffset={251.2 - (251.2 * (totalAvg / 5))}
               />
             </svg>
-            <span className="absolute text-xl font-black text-orange-950 font-mono">
+            <span className="absolute text-xl font-black text-orange-950 dark:text-orange-300 dark:text-orange-300 font-mono">
               {(totalAvg).toFixed(1)}/5
             </span>
           </div>
 
           <div className="flex-1 text-center md:text-left space-y-1">
-            <h4 className="text-sm font-bold text-orange-950 uppercase">
+            <h4 className="text-sm font-bold text-orange-950 dark:text-orange-300 dark:text-orange-305 uppercase">
               {totalAvg >= 4.0 ? '🌟 Utmärkt Standard' : totalAvg >= 3.0 ? '⚠️ Godkänd Standard' : '❌ Otillräcklig Standard'}
             </h4>
-            <p className="text-xs text-orange-850/80 leading-relaxed font-medium">
+            <p className="text-xs text-orange-850 dark:text-orange-300/80 dark:text-orange-300/80 leading-relaxed font-medium">
               Ett totalbetyg på <b>{(totalAvg).toFixed(2)}</b> betyder att ni har implementerat solida processer för ordning och städad miljö. Förbättra era standarder kontinuerligt.
             </p>
           </div>
@@ -2567,16 +2448,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           {/* S1: Sortera */}
           <div className="p-3 bg-slate-50 rounded-lg">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest">1. Sortera (Seiri)</h4>
+              <h4 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-widest">1. Sortera (Seiri)</h4>
               <span className="text-xs font-extrabold text-orange-600 font-mono">Snitt: {sortAvg.toFixed(1)}/5</span>
             </div>
             <div className="space-y-2 text-xs">
               <div>
-                <label className="text-[11px] text-slate-600">Onödiga föremål borttagna (1-5)</label>
+                <label className="text-[11px] text-slate-600 dark:text-slate-400">Onödiga föremål borttagna (1-5)</label>
                 <input type="range" min="1" max="5" className="w-full h-1 bg-slate-200 accent-orange-600 rounded-lg" value={s1_1} onChange={(e) => updateSlider('s1_1', e.target.value)} />
               </div>
               <div>
-                <label className="text-[11px] text-slate-600">Rödmärkning genomförd (1-5)</label>
+                <label className="text-[11px] text-slate-600 dark:text-slate-400">Rödmärkning genomförd (1-5)</label>
                 <input type="range" min="1" max="5" className="w-full h-1 bg-slate-200 accent-orange-600 rounded-lg" value={s1_2} onChange={(e) => updateSlider('s1_2', e.target.value)} />
               </div>
             </div>
@@ -2585,16 +2466,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           {/* S2: Strukturera */}
           <div className="p-3 bg-slate-50 rounded-lg">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest">2. Strukturera (Seiton)</h4>
+              <h4 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-widest">2. Strukturera (Seiton)</h4>
               <span className="text-xs font-extrabold text-orange-600 font-mono">Snitt: {structureAvg.toFixed(1)}/5</span>
             </div>
             <div className="space-y-2 text-xs">
               <div>
-                <label className="text-[11px] text-slate-600">Allt har en bestämd plats (1-5)</label>
+                <label className="text-[11px] text-slate-600 dark:text-slate-400">Allt har en bestämd plats (1-5)</label>
                 <input type="range" min="1" max="5" className="w-full h-1 bg-slate-200 accent-orange-600 rounded-lg" value={s2_1} onChange={(e) => updateSlider('s2_1', e.target.value)} />
               </div>
               <div>
-                <label className="text-[11px] text-slate-600">Märkning och skyltning (1-5)</label>
+                <label className="text-[11px] text-slate-600 dark:text-slate-400">Märkning och skyltning (1-5)</label>
                 <input type="range" min="1" max="5" className="w-full h-1 bg-slate-200 accent-orange-600 rounded-lg" value={s2_2} onChange={(e) => updateSlider('s2_2', e.target.value)} />
               </div>
             </div>
@@ -2603,12 +2484,12 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           {/* S3: Städa */}
           <div className="p-3 bg-slate-50 rounded-lg">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest">3. Städa (Seiso)</h4>
+              <h4 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-widest">3. Städa (Seiso)</h4>
               <span className="text-xs font-extrabold text-orange-600 font-mono">Snitt: {cleanAvg.toFixed(1)}/5</span>
             </div>
             <div className="space-y-2 text-xs">
               <div>
-                <label className="text-[11px] text-slate-600">Arbetsytan ren och väl underhållen (1-5)</label>
+                <label className="text-[11px] text-slate-600 dark:text-slate-400">Arbetsytan ren och väl underhållen (1-5)</label>
                 <input type="range" min="1" max="5" className="w-full h-1 bg-slate-200 accent-orange-600 rounded-lg" value={s3_1} onChange={(e) => updateSlider('s3_1', e.target.value)} />
               </div>
             </div>
@@ -2617,7 +2498,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           {/* S4: Standardisera */}
           <div className="p-3 bg-slate-50 rounded-lg">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest">4. Standardisera (Seiketsu)</h4>
+              <h4 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-widest">4. Standardisera (Seiketsu)</h4>
               <span className="text-xs font-extrabold text-orange-600 font-mono">Snitt: {standardAvg.toFixed(1)}/5</span>
             </div>
           </div>
@@ -2625,7 +2506,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           {/* S5: Självdisciplin */}
           <div className="p-3 bg-slate-50 rounded-lg">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest">5. Självdisciplin (Shitsuke)</h4>
+              <h4 className="text-xs font-bold text-slate-800 dark:text-zinc-100 uppercase tracking-widest">5. Självdisciplin (Shitsuke)</h4>
               <span className="text-xs font-extrabold text-orange-600 font-mono">Snitt: {disciplineAvg.toFixed(1)}/5</span>
             </div>
           </div>
@@ -2633,7 +2514,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm bg-slate-50"
             placeholder="Skriv dina egna 5S iakttagelser..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -2695,10 +2576,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <Wrench className="w-5 h-5 text-indigo-700" /> Revisionsplan & Grindgranskning
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
@@ -2727,8 +2608,8 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 key={item.id} 
                 className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${
                   isChecked 
-                    ? 'bg-indigo-50/20 border-indigo-200 text-slate-800' 
-                    : 'bg-white border-slate-200 hover:bg-slate-50/50 text-slate-600'
+                    ? 'bg-indigo-50/20 border-indigo-200 text-slate-800 dark:text-zinc-100' 
+                    : 'bg-white border-slate-200 dark:border-slate-800/80 hover:bg-slate-50/50 text-slate-600 dark:text-slate-400'
                 }`}
               >
                 <input
@@ -2745,7 +2626,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
             placeholder="Kritiska iakttagelser under granskningen..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -2845,10 +2726,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <Calculator className="w-5 h-5 text-indigo-600" /> Hypotes- & Signifikanstest
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100">
@@ -2866,12 +2747,12 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Configuration Panel */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-4 lg:col-span-2">
+          <div className="p-5 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-xl space-y-4 lg:col-span-2">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Typ av Hypotestest</label>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Typ av Hypotestest</label>
                 <select
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                   value={testType}
                   onChange={(e) => setHypField('testType', e.target.value)}
                 >
@@ -2880,9 +2761,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Signifikansnivå (Alfa-risk α)</label>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Signifikansnivå (Alfa-risk α)</label>
                 <select
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                   value={alpha}
                   onChange={(e) => setHypField('alpha', e.target.value)}
                 >
@@ -2901,7 +2782,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   <label className="block text-[10px] text-slate-500">Antal obs (n)</label>
                   <input
                     type="number"
-                    className="w-full p-2 border border-slate-200 rounded text-xs font-semibold"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-800/80 rounded text-xs font-semibold"
                     value={fields.n1 || '30'}
                     onChange={(e) => setHypField('n1', e.target.value)}
                   />
@@ -2911,7 +2792,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   <input
                     type="number"
                     step="0.1"
-                    className="w-full p-2 border border-slate-200 rounded text-xs font-semibold"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-800/80 rounded text-xs font-semibold"
                     value={fields.mean1 || '102.5'}
                     onChange={(e) => setHypField('mean1', e.target.value)}
                   />
@@ -2921,7 +2802,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   <input
                     type="number"
                     step="0.1"
-                    className="w-full p-2 border border-slate-200 rounded text-xs font-semibold"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-800/80 rounded text-xs font-semibold"
                     value={fields.sd1 || '5.2'}
                     onChange={(e) => setHypField('sd1', e.target.value)}
                   />
@@ -2938,7 +2819,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                     <label className="block text-[10px] text-slate-500">Antal obs (n₂)</label>
                     <input
                       type="number"
-                      className="w-full p-2 border border-slate-200 rounded text-xs font-semibold"
+                      className="w-full p-2 border border-slate-200 dark:border-slate-800/80 rounded text-xs font-semibold"
                       value={fields.n2 || '30'}
                       onChange={(e) => setHypField('n2', e.target.value)}
                     />
@@ -2948,7 +2829,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                     <input
                       type="number"
                       step="0.1"
-                      className="w-full p-2 border border-slate-200 rounded text-xs font-semibold"
+                      className="w-full p-2 border border-slate-200 dark:border-slate-800/80 rounded text-xs font-semibold"
                       value={fields.mean2 || '98.8'}
                       onChange={(e) => setHypField('mean2', e.target.value)}
                     />
@@ -2958,7 +2839,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                     <input
                       type="number"
                       step="0.1"
-                      className="w-full p-2 border border-slate-200 rounded text-xs font-semibold"
+                      className="w-full p-2 border border-slate-200 dark:border-slate-800/80 rounded text-xs font-semibold"
                       value={fields.sd2 || '6.1'}
                       onChange={(e) => setHypField('sd2', e.target.value)}
                     />
@@ -2973,7 +2854,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   <input
                     type="number"
                     step="0.1"
-                    className="w-full p-2 border border-slate-200 rounded text-xs font-bold font-mono"
+                    className="w-full p-2 border border-slate-200 dark:border-slate-800/80 rounded text-xs font-bold font-mono"
                     value={fields.targetMean || '100.0'}
                     onChange={(e) => setHypField('targetMean', e.target.value)}
                   />
@@ -3024,9 +2905,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         <div className="mb-6 space-y-1.5">
-          <label className="block text-xs font-bold text-slate-600 uppercase">Analys & Slutsatser</label>
+          <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">Analys & Slutsatser</label>
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
             placeholder="Skriv dina egna slutsatser eller tolkningar av hypotestestet..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -3124,10 +3005,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-emerald-600" /> Regressionsanalys
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
@@ -3148,7 +3029,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           {/* Controls & Mini Table */}
           <div className="space-y-4">
             <div className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100/60">
-              <h4 className="text-xs font-bold text-emerald-800 flex items-center gap-1 mb-3">
+              <h4 className="text-xs font-bold text-emerald-800 dark:text-emerald-305 flex items-center gap-1 mb-3">
                 <span>➕</span> Lägg till par (X, Y)
               </h4>
               <div className="grid grid-cols-2 gap-2 mb-3">
@@ -3157,7 +3038,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   <input
                     type="number"
                     step="0.1"
-                    className="w-full p-2 bg-white border border-slate-200 rounded text-xs font-mono font-semibold"
+                    className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs font-mono font-semibold"
                     placeholder="T.ex. Hastighet"
                     value={draftInputs.regX || ''}
                     onChange={(e) => setDraftInputs(p => ({ ...p, regX: e.target.value }))}
@@ -3168,7 +3049,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                   <input
                     type="number"
                     step="0.1"
-                    className="w-full p-2 bg-white border border-slate-200 rounded text-xs font-mono font-semibold"
+                    className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs font-mono font-semibold"
                     placeholder="T.ex. Slitaget"
                     value={draftInputs.regY || ''}
                     onChange={(e) => setDraftInputs(p => ({ ...p, regY: e.target.value }))}
@@ -3190,7 +3071,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <div className="max-h-[160px] overflow-y-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-50/20 text-slate-600 border-b border-slate-100 font-semibold">
+                    <tr className="bg-slate-50/20 text-slate-600 dark:text-slate-400 border-b border-slate-100 font-semibold">
                       <th className="p-2">#</th>
                       <th className="p-2">X-Datapunkt</th>
                       <th className="p-2">Y-Datapunkt</th>
@@ -3200,8 +3081,8 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                     {activePoints.map((pt, idx) => (
                       <tr key={idx} className="hover:bg-slate-50 animate-fade">
                         <td className="p-2 text-slate-400">{idx + 1}</td>
-                        <td className="p-2 text-slate-700 font-medium">{pt.x}</td>
-                        <td className="p-2 text-slate-700 font-medium">{pt.y}</td>
+                        <td className="p-2 text-slate-700 dark:text-slate-300 font-medium">{pt.x}</td>
+                        <td className="p-2 text-slate-700 dark:text-slate-300 font-medium">{pt.y}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -3211,10 +3092,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </div>
 
           {/* Interactive Scatter Plot */}
-          <div className="lg:col-span-2 flex flex-col justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">
-            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex justify-between items-center">
+          <div className="lg:col-span-2 flex flex-col justify-between p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-xl">
+            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2 flex justify-between items-center">
               <span>📈 Spridningsdiagram & Regressionsmodell</span>
-              <span className="text-emerald-700 font-extrabold font-mono text-[11px]">
+              <span className="text-emerald-700 dark:text-emerald-400 font-extrabold font-mono text-[11px]">
                 Ekvation: Y = {intercept.toFixed(2)} + {slope.toFixed(2)}X
               </span>
             </h4>
@@ -3234,7 +3115,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               </ResponsiveContainer>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200">
+            <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-800/80">
               <div className="bg-white p-2.5 rounded-lg border border-slate-100 flex flex-col justify-center">
                 <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Förklaringsgrad (R²)</span>
                 <span className="text-lg font-black font-mono text-emerald-600">{(r2 * 100).toFixed(1)}%</span>
@@ -3252,9 +3133,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         <div className="mb-6 space-y-1.5">
-          <label className="block text-xs font-bold text-slate-600 uppercase">Ytterligare regressionsanalys</label>
+          <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase">Ytterligare regressionsanalys</label>
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50"
             placeholder="Analysera spridningen, avvikande punkter (outliers) eller processändringar..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -3376,10 +3257,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     });
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-orange-600" /> Pugh Beslutsmatris (Lösningsval)
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-orange-50 text-orange-600 border border-orange-100">
@@ -3392,17 +3273,17 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         {/* Input selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="p-4 bg-orange-50/40 border border-orange-100/60 rounded-xl">
-            <h4 className="text-xs font-bold text-orange-850 uppercase tracking-wider mb-3">Lägg till kriterium</h4>
+            <h4 className="text-xs font-bold text-orange-850 dark:text-orange-300 uppercase tracking-wider mb-3">Lägg till kriterium</h4>
             <div className="flex gap-2">
               <input
                 type="text"
-                className="flex-1 p-2 bg-white border border-slate-200 rounded text-xs"
+                className="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                 placeholder="T.ex. Ergonomi, Underhållskostnad..."
                 value={draftInputs.critText || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, critText: e.target.value }))}
               />
               <select
-                className="p-2 bg-white border border-slate-200 rounded text-xs"
+                className="p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                 value={draftInputs.critWeight || '3'}
                 onChange={(e) => setDraftInputs(p => ({ ...p, critWeight: e.target.value }))}
               >
@@ -3422,11 +3303,11 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </div>
 
           <div className="p-4 bg-orange-50/40 border border-orange-100/60 rounded-xl">
-            <h4 className="text-xs font-bold text-orange-850 uppercase tracking-wider mb-3">Lägg till lösningskoncept</h4>
+            <h4 className="text-xs font-bold text-orange-850 dark:text-orange-300 uppercase tracking-wider mb-3">Lägg till lösningskoncept</h4>
             <div className="flex gap-2">
               <input
                 type="text"
-                className="flex-1 p-2 bg-white border border-slate-200 rounded text-xs"
+                className="flex-1 p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                 placeholder="T.ex. Koncept 3: Nytt robotredskap"
                 value={draftInputs.conceptName || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, conceptName: e.target.value }))}
@@ -3442,16 +3323,16 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Pugh Matrix Interactive Table */}
-        <div className="overflow-x-auto border border-slate-200 rounded-xl mb-6 shadow-sm">
+        <div className="overflow-x-auto border border-slate-200 dark:border-slate-800/80 rounded-xl mb-6 shadow-sm">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
-                <th className="p-3 w-4 z-10 sticky left-0 bg-slate-50 border-r border-slate-200">#</th>
-                <th className="p-3 min-w-[180px] z-10 sticky left-6 bg-slate-50 border-r border-slate-200">Kvalitetskriterier</th>
-                <th className="p-3 text-center w-16 border-r border-slate-200">Vikt</th>
-                <th className="p-3 text-center w-24 bg-slate-100/60 border-r border-slate-200">Referens (Nu)</th>
+              <tr className="bg-slate-50 border-b border-slate-200 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider text-[10px]">
+                <th className="p-3 w-4 z-10 sticky left-0 bg-slate-50 border-r border-slate-200 dark:border-slate-800/80">#</th>
+                <th className="p-3 min-w-[180px] z-10 sticky left-6 bg-slate-50 border-r border-slate-200 dark:border-slate-800/80">Kvalitetskriterier</th>
+                <th className="p-3 text-center w-16 border-r border-slate-200 dark:border-slate-800/80">Vikt</th>
+                <th className="p-3 text-center w-24 bg-slate-100/60 border-r border-slate-200 dark:border-slate-800/80">Referens (Nu)</th>
                 {activeConcepts.map((concept: string) => (
-                  <th key={concept} className="p-3 text-center min-w-[124px] border-r border-slate-200 relative group">
+                  <th key={concept} className="p-3 text-center min-w-[124px] border-r border-slate-200 dark:border-slate-800/80 relative group">
                     <div className="flex flex-col items-center">
                       <span className="break-words max-w-[120px]">{concept}</span>
                       <button
@@ -3465,18 +3346,18 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {activeCriteria.map((crit: any, idx: number) => (
                 <tr key={crit.id} className="hover:bg-slate-50/50">
-                  <td className="p-3 text-slate-400 font-mono font-medium sticky left-0 bg-white border-r border-slate-200">{idx + 1}</td>
-                  <td className="p-3 font-semibold text-slate-800 sticky left-6 bg-white border-r border-slate-200">{crit.text}</td>
-                  <td className="p-3 text-center font-bold text-orange-700 bg-orange-50/10 border-r border-slate-200">{crit.weight}</td>
-                  <td className="p-3 text-center font-bold bg-slate-100/30 text-slate-400 border-r border-slate-200">0 (Bas)</td>
+                  <td className="p-3 text-slate-400 font-mono font-medium sticky left-0 bg-white border-r border-slate-200 dark:border-slate-800/80">{idx + 1}</td>
+                  <td className="p-3 font-semibold text-slate-800 dark:text-zinc-100 sticky left-6 bg-white border-r border-slate-200 dark:border-slate-800/80">{crit.text}</td>
+                  <td className="p-3 text-center font-bold text-orange-700 dark:text-orange-400 bg-orange-50/10 border-r border-slate-200 dark:border-slate-800/80">{crit.weight}</td>
+                  <td className="p-3 text-center font-bold bg-slate-100/30 text-slate-400 border-r border-slate-200 dark:border-slate-800/80">0 (Bas)</td>
                   
                   {activeConcepts.map((concept: string) => {
                     const score = getScore(crit.id, concept);
                     return (
-                      <td key={concept} className="p-3 text-center border-r border-slate-200">
+                      <td key={concept} className="p-3 text-center border-r border-slate-200 dark:border-slate-800/80">
                         <div className="flex justify-center items-center gap-1.5">
                           <button
                             onClick={() => setScore(crit.id, concept, -1)}
@@ -3489,7 +3370,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                           <button
                             onClick={() => setScore(crit.id, concept, 0)}
                             className={`w-7 h-7 rounded-full flex items-center justify-center font-black transition-all ${
-                              score === 0 ? 'bg-slate-400 text-white shadow-sm ring-2 ring-slate-200' : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700'
+                              score === 0 ? 'bg-slate-400 text-white shadow-sm ring-2 ring-slate-200' : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700 dark:text-slate-300'
                             }`}
                           >
                             S
@@ -3511,28 +3392,28 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
               {/* Total Calculations */}
               <tr className="bg-slate-100/50 border-t-2 border-slate-300 font-bold text-[11px]">
-                <td colSpan={2} className="p-3 text-right bg-slate-50 sticky left-0 border-r border-slate-200">Positiva (+) Antal:</td>
-                <td className="bg-slate-50 border-r border-slate-200"></td>
-                <td className="p-3 text-center text-slate-400 border-r border-slate-200">0</td>
+                <td colSpan={2} className="p-3 text-right bg-slate-50 sticky left-0 border-r border-slate-200 dark:border-slate-800/80">Positiva (+) Antal:</td>
+                <td className="bg-slate-50 border-r border-slate-200 dark:border-slate-800/80"></td>
+                <td className="p-3 text-center text-slate-400 border-r border-slate-200 dark:border-slate-800/80">0</td>
                 {totals.map((t: any) => (
-                  <td key={t.name} className="p-3 text-center text-green-700 font-mono border-r border-slate-200 bg-green-50/20">{t.pos}</td>
+                  <td key={t.name} className="p-3 text-center text-green-700 font-mono border-r border-slate-200 dark:border-slate-800/80 bg-green-50/20">{t.pos}</td>
                 ))}
               </tr>
               <tr className="bg-slate-100/50 font-bold text-[11px]">
-                <td colSpan={2} className="p-3 text-right bg-slate-50 sticky left-0 border-r border-slate-200">Negativa (-) Antal:</td>
-                <td className="bg-slate-50 border-r border-slate-200"></td>
-                <td className="p-3 text-center text-slate-400 border-r border-slate-200">0</td>
+                <td colSpan={2} className="p-3 text-right bg-slate-50 sticky left-0 border-r border-slate-200 dark:border-slate-800/80">Negativa (-) Antal:</td>
+                <td className="bg-slate-50 border-r border-slate-200 dark:border-slate-800/80"></td>
+                <td className="p-3 text-center text-slate-400 border-r border-slate-200 dark:border-slate-800/80">0</td>
                 {totals.map((t: any) => (
-                  <td key={t.name} className="p-3 text-center text-red-700 font-mono border-r border-slate-200 bg-red-50/20">{t.neg}</td>
+                  <td key={t.name} className="p-3 text-center text-red-700 font-mono border-r border-slate-200 dark:border-slate-800/80 bg-red-50/20">{t.neg}</td>
                 ))}
               </tr>
               <tr className="bg-orange-50/30 font-extrabold text-[12px] border-b border-slate-300">
-                <td colSpan={2} className="p-3 text-right bg-slate-50 sticky left-0 border-r border-slate-200 text-orange-950">Viktat Nettoresultat:</td>
-                <td className="bg-slate-50 border-r border-slate-200"></td>
-                <td className="p-3 text-center text-slate-400 border-r border-slate-200">0</td>
+                <td colSpan={2} className="p-3 text-right bg-slate-50 sticky left-0 border-r border-slate-200 dark:border-slate-800/80 text-orange-950 dark:text-orange-300">Viktat Nettoresultat:</td>
+                <td className="bg-slate-50 border-r border-slate-200 dark:border-slate-800/80"></td>
+                <td className="p-3 text-center text-slate-400 border-r border-slate-200 dark:border-slate-800/80">0</td>
                 {totals.map((t: any) => (
-                  <td key={t.name} className={`p-4 text-center font-mono border-r border-slate-200 text-sm ${
-                    t.weighted > 0 ? 'text-green-700 bg-green-50 font-black' : t.weighted < 0 ? 'text-red-700 bg-red-50' : 'text-slate-600 bg-slate-50'
+                  <td key={t.name} className={`p-4 text-center font-mono border-r border-slate-200 dark:border-slate-800/80 text-sm ${
+                    t.weighted > 0 ? 'text-green-700 bg-green-50 font-black' : t.weighted < 0 ? 'text-red-700 bg-red-50' : 'text-slate-600 dark:text-slate-400 bg-slate-50'
                   }`}>{t.weighted}</td>
                 ))}
               </tr>
@@ -3542,9 +3423,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Results assessment */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="p-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
-            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">💡 Pugh Matrix Guideline:</h4>
-            <p className="text-xs text-slate-600 leading-relaxed font-medium">
+          <div className="p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-800/80 bg-slate-50/50">
+            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-2">💡 Pugh Matrix Guideline:</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               Välj det koncept som presterar bäst i det <b>viktade nettoresultatet</b>. Om två ligger nära, kombinera de positiva aspekterna hos de båda för att syntetisera ett unikt optimerat LSS-koncept!
             </p>
           </div>
@@ -3563,7 +3444,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-orange-500 text-sm bg-slate-50"
             placeholder="Skriv dina kommentarer eller kombinera synpunkter..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -3657,10 +3538,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <Calculator className="w-5 h-5 text-blue-600" /> VSM-Flödestidskalkylator
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-blue-50 text-blue-600 border border-blue-100">
@@ -3672,14 +3553,14 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         {/* Dashboard Cards KPI */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
-            <span className="text-[10px] text-blue-800 uppercase font-bold tracking-wider">Värdeskapande Tid (VA)</span>
+          <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-xl">
+            <span className="text-[10px] text-blue-800 dark:text-blue-300 uppercase font-bold tracking-wider">Värdeskapande Tid (VA)</span>
             <div className="text-2xl font-black text-blue-950 font-mono mt-1">
               {totalVAHours >= 1 ? `${totalVAHours.toFixed(2)} h` : `${(totalVAHours*60).toFixed(0)} min`}
             </div>
-            <p className="text-[10px] text-blue-700/80 mt-1 font-medium">Summan av bearbetningstid (C/T)</p>
+            <p className="text-[10px] text-blue-700 dark:text-blue-400/80 mt-1 font-medium">Summan av bearbetningstid (C/T)</p>
           </div>
-          <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+          <div className="p-4 bg-amber-50 dark:bg-amber-950/15 border border-amber-100 dark:border-amber-900/30 rounded-xl">
             <span className="text-[10px] text-amber-800 uppercase font-bold tracking-wider">Icke Värdeskapande (NVA)</span>
             <div className="text-2xl font-black text-amber-950 font-mono mt-1">
               {totalNVAHours >= 24 ? `${(totalNVAHours/24).toFixed(1)} d` : `${totalNVAHours.toFixed(1)} h`}
@@ -3696,14 +3577,14 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Steps Editor Form */}
-        <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl mb-6">
-          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Snabblägg till processteg i flödet</h4>
+        <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-xl mb-6">
+          <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-3">Snabblägg till processteg i flödet</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
             <div>
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Mottagarsteg / Aktivitet</label>
               <input
                 type="text"
-                className="w-full p-2 bg-white border border-slate-200 rounded text-xs"
+                className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                 placeholder="T.ex. Ytbehandling"
                 value={draftInputs.vsmName || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, vsmName: e.target.value }))}
@@ -3714,13 +3595,13 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <div className="flex gap-1">
                 <input
                   type="number"
-                  className="w-full p-2 bg-white border border-slate-200 rounded text-xs"
+                  className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                   placeholder="20"
                   value={draftInputs.vsmCT || ''}
                   onChange={(e) => setDraftInputs(p => ({ ...p, vsmCT: e.target.value }))}
                 />
                 <select
-                  className="p-2 bg-white border border-slate-200 rounded text-xs"
+                  className="p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                   value={draftInputs.vsmCTUnit || 'min'}
                   onChange={(e) => setDraftInputs(p => ({ ...p, vsmCTUnit: e.target.value }))}
                 >
@@ -3735,13 +3616,13 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <div className="flex gap-1">
                 <input
                   type="number"
-                  className="w-full p-2 bg-white border border-slate-200 rounded text-xs"
+                  className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                   placeholder="8"
                   value={draftInputs.vsmWait || ''}
                   onChange={(e) => setDraftInputs(p => ({ ...p, vsmWait: e.target.value }))}
                 />
                 <select
-                  className="p-2 bg-white border border-slate-200 rounded text-xs"
+                  className="p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                   value={draftInputs.vsmWaitUnit || 'h'}
                   onChange={(e) => setDraftInputs(p => ({ ...p, vsmWaitUnit: e.target.value }))}
                 >
@@ -3805,7 +3686,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-slate-50 dark:bg-slate-950 text-slate-850 dark:text-zinc-100"
             placeholder="Skriv dina egna iakttagelser om värdeskapande vs slöseri (Muda)..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -3865,8 +3746,8 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
       if (func === 1) {
         if (dys === 1) return { code: 'Q', label: 'Tveksamt (Q)', color: 'bg-indigo-100 text-indigo-700' };
-        if (dys === 2 || dys === 3 || dys === 4) return { code: 'A', label: 'Hänförelse (A)', color: 'bg-emerald-100 text-emerald-800 font-bold border border-emerald-300' };
-        if (dys === 5) return { code: 'O', label: 'Prestanda (O)', color: 'bg-blue-100 text-blue-800 font-bold border border-blue-300' };
+        if (dys === 2 || dys === 3 || dys === 4) return { code: 'A', label: 'Hänförelse (A)', color: 'bg-emerald-100 text-emerald-800 dark:text-emerald-305 font-bold border border-emerald-300' };
+        if (dys === 5) return { code: 'O', label: 'Prestanda (O)', color: 'bg-blue-100 text-blue-800 dark:text-blue-300 font-bold border border-blue-300' };
       }
       if (func === 2 || func === 3 || func === 4) {
         if (dys === 1) return { code: 'R', label: 'Omvänt (R)', color: 'bg-red-100 text-red-700' };
@@ -3917,10 +3798,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     }, {} as Record<string, number>);
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-indigo-600" /> Kano Kundtillfredsställelsemodell
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mt-1 inline-block">
@@ -3940,35 +3821,35 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl mb-6 border border-slate-150">
           <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
             <span className="text-[10px] text-emerald-600 font-extrabold uppercase font-mono block">A: Hänförelse-krav</span>
-            <span className="text-2xl font-black text-slate-800 block">{categorySummary['A'] || 0}</span>
+            <span className="text-2xl font-black text-slate-800 dark:text-zinc-100 block">{categorySummary['A'] || 0}</span>
             <span className="text-[9px] text-slate-400">Skapar stor förtjusning</span>
           </div>
           <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
             <span className="text-[10px] text-blue-600 font-extrabold uppercase font-mono block">O: Prestanda-krav</span>
-            <span className="text-2xl font-black text-slate-800 block">{categorySummary['O'] || 0}</span>
+            <span className="text-2xl font-black text-slate-800 dark:text-zinc-100 block">{categorySummary['O'] || 0}</span>
             <span className="text-[9px] text-slate-400">Ju mer desto nöjdare kund</span>
           </div>
           <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
             <span className="text-[10px] text-amber-600 font-extrabold uppercase font-mono block">M: Måste-krav</span>
-            <span className="text-2xl font-black text-slate-800 block">{categorySummary['M'] || 0}</span>
+            <span className="text-2xl font-black text-slate-800 dark:text-zinc-100 block">{categorySummary['M'] || 0}</span>
             <span className="text-[9px] text-slate-400">Tas för givet (kritisk risk)</span>
           </div>
           <div className="p-2.5 bg-white rounded-lg border text-center shadow-sm">
             <span className="text-[10px] text-slate-500 font-extrabold uppercase font-mono block">I: Ointressanta</span>
-            <span className="text-2xl font-black text-slate-800 block">{categorySummary['I'] || 0}</span>
+            <span className="text-2xl font-black text-slate-800 dark:text-zinc-100 block">{categorySummary['I'] || 0}</span>
             <span className="text-[9px] text-slate-400">Det kvittar för kunden</span>
           </div>
         </div>
 
         {/* Add item bar */}
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
-          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Lägg till ny egenskap & märk betyg</h4>
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 dark:border-slate-800/80 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px]">Lägg till ny egenskap & märk betyg</h4>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
             <div className="md:col-span-5">
               <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-5">Kundkrav / Egenskap</label>
               <input
                 type="text"
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs"
                 placeholder="T.ex. Slitstark ytlackering..."
                 value={draftInputs.kanoName || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, kanoName: e.target.value }))}
@@ -3977,7 +3858,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             <div className="md:col-span-3">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Närvarande (Funktionell)</label>
               <select
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs outline-none"
                 value={draftInputs.kanoFunc || '1'}
                 onChange={(e) => setDraftInputs(p => ({ ...p, kanoFunc: e.target.value }))}
               >
@@ -3991,7 +3872,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             <div className="md:col-span-3">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Frånvarande (Dysfunktionell)</label>
               <select
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs outline-none"
                 value={draftInputs.kanoDys || '3'}
                 onChange={(e) => setDraftInputs(p => ({ ...p, kanoDys: e.target.value }))}
               >
@@ -4014,10 +3895,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Requirements interactive table */}
-        <div className="overflow-x-auto border border-slate-200 rounded-xl mb-6 shadow-sm">
+        <div className="overflow-x-auto border border-slate-200 dark:border-slate-800/80 rounded-xl mb-6 shadow-sm">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 font-bold text-slate-600 uppercase text-[10px]">
+              <tr className="bg-slate-50 border-b border-slate-200 dark:border-slate-800/80 font-bold text-slate-600 dark:text-slate-400 uppercase text-[10px]">
                 <th className="p-3 w-8">#</th>
                 <th className="p-3">Produkt-/Tjänsteegenskap</th>
                 <th className="p-3 text-center">Närvarande</th>
@@ -4034,9 +3915,9 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 return (
                   <tr key={k.id} className="hover:bg-slate-50/50">
                     <td className="p-3 text-slate-400 font-semibold font-mono">{idx + 1}</td>
-                    <td className="p-3 font-semibold text-slate-800">{k.name}</td>
-                    <td className="p-3 text-center text-slate-600 font-medium">{showFuncText}</td>
-                    <td className="p-3 text-center text-slate-600 font-medium">{showDysText}</td>
+                    <td className="p-3 font-semibold text-slate-800 dark:text-zinc-100">{k.name}</td>
+                    <td className="p-3 text-center text-slate-600 dark:text-slate-400 font-medium">{showFuncText}</td>
+                    <td className="p-3 text-center text-slate-600 dark:text-slate-400 font-medium">{showDysText}</td>
                     <td className="p-3 text-center">
                       <span className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide block text-center uppercase ${spec.color}`}>
                         {spec.label}
@@ -4059,7 +3940,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
             placeholder="Skriv kommentarer eller slutsatser gällande er Kano-analys..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -4133,20 +4014,20 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     const arrowRotationTransform = `rotate(${gaugeAngle} 100 100)`;
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
-        <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
+        <div className="flex flex-wrap items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-805 pb-3 gap-2">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-emerald-600" /> DPMO & Process Sigma-kalkylator
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-indigo-650 dark:text-indigo-400" /> DPMO & Process Sigma-kalkylator
             </h3>
-            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100 mt-1 inline-block">
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/50 mt-1 inline-block">
               Statistiska Mätetal (Defekttaktsanalys)
             </span>
-            <p className="text-xs text-slate-500 mt-1">{description}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{description}</p>
           </div>
           <button
             onClick={loadPepsiDPMO}
-            className="text-xs font-semibold px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5 shadow-sm focus:outline-none"
+            className="text-xs font-semibold px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900 rounded-lg border border-indigo-200 dark:border-indigo-800 transition-all flex items-center gap-1.5 shadow-sm focus:outline-none"
           >
             <Sparkles className="w-3.5 h-3.5" /> Pepsi Flaskfyllning exempel
           </button>
@@ -4154,42 +4035,42 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           {/* Inputs Column */}
-          <div className="lg:col-span-5 space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
-            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-widest border-b border-slate-150 pb-1.5">Mätdata Parametrar</h4>
+          <div className="lg:col-span-5 space-y-4 p-4 bg-slate-50 dark:bg-slate-950/45 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-xl">
+            <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800 pb-1.5">Mätdata Parametrar</h4>
             
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Totala enheter inspekterade (N)</label>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Totala enheter inspekterade (N)</label>
                 <input
                   type="number"
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm font-bold font-mono"
+                  className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-lg text-sm font-bold font-mono"
                   value={units}
                   onChange={(e) => setFieldLocal('units', e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Antal defekter funna (D)</label>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Antal defekter funna (D)</label>
                 <input
                   type="number"
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm font-bold font-mono text-red-650"
+                  className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-lg text-sm font-bold font-mono text-red-650 dark:text-red-400"
                   value={defects}
                   onChange={(e) => setFieldLocal('defects', e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">Felmöjligheter per enhet (O)</label>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">Felmöjligheter per enhet (O)</label>
                 <input
                   type="number"
-                  className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-sm font-bold font-mono text-slate-700"
+                  className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-lg text-sm font-bold font-mono text-slate-700 dark:text-slate-300"
                   value={opps}
                   onChange={(e) => setFieldLocal('opps', e.target.value)}
                 />
               </div>
             </div>
 
-            <div className="bg-slate-900 text-slate-300 p-3 rounded-lg text-[11px] font-mono leading-relaxed">
+            <div className="bg-slate-900 border border-slate-800/80 text-slate-300 p-3 rounded-lg text-[11px] font-mono leading-relaxed">
               <span className="font-bold text-amber-400 block mb-1">📐 Formel för DPMO:</span>
               DPMO = (Defekter / (Enheter × Möjligheter)) × 1 000 000 = <br/>
               <b>{(defects).toLocaleString('sv-SE')} / ({(units).toLocaleString('sv-SE')} × {opps}) × 10⁶</b>
@@ -4228,51 +4109,56 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
             {/* Numeric Indicators */}
             <div className="space-y-3">
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block">DPMO (Defects Per Million Opps)</span>
+              {/* DPMO indicator */}
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-xl">
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block">DPMO (Defects Per Million Opps)</span>
                 <span className="text-2xl font-black font-mono text-emerald-600 block mt-0.5">
                   {dpmo >= 100000 ? `${(dpmo/1000).toFixed(0)}k` : dpmo.toLocaleString('sv-SE', { maximumFractionDigits: 0 })}
                 </span>
-                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div className="w-full bg-slate-205 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
                   <div className="bg-emerald-500 h-full" style={{ width: `${Math.min(100, (1 - (dpmo/1000000)) * 100)}%` }} />
                 </div>
               </div>
 
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block">Process Yield (Utbyte %)</span>
-                <span className="text-2xl font-black font-mono text-blue-600 block mt-0.5">
+              {/* Yield indicator */}
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-xl">
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block">Process Yield (Utbyte %)</span>
+                <span className="text-2xl font-black font-mono text-blue-600 dark:text-blue-400 block mt-0.5">
                   {yieldPct.toFixed(4)}%
                 </span>
-                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1.5">
+                <div className="w-full bg-slate-205 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
                   <div className="bg-blue-500 h-full" style={{ width: `${yieldPct}%` }} />
                 </div>
               </div>
 
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold block">Defekter Per Enhet (DPU)</span>
-                <span className="text-2xl font-black font-mono text-orange-600 block mt-0.5">
+              {/* DPU indicator */}
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-zinc-100 rounded-xl">
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block">Defekter Per Enhet (DPU)</span>
+                <span className="text-2xl font-black font-mono text-orange-600 dark:text-orange-400 block mt-0.5">
                   {dpu.toFixed(4)}
                 </span>
-                <span className="text-[9px] text-slate-400 block">Genomsnittligt antal fel per producerad flaska/enhet.</span>
+                <span className="text-[9px] text-slate-400 dark:text-slate-500 block">Genomsnittligt antal fel per producerad enhet.</span>
               </div>
             </div>
 
           </div>
         </div>
 
+        {/* Notes Area */}
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-555 focus:ring-emerald-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-205 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-zinc-100"
             placeholder="Skriv kommentarer om DPMO och Process Sigma mätetalen..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-          <span className="text-xs text-slate-400">
+        {/* Footer actions */}
+        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
+          <span className="text-xs text-slate-400 dark:text-slate-500">
             {saveSuccess ? (
-              <span className="text-green-600 font-semibold flex items-center gap-1 animate-pulse">
+              <span className="text-green-600 dark:text-green-400 font-semibold flex items-center gap-1 animate-pulse">
                 <Check className="w-4 h-4" /> Sparat framgångsrikt till mätetal!
               </span>
             ) : (
@@ -4281,7 +4167,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </span>
           <button
             onClick={() => handleSave(items, { units, defects, opps }, notes)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-slate-750 dark:hover:bg-slate-700 text-white rounded-lg font-bold text-xs shadow-sm transition-all"
           >
             <Save className="w-4 h-4" /> Spara till projekt
           </button>
@@ -4328,10 +4214,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-indigo-600" /> VOC & CTQ Translation Tree
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mt-1 inline-block">
@@ -4348,14 +4234,14 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* VOC Form */}
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
-          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Översätt kundens röst (VOC) till CTQ</h4>
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 dark:border-slate-800/80 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px]">Översätt kundens röst (VOC) till CTQ</h4>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
             <div className="md:col-span-4">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Voice of Customer (Kundbehov)</label>
               <textarea
                 rows={1}
-                className="w-full p-2 bg-white border border-slate-200 rounded-lg text-xs resize-none"
+                className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs resize-none"
                 placeholder="T.ex: Flaskan ska inte läcka i liggande läge..."
                 value={draftInputs.vocText || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, vocText: e.target.value }))}
@@ -4365,7 +4251,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Kvalitets-Driver (Processfokus)</label>
               <input
                 type="text"
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs"
                 placeholder="T.ex: Kapsylens tätningsgrepp"
                 value={draftInputs.vocDriver || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, vocDriver: e.target.value }))}
@@ -4375,7 +4261,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <label className="block text-[10px] text-slate-500 font-bold mb-1">CTQ (Mätbart specifikt krav)</label>
               <input
                 type="text"
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs"
                 placeholder="T.ex: Kolsyrehållfasthet ≥ 98% efter 60 dagar"
                 value={draftInputs.vocCtq || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, vocCtq: e.target.value }))}
@@ -4384,7 +4270,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             <div className="md:col-span-1.5">
               <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-2">Status</label>
               <select
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs outline-none"
                 value={draftInputs.vocStatus || 'In Progress'}
                 onChange={(e) => setDraftInputs(p => ({ ...p, vocStatus: e.target.value }))}
               >
@@ -4410,14 +4296,14 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             const statusClass = 
               item.status === 'Pass' ? 'bg-green-50 text-green-700 border border-green-200' :
               item.status === 'Review' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
-              'bg-blue-50 text-blue-700 border border-blue-200';
+              'bg-blue-50 text-blue-700 dark:text-blue-400 border border-blue-200';
             return (
-              <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch p-4 bg-white border border-slate-205 rounded-xl border border-slate-200 relative hover:shadow-md transition-all">
+              <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch p-4 bg-white dark:bg-slate-900 border border-slate-202 dark:border-slate-800 rounded-xl relative hover:shadow-md transition-all">
                 {/* VOC segment */}
                 <div className="md:col-span-4 bg-slate-50/50 p-3 rounded-lg flex flex-col justify-between">
                   <div>
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono block">VOC - Kundens Röst</span>
-                    <p className="text-xs font-semibold text-slate-800 leading-relaxed mt-1">"{item.voc}"</p>
+                    <p className="text-xs font-semibold text-slate-800 dark:text-zinc-100 leading-relaxed mt-1">"{item.voc}"</p>
                   </div>
                   <span className="text-[10px] text-slate-400 mt-2 font-bold">Steg 1 (Identifiera behov)</span>
                 </div>
@@ -4431,7 +4317,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 <div className="md:col-span-3 bg-indigo-50/10 p-3 rounded-lg flex flex-col justify-between">
                   <div>
                     <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-widest font-mono block font-extrabold">Kvalitets-Driver</span>
-                    <p className="text-xs text-slate-700 font-medium leading-relaxed mt-1 font-semibold">{item.driver || 'Ej definierad'}</p>
+                    <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed mt-1 font-semibold">{item.driver || 'Ej definierad'}</p>
                   </div>
                   <span className="text-[10px] text-slate-400 mt-2 font-bold">Steg 2 (Hitta fokusområde)</span>
                 </div>
@@ -4445,7 +4331,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                 <div className="md:col-span-4 bg-emerald-50/10 p-3 rounded-lg border border-dashed border-emerald-300/30 flex flex-col justify-between">
                   <div className="flex justify-between items-start gap-1">
                     <div>
-                      <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-widest font-mono block font-extrabold">CTQ (Mätbart Krav)</span>
+                      <span className="text-[9px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest font-mono block font-extrabold">CTQ (Mätbart Krav)</span>
                       <p className="text-xs text-emerald-950 leading-relaxed mt-1 font-black font-mono">{item.ctq || 'Ej specificerad'}</p>
                     </div>
                     <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase shrink-0 ${statusClass}`}>
@@ -4469,7 +4355,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm bg-slate-50"
             placeholder="Skriv dina övergripande tankar om er CTQ toleransdefinition och mätmetoder..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -4548,10 +4434,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-indigo-700" /> Poka-Yoke / Felsäkringsanalys
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 mt-1 inline-block">
@@ -4562,22 +4448,22 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Input Form for Poka-Yoke */}
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
-          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Ny Felsäkringsåtgärd & Riskreduktion</h4>
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 dark:border-slate-800/80 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px]">Ny Felsäkringsåtgärd & Riskreduktion</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
             <div className="md:col-span-2">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Processsteg & Felkälla</label>
               <input
                 type="text"
-                className="w-full p-2 bg-white border border-slate-200 rounded text-xs"
+                className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                 placeholder="T.ex: Inmatning av pall"
                 value={draftInputs.pokaProc || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, pokaProc: e.target.value }))}
               />
               <input
                 type="text"
-                className="w-full p-2 bg-white border border-slate-200 rounded text-xs mt-1.5"
+                className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs mt-1.5"
                 placeholder="T.ex: Pallen placeras sned"
                 value={draftInputs.pokaErr || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, pokaErr: e.target.value }))}
@@ -4587,7 +4473,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             <div className="md:col-span-1">
               <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-1">Poka-Yoke Typ</label>
               <select
-                className="w-full p-2 bg-white border border-slate-200 rounded text-xs"
+                className="w-full p-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs"
                 value={draftInputs.pokaType || 'Control'}
                 onChange={(e) => setDraftInputs(p => ({ ...p, pokaType: e.target.value }))}
               >
@@ -4601,7 +4487,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Teknisk Felsäkringslösning</label>
               <textarea
                 rows={2}
-                className="w-full p-2.5 bg-white border border-slate-200 rounded text-xs resize-none"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-xs resize-none"
                 placeholder="T.ex: Styrklackar svetsas på bandet som mekaniskt tvingar pallen i rätt spår..."
                 value={draftInputs.pokaSol || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, pokaSol: e.target.value }))}
@@ -4609,22 +4495,22 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-2 border-t border-slate-200">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 pt-2 border-t border-slate-200 dark:border-slate-800/80">
             {/* Before parameters */}
             <div className="bg-red-50/50 p-2.5 rounded-lg border border-red-100 flex flex-col gap-1.5 md:col-span-3">
               <span className="text-[10px] font-bold text-red-800 uppercase">Risk FÖRE felsäkring</span>
               <div className="grid grid-cols-3 gap-1.5">
                 <div>
                   <label className="text-[9px] text-slate-500 block">Allvar (S)</label>
-                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaSevB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaSevB: e.target.value }))} />
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-[11px] font-bold" value={draftInputs.pokaSevB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaSevB: e.target.value }))} />
                 </div>
                 <div>
                   <label className="text-[9px] text-slate-500 block">Sannol (O)</label>
-                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaOccB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaOccB: e.target.value }))} />
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-[11px] font-bold" value={draftInputs.pokaOccB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaOccB: e.target.value }))} />
                 </div>
                 <div>
                   <label className="text-[9px] text-slate-500 block">Detekt (D)</label>
-                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaDetB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaDetB: e.target.value }))} />
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-[11px] font-bold" value={draftInputs.pokaDetB || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaDetB: e.target.value }))} />
                 </div>
               </div>
             </div>
@@ -4635,15 +4521,15 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <div className="grid grid-cols-3 gap-1.5">
                 <div>
                   <label className="text-[9px] text-slate-500 block">Allvar (S)</label>
-                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaSevA || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaSevA: e.target.value }))} />
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-[11px] font-bold" value={draftInputs.pokaSevA || '5'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaSevA: e.target.value }))} />
                 </div>
                 <div>
                   <label className="text-[9px] text-slate-500 block">Sannol (O)</label>
-                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaOccA || '1'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaOccA: e.target.value }))} />
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-[11px] font-bold" value={draftInputs.pokaOccA || '1'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaOccA: e.target.value }))} />
                 </div>
                 <div>
                   <label className="text-[9px] text-slate-500 block">Detekt (D)</label>
-                  <input type="number" min="1" max="10" className="w-full p-1 bg-white border border-slate-200 rounded text-[11px] font-bold" value={draftInputs.pokaDetA || '1'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaDetA: e.target.value }))} />
+                  <input type="number" min="1" max="10" className="w-full p-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded text-[11px] font-bold" value={draftInputs.pokaDetA || '1'} onChange={(e) => setDraftInputs(p => ({ ...p, pokaDetA: e.target.value }))} />
                 </div>
               </div>
             </div>
@@ -4667,7 +4553,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             const riskReduction = Math.round(((rpnBefore - rpnAfter) / rpnBefore) * 100);
 
             return (
-              <div key={p.id} className="p-4 bg-white border border-slate-200 rounded-xl relative hover:shadow-sm">
+              <div key={p.id} className="p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-xl relative hover:shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                   
                   {/* Process details */}
@@ -4675,7 +4561,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
                     <span className="text-[9px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full uppercase tracking-wider inline-block">
                       {p.type || 'Felsäkring'}
                     </span>
-                    <h4 className="text-xs font-bold text-slate-800">Processsteg: {p.process}</h4>
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-zinc-100">Processsteg: {p.process}</h4>
                     <p className="text-xs text-slate-500 italic"><b>Potentiellt Fel:</b> {p.error}</p>
                     <div className="p-3 bg-indigo-50/10 border border-indigo-100 rounded-lg text-xs font-semibold leading-relaxed text-slate-705">
                       <span className="text-[10px] text-indigo-700 font-bold block mb-0.5">💡 Teknisk lösning:</span>
@@ -4719,7 +4605,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-700 text-sm bg-slate-50"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-indigo-700 text-sm bg-slate-50"
             placeholder="Skriv dina egna slutsatser eller reaktionsplaner gällande felsäkringen..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -4789,10 +4675,10 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
     };
 
     return (
-      <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+      <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
         <div className="flex items-start justify-between mb-4 border-b border-slate-100 pb-3">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <ClipboardList className="w-5 h-5 text-indigo-700" /> Intressentanalys & Makt/Intresse-matris
             </h3>
             <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-150 mt-1 inline-block">
@@ -4803,15 +4689,15 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
         </div>
 
         {/* Form add stakeholder */}
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6 font-medium text-xs space-y-3">
-          <h4 className="font-bold text-slate-700 uppercase tracking-widest text-[10px]">Lägg till intressent och hanteringsstrategi</h4>
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 dark:border-slate-800/80 mb-6 font-medium text-xs space-y-3">
+          <h4 className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest text-[10px]">Lägg till intressent och hanteringsstrategi</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
             <div className="md:col-span-3">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Intressent / Roll</label>
               <input
                 type="text"
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs"
                 placeholder="T.ex: Produktionsledare"
                 value={draftInputs.stLabel || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, stLabel: e.target.value }))}
@@ -4819,21 +4705,21 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
             </div>
             <div className="md:col-span-2">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Beslutsmakt (Inflytande)</label>
-              <select className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none" value={draftInputs.stInfluence || 'Hög'} onChange={(e) => setDraftInputs(p => ({ ...p, stInfluence: e.target.value }))}>
+              <select className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs outline-none" value={draftInputs.stInfluence || 'Hög'} onChange={(e) => setDraftInputs(p => ({ ...p, stInfluence: e.target.value }))}>
                 <option value="Hög">Hög makt</option>
                 <option value="Låg">Låg makt</option>
               </select>
             </div>
             <div className="md:col-span-2">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Engagemangsgrad (Intresse)</label>
-              <select className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none" value={draftInputs.stInterest || 'Hög'} onChange={(e) => setDraftInputs(p => ({ ...p, stInterest: e.target.value }))}>
+              <select className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs outline-none" value={draftInputs.stInterest || 'Hög'} onChange={(e) => setDraftInputs(p => ({ ...p, stInterest: e.target.value }))}>
                 <option value="Hög">Höggradigt intresserad</option>
                 <option value="Låg">Låggradigt intresserad</option>
               </select>
             </div>
             <div className="md:col-span-2">
               <label className="block text-[10px] text-slate-500 font-bold mb-1">Nuvarande Inställning</label>
-              <select className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs outline-none" value={draftInputs.stSupport || 'Neutral'} onChange={(e) => setDraftInputs(p => ({ ...p, stSupport: e.target.value }))}>
+              <select className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs outline-none" value={draftInputs.stSupport || 'Neutral'} onChange={(e) => setDraftInputs(p => ({ ...p, stSupport: e.target.value }))}>
                 <option value="Sponsor">Sponsor / Aktiv ledare</option>
                 <option value="Förespråkare">Förespråkare (Positiv)</option>
                 <option value="Neutral">Neutral</option>
@@ -4844,7 +4730,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
               <label className="block text-[10px] text-slate-500 font-bold mb-1 col-span-3">Hanteringsstrategi (Åtgärd)</label>
               <input
                 type="text"
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-lg text-xs"
+                className="w-full p-2.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-lg text-xs"
                 placeholder="T.ex: Skicka månadsbrev etc."
                 value={draftInputs.stStrategy || ''}
                 onChange={(e) => setDraftInputs(p => ({ ...p, stStrategy: e.target.value }))}
@@ -4866,26 +4752,26 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           {activeStakeholders.map((s) => {
             const cls = classifyStakeholder(s.influence, s.interest);
             const supportColor = 
-              s.support === 'Sponsor' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold' :
+              s.support === 'Sponsor' ? 'bg-emerald-100 text-emerald-800 dark:text-emerald-305 border border-emerald-300 font-bold' :
               s.support === 'Förespråkare' ? 'bg-green-50 text-green-700 border border-green-200' :
               s.support === 'Motståndare' ? 'bg-rose-100 text-rose-800 border border-rose-300 font-bold' :
-              'bg-slate-100 text-slate-600 border border-slate-200';
+              'bg-slate-100 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800/80';
             
             const positionClass = 
               cls.startsWith('Key Player') ? 'bg-indigo-900 text-white font-bold border border-indigo-950' :
               cls.startsWith('Keep Satisfied') ? 'bg-sky-50 text-sky-800 border border-sky-200' :
               cls.startsWith('Keep Informed') ? 'bg-amber-50 text-amber-800 border border-amber-200' :
-              'bg-slate-50 text-slate-500 border border-slate-200';
+              'bg-slate-50 text-slate-500 border border-slate-200 dark:border-slate-800/80';
 
             return (
-              <div key={s.id} className="p-4 bg-white border border-slate-200 rounded-xl relative hover:shadow-sm grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+              <div key={s.id} className="p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-slate-100 rounded-xl relative hover:shadow-sm grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                 <div className="md:col-span-4">
-                  <h4 className="text-xs font-black text-slate-800">{s.label}</h4>
+                  <h4 className="text-xs font-black text-slate-800 dark:text-zinc-100">{s.label}</h4>
                   <div className="flex flex-wrap gap-1.5 mt-2">
-                    <span className="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-200">
+                    <span className="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800/80">
                       Makt: {s.influence}
                     </span>
-                    <span className="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-200">
+                    <span className="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-800/80">
                       Intresse: {s.interest}
                     </span>
                   </div>
@@ -4893,7 +4779,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
                 <div className="md:col-span-5 space-y-1">
                   <span className="text-[8px] font-black uppercase text-slate-400 font-mono block">Intressentstrategi:</span>
-                  <p className="text-xs text-slate-700 font-medium leading-relaxed">{s.strategy || 'Hantera löpande enligt standardförfarande.'}</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">{s.strategy || 'Hantera löpande enligt standardförfarande.'}</p>
                 </div>
 
                 <div className="md:col-span-3 flex flex-row md:flex-col gap-1.5 items-end justify-between md:justify-center border-t md:border-t-0 border-dashed border-slate-100 pt-3 md:pt-0">
@@ -4915,7 +4801,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
 
         <div className="mb-6 space-y-1.5">
           <textarea
-            className="w-full min-h-[90px] p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-700 text-sm bg-slate-50 shadow-inner rounded-xl"
+            className="w-full min-h-[90px] p-2.5 border border-slate-200 dark:border-slate-800/80 rounded-lg focus:ring-2 focus:ring-indigo-700 text-sm bg-slate-50 shadow-inner rounded-xl"
             placeholder="Skriv dina egna slutsatser eller hanteringsplaner gällande intressentanalysen..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -4947,14 +4833,14 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
   // GENERAL FALLBACK: Standard Text Area Editor (For nested custom content types)
   // ----------------------------------------------------
   return (
-    <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col h-auto ${className || ''}`}>
+    <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 text-slate-800 dark:text-zinc-100 dark:text-zinc-100 p-6 rounded-lg shadow-sm flex flex-col h-auto ${className || ''}`}>
       {children ? (
         children
       ) : (
         <>
           <div className="flex items-start justify-between mb-4 border-b border-slate-50 pb-2">
             <div>
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
                 <Wrench className="w-5 h-5 text-slate-400" /> {title}
               </h3>
               <p className="text-sm text-slate-500 mt-1">{description}</p>
@@ -4962,7 +4848,7 @@ export const ToolContainer: React.FC<Props> = ({ toolId, project, updateProject,
           </div>
           <div className="flex-1">
             <textarea
-              className="w-full min-h-[180px] p-3 border border-slate-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-slate-50 resize-y"
+              className="w-full min-h-[180px] p-3 border border-slate-200 dark:border-slate-800/80 dark:border-slate-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm bg-slate-50 dark:bg-slate-950 text-slate-850 dark:text-zinc-100 resize-y"
               placeholder={`Skriv dina anteckningar, slutsatser eller resultat för ${title} här...`}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

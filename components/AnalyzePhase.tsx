@@ -33,10 +33,10 @@ const AnalyzePhase: React.FC<Props> = ({ project, updateProject }) => {
         {/* Pareto Chart */}
         <ToolContainer toolId="t_pareto" project={project} updateProject={updateProject}>
             <div className="h-full flex flex-col space-y-4">
-                <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-1">Analyze: Paretoanalys</h2>
-                        <p className="text-slate-600">Identifierar "De få viktiga" (Vital Few) vs "De många triviala" (Trivial Many).</p>
+                        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">Analyze: Paretoanalys</h2>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">Identifierar "De få viktiga" (Vital Few) vs "De många triviala" (Trivial Many).</p>
                     </div>
                 </div>
                 <VisualPareto project={project} updateProject={updateProject} />
@@ -46,10 +46,10 @@ const AnalyzePhase: React.FC<Props> = ({ project, updateProject }) => {
         {/* Ishikawa Diagram */}
         <ToolContainer toolId="t_ishikawa" project={project} updateProject={updateProject}>
             <div className="flex flex-col h-full space-y-4">
-                <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-1">Analyze: Ishikawa (Fiskben)</h2>
-                        <p className="text-slate-600">Strukturera potentiella rotorsaker i kategorier för att hitta mönster.</p>
+                        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">Analyze: Ishikawa (Fiskben)</h2>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm">Strukturera potentiella rotorsaker i kategorier för att hitta mönster.</p>
                     </div>
                 </div>
                 <VisualIshikawa project={project} updateProject={updateProject} />
@@ -60,13 +60,13 @@ const AnalyzePhase: React.FC<Props> = ({ project, updateProject }) => {
       <div className="grid grid-cols-1 gap-6">
           <ToolContainer toolId="t_anova" project={project} updateProject={updateProject} className="lg:col-span-2">
             <div className="space-y-6">
-              <div className="flex items-start justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                   <div>
-                      <h2 className="text-2xl font-bold text-slate-800 mb-1">Analyze: ANOVA</h2>
-                      <p className="text-slate-600">Analysera varians för att se om det finns signifikanta skillnader mellan olika grupper (t.ex. maskiner, skift eller material).</p>
+                      <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">Analyze: ANOVA</h2>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm">Analysera varians för att se om det finns signifikanta skillnader mellan olika grupper (t.ex. maskiner, skift eller material).</p>
                   </div>
-                  <div className="bg-slate-100 p-3 rounded-lg">
-                      <TrendingUp className="w-6 h-6 text-slate-600" />
+                  <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
+                      <TrendingUp className="w-6 h-6 text-slate-600 dark:text-slate-300" />
                   </div>
               </div>
               <VisualANOVA project={project} updateProject={updateProject} />

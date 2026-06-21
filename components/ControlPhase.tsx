@@ -58,8 +58,8 @@ const ControlPhase: React.FC<Props> = ({ project, updateProject }) => {
           
         <ToolContainer toolId="t_spc" project={project} updateProject={updateProject}>
         <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">Control: SPC (Styrdiagram)</h2>
-            <p className="text-slate-600 mb-4">Övervaka processen löpande över tid med I-MR diagram för kontinuerlig mätning.</p>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Control: SPC (Styrdiagram)</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-4 text-sm">Övervaka processen löpande över tid med I-MR diagram för kontinuerlig mätning.</p>
 
             <div className="mb-4">
               <button
@@ -73,15 +73,15 @@ const ControlPhase: React.FC<Props> = ({ project, updateProject }) => {
             </div>
 
             {showVisual && (
-              <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 transition-all duration-300">
+              <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-200 dark:border-slate-800 transition-all duration-300">
                 {spcData.length > 1 ? (
                   <div className="h-96 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={spcData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="sample" label={{ value: 'Provnummer', position: 'insideBottom', offset: -5 }} />
-                          <YAxis domain={['auto', 'auto']} />
-                          <Tooltip />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                          <XAxis dataKey="sample" label={{ value: 'Provnummer', position: 'insideBottom', offset: -5, fill: '#64748b' }} tick={{fill: '#64748b'}} />
+                          <YAxis domain={['auto', 'auto']} tick={{fill: '#64748b'}} />
+                          <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '8px', color: '#f8fafc' }} />
                           {/* Control Limits */}
                           <ReferenceLine y={currentUCL} label="UCL" stroke="red" strokeDasharray="5 5" />
                           <ReferenceLine y={currentMean} label="CL" stroke="green" />
@@ -91,14 +91,14 @@ const ControlPhase: React.FC<Props> = ({ project, updateProject }) => {
                       </LineChart>
                       </ResponsiveContainer>
                       <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-                        <div className="bg-red-50 p-2 rounded text-red-700 font-mono text-sm">UCL: {currentUCL.toFixed(3)}</div>
-                        <div className="bg-green-50 p-2 rounded text-green-700 font-mono text-sm">Mean: {currentMean.toFixed(3)}</div>
-                        <div className="bg-red-50 p-2 rounded text-red-700 font-mono text-sm">LCL: {currentLCL.toFixed(3)}</div>
+                        <div className="bg-red-50 dark:bg-red-950/20 p-2 rounded text-red-700 dark:text-red-400 font-mono text-xs md:text-sm">UCL: {currentUCL.toFixed(3)}</div>
+                        <div className="bg-green-50 dark:bg-green-950/20 p-2 rounded text-green-700 dark:text-green-400 font-mono text-xs md:text-sm">Mean: {currentMean.toFixed(3)}</div>
+                        <div className="bg-red-50 dark:bg-red-950/20 p-2 rounded text-red-700 dark:text-red-400 font-mono text-xs md:text-sm">LCL: {currentLCL.toFixed(3)}</div>
                       </div>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center h-64 bg-slate-100 rounded border border-dashed border-slate-300">
-                      <p className="text-slate-500">För lite data för att generera styrdiagram. Gå till "Measure" och lägg till mätvärden.</p>
+                  <div className="flex items-center justify-center h-64 bg-slate-100 dark:bg-slate-950/60 rounded border border-dashed border-slate-300 dark:border-slate-800">
+                      <p className="text-slate-500 dark:text-slate-400 text-sm">För lite data för att generera styrdiagram. Gå till "Measure" och lägg till mätvärden.</p>
                   </div>
                 )}
               </div>

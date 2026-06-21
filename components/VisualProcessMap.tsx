@@ -66,21 +66,21 @@ const VisualProcessMap: React.FC<Props> = ({ project, updateProject }) => {
             <div className="group relative w-full flex items-center gap-4">
               {/* Step Card */}
               <div className={`flex-1 p-4 rounded-xl border-2 transition-all ${
-                step.type === 'decision' ? 'bg-amber-50 border-amber-200 rotate-1' : 
-                step.type === 'start' || step.type === 'end' ? 'bg-slate-100 border-slate-300 rounded-full text-center' :
-                'bg-white border-slate-200'
-              } ${!step.valueAdd ? 'border-dashed border-red-300 bg-red-50/30' : ''}`}>
+                step.type === 'decision' ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/40 rotate-1 text-slate-800 dark:text-amber-200' : 
+                step.type === 'start' || step.type === 'end' ? 'bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-full text-center text-slate-800 dark:text-slate-200' :
+                'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200'
+              } ${!step.valueAdd ? 'border-dashed border-red-300 dark:border-red-900/40 bg-red-50/30 dark:bg-red-950/20 text-red-800 dark:text-red-200' : ''}`}>
                 
                 <div className="flex items-center gap-3">
                   <select
                     value={step.type}
                     onChange={(e) => updateStep(idx, { type: e.target.value as any })}
-                    className="bg-transparent text-[10px] font-bold uppercase text-slate-400 outline-none"
+                    className="bg-transparent text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500 outline-none"
                   >
-                    <option value="task">Aktivitet</option>
-                    <option value="decision">Beslut</option>
-                    <option value="start">Start</option>
-                    <option value="end">Slut</option>
+                    <option value="task" className="dark:bg-slate-900 dark:text-white">Aktivitet</option>
+                    <option value="decision" className="dark:bg-slate-900 dark:text-white">Beslut</option>
+                    <option value="start" className="dark:bg-slate-900 dark:text-white">Start</option>
+                    <option value="end" className="dark:bg-slate-900 dark:text-white">Slut</option>
                   </select>
                   
                   <input
@@ -88,7 +88,7 @@ const VisualProcessMap: React.FC<Props> = ({ project, updateProject }) => {
                     value={step.text}
                     onChange={(e) => updateStep(idx, { text: e.target.value })}
                     placeholder="Beskriv steget..."
-                    className="flex-1 bg-transparent font-medium text-slate-800 outline-none text-sm"
+                    className="flex-1 bg-transparent font-medium text-slate-800 dark:text-white outline-none text-sm"
                   />
 
                   <button
@@ -126,18 +126,18 @@ const VisualProcessMap: React.FC<Props> = ({ project, updateProject }) => {
         ))}
       </div>
 
-      <div className="mt-12 p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-6">
+      <div className="mt-12 p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-white border-2 border-slate-200 rounded"></div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase">Value Add</span>
+          <div className="w-3 h-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded"></div>
+          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">Value Add</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-red-50 border-2 border-dashed border-red-300 rounded"></div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase">Non-Value Add (Waste)</span>
+          <div className="w-3 h-3 bg-red-50 dark:bg-red-950/20 border-2 border-dashed border-red-300 dark:border-red-900/40 rounded"></div>
+          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">Non-Value Add (Waste)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-amber-50 border-2 border-amber-200 rotate-1 rounded"></div>
-          <span className="text-[10px] font-bold text-slate-500 uppercase">Beslutspunkt</span>
+          <div className="w-3 h-3 bg-amber-50 dark:bg-amber-950/20 border-2 border-amber-200 dark:border-amber-900/40 rotate-1 rounded"></div>
+          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">Beslutspunkt</span>
         </div>
       </div>
     </div>

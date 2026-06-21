@@ -74,28 +74,28 @@ const VisualPareto: React.FC<Props> = ({ project, updateProject }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Input Table */}
         <div className="space-y-4">
-          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <Calculator className="w-4 h-4" /> Kategorier & Frekvens
           </h3>
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="px-4 py-3 font-bold text-slate-600">Kategori / Feltyp</th>
-                  <th className="px-4 py-3 font-bold text-slate-600 w-24">Antal</th>
+                  <th className="px-4 py-3 font-bold text-slate-600 dark:text-slate-400">Kategori / Feltyp</th>
+                  <th className="px-4 py-3 font-bold text-slate-600 dark:text-slate-400 w-24">Antal</th>
                   <th className="px-4 py-3 w-10"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {items.map((item, idx) => (
-                  <tr key={idx} className="group hover:bg-slate-50/50 transition-colors">
+                  <tr key={idx} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
                     <td className="px-4 py-2">
                       <input
                         type="text"
                         value={item.name}
                         onChange={(e) => updateItem(idx, 'name', e.target.value)}
                         placeholder="T.ex. Maskinstopp"
-                        className="w-full bg-transparent outline-none focus:text-blue-600 font-medium"
+                        className="w-full bg-transparent outline-none focus:text-blue-600 dark:focus:text-blue-400 font-medium text-slate-850 dark:text-slate-200"
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -103,7 +103,7 @@ const VisualPareto: React.FC<Props> = ({ project, updateProject }) => {
                         type="number"
                         value={item.count}
                         onChange={(e) => updateItem(idx, 'count', parseInt(e.target.value) || 0)}
-                        className="w-full bg-transparent outline-none font-mono font-bold text-blue-600"
+                        className="w-full bg-transparent outline-none font-mono font-bold text-blue-600 dark:text-blue-400"
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -120,7 +120,7 @@ const VisualPareto: React.FC<Props> = ({ project, updateProject }) => {
             </table>
             <button
               onClick={addItem}
-              className="w-full py-3 bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-blue-600 transition-all flex items-center justify-center gap-2 text-xs font-bold uppercase border-t border-slate-200"
+              className="w-full py-3 bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center justify-center gap-2 text-xs font-bold uppercase border-t border-slate-200 dark:border-slate-800"
             >
               <Plus className="w-4 h-4" /> Lägg till rad
             </button>
@@ -129,16 +129,16 @@ const VisualPareto: React.FC<Props> = ({ project, updateProject }) => {
 
         {/* Pareto Chart */}
         <div className="space-y-4">
-          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Pareto-diagram (80/20)</h3>
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm h-[350px]">
+          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-400 uppercase tracking-wider">Pareto-diagram (80/20)</h3>
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={paretoData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" />
                 <XAxis dataKey="name" fontSize={10} tick={{ fill: '#64748b' }} />
                 <YAxis yAxisId="left" orientation="left" stroke="#3b82f6" fontSize={10} />
                 <YAxis yAxisId="right" orientation="right" stroke="#f59e0b" domain={[0, 100]} unit="%" fontSize={10} />
                 <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px', color: '#f8fafc' }}
                 />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '10px' }} />
                 <Bar yAxisId="left" dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Antal" />

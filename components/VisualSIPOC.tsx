@@ -102,16 +102,18 @@ const VisualSIPOC: React.FC<Props> = ({ project, updateProject }) => {
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex flex-wrap lg:flex-nowrap gap-4 items-stretch">
-        <Column title="Suppliers" column="suppliers" color="bg-slate-700" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
-        <div className="hidden lg:flex items-center text-slate-300"><ArrowRight /></div>
-        <Column title="Inputs" column="inputs" color="bg-blue-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
-        <div className="hidden lg:flex items-center text-slate-300"><ArrowRight /></div>
-        <Column title="Process" column="process" color="bg-emerald-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
-        <div className="hidden lg:flex items-center text-slate-300"><ArrowRight /></div>
-        <Column title="Outputs" column="outputs" color="bg-amber-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
-        <div className="hidden lg:flex items-center text-slate-300"><ArrowRight /></div>
-        <Column title="Customers" column="customers" color="bg-indigo-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
+      <div className="overflow-x-auto pb-4 scrollbar-thin">
+        <div className="flex gap-4 items-stretch min-w-[950px] lg:min-w-0">
+          <Column title="Suppliers" column="suppliers" color="bg-slate-700" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
+          <div className="flex items-center text-slate-300 dark:text-slate-750 font-bold"><ArrowRight className="w-4 h-4" /></div>
+          <Column title="Inputs" column="inputs" color="bg-blue-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
+          <div className="flex items-center text-slate-300 dark:text-slate-750 font-bold"><ArrowRight className="w-4 h-4" /></div>
+          <Column title="Process" column="process" color="bg-emerald-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
+          <div className="flex items-center text-slate-300 dark:text-slate-750 font-bold"><ArrowRight className="w-4 h-4" /></div>
+          <Column title="Outputs" column="outputs" color="bg-amber-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
+          <div className="flex items-center text-slate-300 dark:text-slate-750 font-bold"><ArrowRight className="w-4 h-4" /></div>
+          <Column title="Customers" column="customers" color="bg-indigo-600" data={data} updateItem={updateItem} removeItem={removeItem} addItem={addItem} />
+        </div>
       </div>
       
       <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-xl border border-blue-100 dark:border-blue-900/60">

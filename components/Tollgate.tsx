@@ -50,7 +50,7 @@ const Tollgate: React.FC<Props> = ({ phase, project, updateProject }) => {
             <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-xl font-bold text-slate-800 dark:text-white">Tollgate: {phase} Review</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${isApproved ? 'bg-green-200 dark:bg-green-905/40 text-green-800 dark:text-green-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${isApproved ? 'bg-green-200 dark:bg-green-900/40 text-green-800 dark:text-green-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'}`}>
                         {status}
                     </span>
                 </div>
@@ -72,7 +72,7 @@ const Tollgate: React.FC<Props> = ({ phase, project, updateProject }) => {
                 {isApproved ? (
                     <button 
                         onClick={handleReopen}
-                        className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-350 rounded-md font-medium hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-350 rounded-md font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
                     >
                         <Unlock className="w-4 h-4" /> Öppna Fas
                     </button>
